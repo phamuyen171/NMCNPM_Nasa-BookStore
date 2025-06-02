@@ -4,8 +4,8 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db.config');
 const bookRoutes = require('./presentation/routes/book.routes');
-// Loại bỏ dòng import auth routes:
-// const authRoutes = require('./presentation/routes/auth.routes'); // Comment hoặc xóa dòng này
+const authRoutes = require('./presentation/routes/auth.routes'); 
+const staffRoutes = require('./presentation/routes/staff.route'); // Đường dẫn đến staff routes
 
 const app = express();
 
@@ -18,8 +18,8 @@ app.use(express.json()); // Để đọc body của request dạng JSON
 
 // Routes
 app.use('/api/books', bookRoutes);
-// Loại bỏ dòng sử dụng auth routes:
-// app.use('/api/auth', authRoutes); // Comment hoặc xóa dòng này
+app.use('/api/auth', authRoutes); 
+app.use('/api/staff', staffRoutes);
 
 // Middleware xử lý lỗi TẬP TRUNG
 // Bắt các lỗi được ném ra (thrown) từ controllers hoặc service

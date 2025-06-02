@@ -1,0 +1,93 @@
+const Staff = require('../../data/models/staff.model');
+
+class StaffService {
+    async checkExistingStaff(CCCD, phone) {
+        
+        if (!phone) {
+            throw new Error('Vui lòng cung cấp số điện thoại');
+        }
+        if (!CCCD) {
+            throw new Error('Vui lòng cung cấp CCCD');
+        }
+
+        let find = {
+            status: 'active'
+        }
+        const existingCCCD = await Staff.findOne({ CCCD, ...find });
+        const existingPhone = await Staff.findOne({ phone, ...find });
+        
+        if (existingCCCD || existingPhone) {
+            return true
+        }
+        return false;
+    }
+    async createStaffId(role){
+        if (!role) {
+            throw new Error('Vui lòng cung cấp vai trò');
+        }
+        let find = {
+            status: 'active'
+        }
+        const count = await Staff.countDocuments({ role, ...find });
+        const role_dict = {
+            'manager': 'M',
+            'staff': 'S',
+            'accountant': 'A'
+        };
+        const number=String(count+1).padStart(4, '0'); 
+        if (!role_dict[role]) {
+            throw new Error('Vai trò không hợp lệ');
+        }
+        // console.log(role_dict[role]);
+        const staffId = `${role_dict[role]}${number}`;
+        // console.log(`Tạo mã nhân viên: ${staffId} cho vai trò ${role}`);
+        return staffId;
+    }
+    createStaffEmail(staffId) {
+        if (!staffId) {
+            throw new Error('Vui lòng cung cấp mã nhân viên');
+        }
+        const email = `${ staffId.toLowerCase()}@gmail.com`;
+        return email;
+    }
+
+    createStaffPassword(cccd) {
+        if (!cccd) {
+            throw new Error('Vui lòng cung cấp CCCD nhân viên');
+        }
+        const password = `NASA@${cccd.slice(-4)}`;
+        return password;
+    }
+
+    async createStaff(staffData) {
+        if (!staffData) {
+            throw new Error('Vui lòng cung cấp thông tin nhân viên');
+        }
+        const CCCD = staffData.CCCD;
+        const phone = staffData.phone;
+        const check = await this.checkExistingStaff(CCCD, phone);
+        if (check) {
+            throw new Error('Nhân viên đã tồn tại');
+        }
+
+        const [day, month, year] = staffData.DoB.split('/');
+        const dateObject = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        // console.log(`Chuyển đổi ngày sinh: ${staffData.DoB} thành ${dateObject}`);
+
+        const newStaff = new Staff({
+            username: staffData.username,
+            fullName: staffData.fullName,
+            address: staffData.address,
+            phone: staffData.phone,
+            CCCD: staffData.CCCD,
+            DoB: dateObject,
+            thumbnail: staffData.thumbnail,
+            role: staffData.role,
+            startdate: new Date()
+        });
+
+        return await newStaff.save();
+    }
+}
+
+module.exports = new StaffService();

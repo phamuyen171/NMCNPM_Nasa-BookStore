@@ -35,7 +35,7 @@ exports.protect = async (req, res, next) => {
     req.user = {
         _id: 'stubUserId123', // ID giả
         username: 'stubUser', // Username giả
-        role: 'cua_hang_truong' // <--- THAY ĐỔI VAI TRÒ Ở ĐÂY ĐỂ TEST KHÁC NHAU
+        role: 'manager' // <--- THAY ĐỔI VAI TRÒ Ở ĐÂY ĐỂ TEST KHÁC NHAU
         // Các thuộc tính khác của user nếu cần
     };
 
