@@ -1,0 +1,73 @@
+body {
+  background-color: #f8f9fa;
+}
+
+.banner-image{
+  max-height: 170px;
+  object-fit: cover;
+}
+
+header {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.btn{
+  background-color: #4365b4;
+}
+
+footer {
+  background-color: #4365b4;
+}
+.text-footer{
+  color:#D9D9D9;
+  font-size: 13px;
+}
+
+
+/* Cụm 1 */
+.logo-footer{
+  padding-top: 10px;
+}
+.logo-footer-icon {
+  background-color: #D9D9D9;
+  padding: 0 8px 0;
+  display: inline-block;
+  width: 150px;
+}
+.logo-img {
+  max-width: 100%;
+  max-height: 100px;
+  display: block;
+  margin: 0 auto;
+}
+.since-footer {
+  background-color: #4365b4;
+  display: inline-block;
+  width: 150px;
+}
+.since-text {
+  margin-left: 0;
+  display: block;
+  text-align: left;
+}
+
+/* row 2 */
+.footer-line {
+  border: none;
+  height: 1px;
+  background-color: #D9D9D9;
+  opacity: 0.6;
+  width: 90%;
+}
+.footer .copyright-text {
+  font-size: 13px;
+  color: #D9D9D9;
+  text-align: center;
+}
+
+
+a {
+  color: #4365b4;
+}
+
