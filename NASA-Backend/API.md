@@ -312,6 +312,90 @@ Hiện tại, các API quản lý sách chưa yêu cầu xác thực. Khi tích 
   - `orderId`: ID của phiếu nhập cần tạo PDF (bắt buộc).
 - **Response**: File PDF (Content-Type: application/pdf)
 
+### 3. Quản lý tài khoản
+
+#### 3.1 Đăng nhập
+
+- **URL**: `/auth/login`
+- **Method**: `POST`
+- **Description**: Nhân viên đăng nhập để sử dụng website.
+- **Body**:
+  ```json
+  {
+    "username": "string",    // ID nhân viên (bắt buộc)
+    "password": "string" // mật khẩu (bắt buộc, tối thiểu 8 kí tự)
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "Đăng nhập thành công",
+    "data": {
+      "token": "string", 
+    }
+  }
+  ```
+
+#### 3.2 Thêm nhân viên (tạo tài khoản cho nhân viên)
+- **URL**: `/auth/create-account`
+- **Method**: `POST`
+- **Description**: Cửa hàng trưởng dùng để tạo tài khoản cho nhân viên, đồng thời lưu thông tin nhân viên.
+- **Body**:
+  ```json
+  {
+    "username": "string",
+    "password": "string",
+    "fullName": "string",
+    "address": "string",
+    "phone": "string",
+    "CCCD": "string",
+    "DoB": "Date",
+    "role": "string" // giá trị: ['manager', 'staff', 'accountant']
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "Tạo tài khoản thành công",
+    "data": {
+      "username": "string",
+      "password": "token",
+      "role": "string",
+      "status": "string", // default: active
+      "_id": "string"
+    }
+  }
+  ```
+### 4. Quản lý nhân viên:
+
+#### 4.1 Tạo các thông tin tự động cho nhân viên
+- **URL**: `/staff/fill-staff-auto`
+- **Method**: `POST`
+- **Description**: Tự động tạo thông tin mã nhân viên, email, tên đăng nhập, mật khẩu khi nhập thông tin nhân viên mới
+- **Body**:
+  ```json
+  {
+    "role": "string",
+    "CCCD": "string"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "Tạo thông tin nhân viên tự động thành công",
+    "data": {
+      "username": "string",
+      "password": "token",
+      "role": "string",
+      "status": "string", // default: active
+      "_id": "string"
+    }
+  }
+  ```
+
 ## Error Responses
 
 Tất cả các API đều có thể trả về lỗi với format:
