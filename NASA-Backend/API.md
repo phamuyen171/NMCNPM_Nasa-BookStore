@@ -322,16 +322,15 @@ Hiện tại, các API quản lý sách chưa yêu cầu xác thực. Khi tích 
 - **Body**:
   ```json
   {
-    {
-      "username": "string",    // ID nhân viên (bắt buộc)
-      "password": "string" // mật khẩu (bắt buộc, tối thiểu 8 kí tự)
-    }
+    "username": "string",    // ID nhân viên (bắt buộc)
+    "password": "string" // mật khẩu (bắt buộc, tối thiểu 8 kí tự)
   }
   ```
 - **Response**:
   ```json
   {
     "success": true,
+    "message": "Đăng nhập thành công",
     "data": {
       "token": "string", 
     }
@@ -345,22 +344,48 @@ Hiện tại, các API quản lý sách chưa yêu cầu xác thực. Khi tích 
 - **Body**:
   ```json
   {
-    {
-        "username": "string",
-        "password": "string",
-        "fullName": "string",
-        "address": "string",
-        "phone": "string",
-        "CCCD": "string",
-        "DoB": "Date",
-        "role": "string" // giá trị: ['manager', 'staff', 'accountant']
-    }
+    "username": "string",
+    "password": "string",
+    "fullName": "string",
+    "address": "string",
+    "phone": "string",
+    "CCCD": "string",
+    "DoB": "Date",
+    "role": "string" // giá trị: ['manager', 'staff', 'accountant']
   }
   ```
 - **Response**:
   ```json
   {
     "success": true,
+    "message": "Tạo tài khoản thành công",
+    "data": {
+      "username": "string",
+      "password": "token",
+      "role": "string",
+      "status": "string", // default: active
+      "_id": "string"
+    }
+  }
+  ```
+### 4. Quản lý nhân viên:
+
+#### 4.1 Tạo các thông tin tự động cho nhân viên
+- **URL**: `/staff/fill-staff-auto`
+- **Method**: `POST`
+- **Description**: Tự động tạo thông tin mã nhân viên, email, tên đăng nhập, mật khẩu khi nhập thông tin nhân viên mới
+- **Body**:
+  ```json
+  {
+    "role": "string",
+    "CCCD": "string"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "Tạo thông tin nhân viên tự động thành công",
     "data": {
       "username": "string",
       "password": "token",
