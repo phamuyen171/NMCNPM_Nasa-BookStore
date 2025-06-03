@@ -1,6 +1,6 @@
-function showModalError(message) {
-    alert("Lỗi: " + message); // hoặc thay bằng code hiện modal của bạn
-}
+//function showModalError(message) {
+//    alert("Lỗi: " + message); // hoặc thay bằng code hiện modal của bạn
+//}
 
 document.getElementById('loginBtn').addEventListener('click', async () => {
   const username = document.getElementById('username').value.trim();
