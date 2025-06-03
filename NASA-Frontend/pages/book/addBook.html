@@ -89,7 +89,25 @@
 
               <!-- Row 3: Button -->
               <div class="text-end">
-                <button type="submit" class="btn btn-primary px-4">Thêm</button>
+                <button type="button" class="btn btn-primary px-4" data-bs-toggle="modal" data-bs-target="#confirmModal">Thêm</button>
+              </div>
+              <!-- Modal Xác nhận -->
+              <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="confirmModalLabel">Xác nhận</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                    </div>
+                    <div class="modal-body">
+                      Bạn có chắc chắn muốn thêm sách mới không?
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                      <button type="button" class="btn btn-primary" id="confirmSaveBtn">Xác nhận</button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </form>
           </div>
@@ -97,16 +115,22 @@
       </div>
 
 
-
-
-
-
-
-
-
       <!-- Footer -->
       <div id="footer" data-url="../../layouts/html/footer.html"></div>
 
+      
+
+      <script>
+        document.getElementById('confirmSaveBtn').addEventListener('click', function() {
+          // Gọi hàm lưu dữ liệu tại đây
+          console.log("Đã lưu!");
+          
+          // Đóng modal sau khi xác nhận
+          var myModalEl = document.getElementById('confirmModal');
+          var modal = bootstrap.Modal.getInstance(myModalEl);
+          modal.hide();
+        });
+      </script>
 
       <script type="module" src="../../assets/js/addBook.js"></script>
       <!-- js bootstrap -->
