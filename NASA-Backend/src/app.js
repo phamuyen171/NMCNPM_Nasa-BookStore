@@ -1,11 +1,13 @@
 // src/app.js
 require('dotenv').config(); // Đảm bảo biến môi trường được load đầu tiên
+console.log('DEBUG: Dotenv config finished. MONGO_URI after loading:', process.env.MONGO_URI); 
 const express = require('express');
 const cors = require('cors');
-const connectDB = require('./config/db.config');
+const connectDB = require('./config/database');
 const bookRoutes = require('./presentation/routes/book.routes');
-const authRoutes = require('./presentation/routes/auth.routes'); 
-const staffRoutes = require('./presentation/routes/staff.route'); // Đường dẫn đến staff routes
+const importOrderRoutes = require('./presentation/routes/import-order.routes');
+// Loại bỏ dòng import auth routes:
+// const authRoutes = require('./presentation/routes/auth.routes'); 
 
 const app = express();
 
@@ -18,8 +20,9 @@ app.use(express.json()); // Để đọc body của request dạng JSON
 
 // Routes
 app.use('/api/books', bookRoutes);
-app.use('/api/auth', authRoutes); 
-app.use('/api/staff', staffRoutes);
+app.use('/api/books', importOrderRoutes); // Thêm routes cho đơn nhập sách
+// Loại bỏ dòng sử dụng auth routes:
+// app.use('/api/auth', authRoutes); 
 
 // Middleware xử lý lỗi TẬP TRUNG
 // Bắt các lỗi được ném ra (thrown) từ controllers hoặc service
@@ -54,4 +57,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
-

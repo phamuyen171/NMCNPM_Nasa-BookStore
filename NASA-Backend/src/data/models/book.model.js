@@ -27,15 +27,15 @@ const bookSchema = new mongoose.Schema({
     quantity: {
         type: Number,
         required: [true, 'Số lượng là bắt buộc'],
-        min: [0, 'Số lượng không được âm']
+        min: [0, 'Số lượng không được âm'],
+        default: 0
     },
     image: {
         type: String,
         required: [true, 'Hình ảnh là bắt buộc'],
-        // Tự kiểm tra xem URL ảnh có hợp lệ không (tạm thời chỉ check đuôi file)
+        trim: true,
         validate: {
             validator: function (v) {
-                // Dùng regex để kiểm tra đuôi file ảnh
                 return /\.(jpg|jpeg|png|gif)$/i.test(v);
             },
             message: props => `${props.value} không phải là URL hình ảnh hợp lệ (chỉ chấp nhận .jpg, .jpeg, .png, .gif)!`
@@ -43,12 +43,10 @@ const bookSchema = new mongoose.Schema({
     },
     publisher: {
         type: String,
-        required: [true, 'Nhà xuất bản là bắt buộc'],
         trim: true
     },
     priceImport: {
         type: Number,
-        required: [true, 'Giá nhập là bắt buộc'],
         min: [0, 'Giá nhập không được âm']
     },
     description: {
@@ -57,11 +55,9 @@ const bookSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        required: [true, 'Trạng thái là bắt buộc'],
         trim: true,
-        // Chỉ chấp nhận các trạng thái này
         enum: ['Available', 'Out of Stock', 'Discontinued'],
-        default: 'Available' // Mặc định sách mới là còn hàng
+        default: 'Available'
     },
     // Đánh dấu sách đã bị xóa mềm hay chưa
     isDeleted: {
