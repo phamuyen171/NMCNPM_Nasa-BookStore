@@ -13,116 +13,52 @@
     />
     <link rel="stylesheet" href="./assets/css/login.css" />
 
+    <link rel="stylesheet" href="./components/css/error-modal.css" />
+
+
     <title>Nhà Sách NASA</title>
   </head>
-  <body>
+  <body data-modal-src="./components/html/error-modal.html">
     <div class="container-fluid min-vh-100 d-flex flex-column justify-content-between">
-    <!-- Banner -->
-    <header class="text-center">
-      <img src="./assets/images/banner.svg" alt="NASA Banner" class="img-fluid banner-image w-100"/>
-    </header>
+      <!-- Banner -->
+      <div id="banner" data-url="./layouts/html/banner.html"></div>
 
-    <!-- Content -->
-    <div class="row mt-0 pt-0">
-      <div class="col-md-6 d-flex flex-column align-items-center justify-content-center">
-        <img src="./assets/images/big-logo.svg" alt="NASA Logo" class="img-fluid mb-3" style="max-width: 200px;" />
-      </div>
-      <div class="col-md-6 d-flex justify-content-center align-items-center">
-        <div class="w-75">
-          <h5 class="mb-4">Chào mừng đến với nhà sách NASA!</h5>
-          <div class="mb-3">
-            <label for="username" class="form-label">TÊN ĐĂNG NHẬP</label>
-            <input type="text" class="form-control" id="username" placeholder="Nhập mã nhân viên" />
+      <!-- Content -->
+      <div class="row mt-0 pt-0">
+        <div class="col-md-6 d-flex flex-column align-items-center justify-content-center">
+          <img src="./assets/images/big-logo.png" alt="NASA Logo" class="img-fluid mb-3" style="max-width: 200px;" />
+        </div>
+        <div class="col-md-6 d-flex justify-content-center align-items-center">
+          <div class="w-75 border rounded shadow p-4 bg-white">
+            <h5 class="mb-4">Chào mừng đến với nhà sách NASA!</h5>
+            <div class="mb-3">
+              <label for="username" class="form-label">TÊN ĐĂNG NHẬP</label>
+              <input type="text" class="form-control" id="username" placeholder="Nhập mã nhân viên" />
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">MẬT KHẨU</label>
+              <input type="password" class="form-control" id="password" placeholder="Nhập mật khẩu" />
+            </div>
+            <div class="mb-3 text-end">
+              <a href="#" class="text-decoration-underline">Quên mật khẩu?</a>
+            </div>
+            <button id="loginBtn" class="btn text-white w-100">ĐĂNG NHẬP</button>
           </div>
-          <div class="mb-3">
-            <label for="password" class="form-label">MẬT KHẨU</label>
-            <input type="password" class="form-control" id="password" placeholder="Nhập mật khẩu" />
-          </div>
-          <div class="mb-3 text-end">
-            <a href="#" class="text-decoration-underline">Quên mật khẩu?</a>
-          </div>
-          <button id="loginBtn" class="btn text-white w-100">ĐĂNG NHẬP</button>
         </div>
       </div>
+
+      <!-- Footer -->
+      <div id="footer" data-url="./layouts/html/footer.html"></div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer py-3 mt-4 text-footer">
-      <div class="row d-flex justify-content-center">
-        <!-- cụm logo -->
-        <div class="col-md-3">
-            <div class="logo-footer d-flex flex-column justify-content-center align-items-center text-center">
-              <div class="logo-footer-icon">
-                <img src="./assets/images/logo.svg" alt="NASA.com" class="logo-img" />
-              </div>
-              <div class="since-footer">
-                <p class="since-text text-footer m-0">Since 2005.</p>
-              </div>
-            </div>
-        </div>  
-
-        <!-- cụm address-phone-email -->
-        <div class="col-md-9">
-          <!-- row 1 -->
-          <div class="row d-flex align-items-center">
-            <!-- cụm 1 -->
-            <div class="col-md-4">
-              <div class="footer-address pt-2 d-flex justify-content-center">
-                <div class="footer-address-icon">
-                  <img src="./assets/images/footer-icon/address.svg" alt="NASA.com" class="address-img" />
-                </div>
-                <div class="footer-address-text">
-                  <p class="text-footer mb-0 pb-0">Công ty TNHH NASA.COM</p>
-                  <p class="text-footer mb-0 pb-0">227 Nguyễn Văn Cừ, P4, Q5, TPHCM.</p>
-                </div>
-              </div>
-            </div>
-    
-            <!-- cụm 2 -->
-            <div class="col-md-4">
-              <div class="footer-phone d-flex justify-content-center align-items-center">
-                <div class="footer-phone-icon">
-                  <img src="./assets/images/footer-icon/phone.svg" alt="NASA.com" class="address-img" />
-                </div>
-                <div class="footer-phone-text">
-                  <p class="text-footer mb-0 pb-0">+84 123 456 7890</p>
-                </div>
-              </div>
-            </div>
-    
-            <!-- cụm 3 -->
-            <div class="col-md-4">
-              <div class="footer-email d-flex justify-content-center align-items-center">
-                <div class="footer-email-icon pt-1">
-                  <img src="./assets/images/footer-icon/letter.svg" alt="NASA.com" class="address-img" />
-                </div>
-                <div class="footer-email-text">
-                  <p class="text-footer  mb-0 pb-0">nasa.bookstore@gmail.com</p>
-                </div>
-              </div>
-            </div>
-          </div>
-            
-          <!-- row 2 -->
-          <div class="row align-items-center">
-            <div class="d-flex flex-column align-items-center">
-              <hr class="footer-line mb-2" />
-              <p class="copyright-text mb-0">© All rights reserved.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </footer>
-  </div>
-
-
-
-  <script type="module" src="./assets/js/login.js"></script>
+    <script type="module" src="./assets/js/login.js"></script>
     <!-- js bootstrap -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
       crossorigin="anonymous"
     ></script>
+  <script src="./layouts/js/layout-loader.js"></script>
+  <script src="./components/js/error-modal.js"></script>
   </body>
 </html>
