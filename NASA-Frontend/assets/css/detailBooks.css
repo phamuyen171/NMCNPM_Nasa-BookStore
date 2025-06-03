@@ -12,6 +12,7 @@ body {
 /* header và footer có chiều cao cố định */
 #header {
   height: 70px; /* thay bằng đúng chiều cao header bạn load */
+  /* margin-bottom: 25px; */
 }
 
 /* phần giữa chiếm toàn bộ khoảng còn lại */
@@ -55,15 +56,21 @@ a{
 }
 
 .card {
-  min-height: 250px;
-  max-height: 250px;
+  margin-top: 20px;
+  min-height: 280px;
+  max-height: 280px;
 }
 .book-des{
-  max-height: 6.0em;           /* ~2 dòng nếu font-size là 1.2em */
+  max-height: 9.0em;           /* ~2 dòng nếu font-size là 1.2em */
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 4;       /* số dòng hiển thị tối đa */
+  -webkit-line-clamp: 3;       /* số dòng hiển thị tối đa */
   -webkit-box-orient: vertical;
+  line-height: 1.5em;          
+}
+
+.mt-3 {
+  margin-bottom: 15px;
 }
 

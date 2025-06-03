@@ -44,7 +44,7 @@ const bookController = {
         try {
             const queryOptions = {
                 page: parseInt(req.query.page) || 1,
-                limit: parseInt(req.query.limit) || 10,
+                limit: parseInt(req.query.limit) || 8,
                 sortBy: req.query.sortBy || 'title',
                 order: parseInt(req.query.order) || 1,
                 category: req.query.category,

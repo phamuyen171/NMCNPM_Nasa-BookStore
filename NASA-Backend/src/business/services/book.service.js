@@ -47,7 +47,7 @@ class BookService {
     // Service: Lấy danh sách tất cả sách, hỗ trợ lọc, phân trang, sắp xếp
     async getAllBooks(queryOptions = {}) {
         try {
-            const { page = 1, limit = 10, sortBy = 'title', order = 1, category, author, minPrice, maxPrice } = queryOptions;
+            const { page = 1, limit = 8, sortBy = 'title', order = 1, category, author, minPrice, maxPrice } = queryOptions;
 
             // Xây dựng điều kiện lọc
             const filter = { isDeleted: false };

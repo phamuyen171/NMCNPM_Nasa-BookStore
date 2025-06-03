@@ -1,31 +1,28 @@
 // books.js
+import { renderPagination } from "../../components/js/pagination";
 
-// in ra danh sách
-const books = [
-  {
-    title: "Đắc Nhân Tâm",
-    author: "Dale Carnegie",
-    price: "81.000",
-    category: "Kỹ năng sống",
-    quantity: "420",
-    image: "https://nhasachphuongnam.com/images/detailed/217/dac-nhan-tam-bc.jpg",
-    description:"Quyển sách gồm 6 phần, mỗi phần có nhiều chương. Quyển sách đưa ra các lời khuyên về cách thức cư xử, ứng xử và giao tiếp với mọi người để đạt được thành công trong cuộc sống "
-  },
-  {
-    title: "Vũ Trụ Song Song",
-    author: "Brian Greene",
-    price: "72.000",
-    category: "Khoa học",
-    quantity: "110",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTitHyKvG0aUUUp3xwW3jQY27axUC0KlkYEXQ&s",
-    description:"Đã từng có lúc chúng ta cho là “vũ trụ” đồng nghĩa với vạn vật. Tuy nhiên, trong vài năm gần đây những khám phá trong lĩnh vực vật lý và vũ trụ học khiến một số nhà vật lý học đi đến kết luận rằng vũ trụ của chúng ta có thể chỉ là một trong nhiều vũ trụ. Với những suy luận sâu sắc và thuyết phục, Brian Greene giúp chúng ta có được một bức tranh tổng quát về cơ cấu đa-vũ- trụ trong vật lý thiên thể."
-  }
-];
+async function getBooksByPage(apiUrl) {
+  const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      const message = data?.message || 'Tải sach thất bại. Vui lòng thử lại sau!';
+      const errorTiltle = 'Lỗi tải sách';
+      showModalError(errorTiltle, message, './');
+      return;
+    }
+    return data.data; 
+}
 
 function renderBooks(bookList) {
   const container = document.getElementById("books-container");
   container.innerHTML = "";
-
   if (bookList.length === 0) {
     container.innerHTML = `<p class="fst-italic text-center mt-3">Không tìm thấy kết quả</p>`;
     return;
@@ -57,18 +54,18 @@ function renderBooks(bookList) {
     container.appendChild(bookCard);
   });
 }
-renderBooks(books);
 
 
 //tìm kiếm
-function setupSearchEvent() {
+function setupSearchEvent(bookList) {
+  console.log(bookList);
   const searchInput = document.getElementById("search-input");
   if (!searchInput) return;
 
   searchInput.addEventListener("input", function () {
     const keyword = this.value.toLowerCase().trim();
 
-    const filtered = books.filter(book =>
+    const filtered = bookList.filter(book =>
       book.title.toLowerCase().includes(keyword) ||
       book.author.toLowerCase().includes(keyword) ||
       book.category.toLowerCase().includes(keyword) ||
@@ -78,12 +75,37 @@ function setupSearchEvent() {
     renderBooks(filtered);
   });
 }
-setTimeout(() => {
-  setupSearchEvent();
-}, 500); // Đợi header load xong
+
+async function getAllBooks() {
+  const bookList = [];
+  const url = `http://localhost:3000/api/books`;
+  const data = await getBooksByPage(url);
+  const total = data.total;
+  const limit = data.limit;
+  const totalPages = Math.ceil(total / limit);
+  for (let i = 1; i <= totalPages; i++) {
+    const pageUrl = `http://localhost:3000/api/books?page=${i}`;
+    const pageData = await getBooksByPage(pageUrl);
+    bookList.push(...pageData.books);
+  }
+  // console.log(bookList);
+  return bookList;
+}
+getAllBooks().then(bookList => {
+  setupSearchEvent(bookList);
+});
 
 
+async function initBooks(page = 1) {
+  const url = `http://localhost:3000/api/books?page=${page}`;
+  const data = await getBooksByPage(url);
+  renderBooks(data.books);
+  renderPagination(data.total, data.limit, data.page, (newPage) => {
+    initBooks(newPage);
+  });
+  
+}
 
-
+initBooks();
 
 
