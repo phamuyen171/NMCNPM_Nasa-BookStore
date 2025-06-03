@@ -33,7 +33,7 @@ class BookController {
             // Lấy các tham số phân trang và lọc từ req.query
             const queryOptions = {
                 page: parseInt(req.query.page) || 1, // Trang hiện tại, mặc định là 1
-                limit: parseInt(req.query.limit) || 10, // Số lượng sách trên mỗi trang, mặc định là 10
+                limit: parseInt(req.query.limit) || 8, // Số lượng sách trên mỗi trang, mặc định là 10
                 sortBy: req.query.sortBy || 'title', // Trường sắp xếp, mặc định là title
                 order: parseInt(req.query.order) || 1, // Thứ tự sắp xếp (1: ASC, -1: DESC), mặc định là 1
                 category: req.query.category, // Lọc theo thể loại
