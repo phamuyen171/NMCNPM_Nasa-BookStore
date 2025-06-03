@@ -1,13 +1,23 @@
-# API Documentation - Hệ thống Quản lý Sách
+# API Documentation - Hệ thống Quản lý Sách & Tài khoản
 
 ## Base URL
 ```
 http://localhost:3000/api
 ```
 
-## Authentication & Authorization (Chưa triển khai đầy đủ)
+## Authentication & Authorization
 
-Hiện tại, các API quản lý sách chưa yêu cầu xác thực. Khi tích hợp với module Auth, các endpoint cần phân quyền sẽ được bảo vệ bằng middleware.
+Hiện tại, các API quản lý sách chưa yêu cầu xác thực đầy đủ (như mô tả ở phần 1.1). Khi tích hợp với module Auth, các endpoint cần phân quyền sẽ được bảo vệ bằng middleware.
+
+Để đăng nhập và quản lý tài khoản/nhân viên, sử dụng các endpoint trong phần 3 và 4. Các endpoint này có thể yêu cầu xác thực.
+
+### Yêu cầu xác thực (nếu cần thiết cho các endpoint cũ):
+
+Các API endpoints yêu cầu xác thực sẽ cần JWT token trong header:
+
+```
+Authorization: Bearer <your_jwt_token>
+```
 
 ## Endpoints
 
@@ -16,146 +26,89 @@ Hiện tại, các API quản lý sách chưa yêu cầu xác thực. Khi tích 
 #### 1.1. Lấy danh sách sách
 - **URL**: `/books`
 - **Method**: `GET`
-- **Description**: Lấy danh sách tất cả sách trong cửa hàng. Hỗ trợ phân trang, lọc và sắp xếp.
-- **Query Parameters**:
+- **Description**: Lấy danh sách tất cả sách trong cửa hàng. Hỗ trợ phân trang, lọc và sắp xếp. Lưu ý: Endpoint này hiện tại chưa yêu cầu xác thực.
+- **Query Parameters**: (Giữ nguyên)
   - `page` (optional): Số trang (mặc định: 1)
   - `limit` (optional): Số lượng sách trên mỗi trang (mặc định: 10)
   - `sortBy` (optional): Trường sắp xếp (ví dụ: `title`, `author`, `price`, `quantity`).
   - `order` (optional): Thứ tự sắp xếp (`1` cho ASC, `-1` cho DESC) (mặc định: 1)
-  - `category` (optional): Lọc theo thể loại.
+  - `category` (optional): Lọc theo thể loại (hỗ trợ tìm kiếm một phần, không phân biệt hoa thường).
   - `author` (optional): Lọc theo tác giả.
   - `minPrice` (optional): Lọc giá từ.
   - `maxPrice` (optional): Lọc giá đến.
-- **Response**:
+- **Response**: 
   ```json
   {
     "success": true,
-    "data": {
-      "total": "number", // Tổng số sách theo bộ lọc
-      "page": "number",
-      "limit": "number",
-      "books": [
-        {
-          "_id": "string",
-          "title": "string",
-          "author": "string",
-          "price": "number",
-          "quantity": "number",
-          "description": "string",
-          "category": "string",
-          "publisher": "string",
-          "priceImport": "number", // Thêm trường priceImport
-          "status": "string",    // Thêm trường status
-          "coverImage": "string",
-          "isDeleted": "boolean", // Thêm trường soft delete
-          "createdAt": "string",
-          "updatedAt": "string"
-        }
-      ]
-    }
+    "data": { /* ... */ }
   }
   ```
 
 #### 1.2. Tìm kiếm sách
 - **URL**: `/books/search`
 - **Method**: `GET`
-- **Description**: Tìm kiếm sách theo tên, tác giả hoặc thể loại (không phân biệt hoa thường).
+- **Description**: Tìm kiếm sách theo tên, tác giả, thể loại hoặc nhà xuất bản (không phân biệt hoa thường). Lưu ý: Endpoint này hiện tại chưa yêu cầu xác thực.
 - **Query Parameters**: 
   - `searchTerm`: Từ khóa tìm kiếm (bắt buộc).
-- **Response**:
+- **Response**: 
   ```json
   {
     "success": true,
     "message": "Tìm kiếm thành công" OR "Không tìm thấy kết quả phù hợp",
-    "data": {
-      "books": [
-         {
-          "_id": "string",
-          "title": "string",
-          "author": "string",
-          "price": "number",
-          "quantity": "number",
-          "description": "string",
-          "category": "string",
-          "publisher": "string",
-          "priceImport": "number",
-          "status": "string",
-          "coverImage": "string",
-          "isDeleted": "boolean",
-          "createdAt": "string",
-          "updatedAt": "string"
-        }
-      ],
-      "total": "number" // Tổng số sách phù hợp với tìm kiếm
-    }
+    "data": { /* ... */ }
   }
   ```
 
 #### 1.3. Lấy thông tin chi tiết sách
 - **URL**: `/books/:id`
 - **Method**: `GET`
-- **Description**: Lấy thông tin chi tiết của một cuốn sách theo ID.
+- **Description**: Lấy thông tin chi tiết của một cuốn sách theo ID. Lưu ý: Endpoint này hiện tại chưa yêu cầu xác thực.
 - **Parameters**: 
   - `id`: ID của sách cần lấy thông tin.
-- **Response**:
+- **Response**: 
   ```json
   {
     "success": true,
-    "data": {
-      "_id": "string",
-      "title": "string",
-      "author": "string",
-      "price": "number",
-      "quantity": "number",
-      "description": "string",
-      "category": "string",
-      "publisher": "string",
-      "priceImport": "number",
-      "status": "string",
-      "coverImage": "string",
-      "isDeleted": "boolean",
-      "createdAt": "string",
-      "updatedAt": "string"
-    }
+    "data": { /* ... */ }
   }
   ```
 
 #### 1.4. Thêm sách mới
 - **URL**: `/books`
 - **Method**: `POST`
-- **Description**: Thêm một cuốn sách mới vào hệ thống.
-- **Body**:
+- **Description**: Thêm một hoặc nhiều cuốn sách mới vào hệ thống. Lưu ý: Endpoint này hiện tại chưa yêu cầu xác thực.
+- **Body**: Có thể là một object (thêm 1 sách) hoặc một mảng các object (thêm nhiều sách), mỗi object có cấu trúc:
   ```json
   {
     "title": "string", (required)
     "author": "string", (required)
     "price": "number", (required, > 0)
     "quantity": "number", (required, >= 0)
-    "description": "string",
+    "description": "string", (optional)
     "category": "string", (required)
-    "publisher": "string",
+    "publisher": "string", (optional)
     "priceImport": "number", (required, > 0)
     "status": "string" (optional, default: 'Available' if quantity > 0, 'Out of Stock' if quantity === 0)
     "coverImage": "string" (optional, URL format validation)
   }
   ```
-- **Response**:
+- **Response**: (Giữ nguyên)
   ```json
   {
     "success": true,
-    "message": "Thêm sách thành công",
-    "data": { ... // Thông tin sách vừa thêm }
+    "message": "Thêm sách thành công" OR "Đã thêm thành công X cuốn sách.",
+    "data": { ... // Thông tin sách vừa thêm hoặc danh sách sách đã thêm }
   }
   ```
 
 #### 1.5. Cập nhật thông tin sách
 - **URL**: `/books/:id`
 - **Method**: `PUT`
-- **Description**: Cập nhật thông tin của một cuốn sách theo ID. Chỉ cần gửi các trường muốn cập nhật.
+- **Description**: Cập nhật thông tin của một cuốn sách theo ID. Chỉ cần gửi các trường muốn cập nhật. Lưu ý: Endpoint này hiện tại chưa yêu cầu xác thực.
 - **Parameters**: 
   - `id`: ID của sách cần cập nhật (bắt buộc).
 - **Body**: Có thể bao gồm bất kỳ trường nào của sách với giá trị mới (tương tự 1.4).
-- **Response**:
+- **Response**: 
   ```json
   {
     "success": true,
@@ -167,10 +120,10 @@ Hiện tại, các API quản lý sách chưa yêu cầu xác thực. Khi tích 
 #### 1.6. Xóa sách (Soft Delete)
 - **URL**: `/books/:id`
 - **Method**: `DELETE`
-- **Description**: Đánh dấu một cuốn sách là đã xóa mềm (`isDeleted: true`). Sách sẽ không còn hiển thị trong danh sách mặc định.
+- **Description**: Đánh dấu một cuốn sách là đã xóa mềm (`isDeleted: true`). Sách sẽ không còn hiển thị trong danh sách mặc định. Lưu ý: Endpoint này hiện tại chưa yêu cầu xác thực.
 - **Parameters**: 
   - `id`: ID của sách cần xóa mềm (bắt buộc).
-- **Response**:
+- **Response**: 
   ```json
   {
     "success": true,
@@ -178,19 +131,19 @@ Hiện tại, các API quản lý sách chưa yêu cầu xác thực. Khi tích 
   }
   ```
 
-#### 1.7. Tăng số lượng sách (Import More)
+#### 1.7. Tăng số lượng sách (Import More) - Chỉ nhập đơn lẻ
 - **URL**: `/books/import/:id`
 - **Method**: `PUT`
-- **Description**: Tăng số lượng tồn kho cho một cuốn sách cụ thể.
+- **Description**: Tăng số lượng tồn kho cho một cuốn sách cụ thể. Lưu ý: Endpoint này hiện tại chưa yêu cầu xác thực.
 - **Parameters**: 
   - `id`: ID của sách cần nhập thêm (bắt buộc).
-- **Body**:
+- **Body**: 
   ```json
   {
     "quantity": "number" // Số lượng cần nhập thêm (bắt buộc, > 0)
   }
   ```
-- **Response**:
+- **Response**: 
   ```json
   {
     "success": true,
@@ -202,7 +155,7 @@ Hiện tại, các API quản lý sách chưa yêu cầu xác thực. Khi tích 
 #### 1.8. Đánh dấu sách ngừng kinh doanh (Mark as Discontinued)
 - **URL**: `/books/discontinue/:id`
 - **Method**: `PUT`
-- **Description**: Đánh dấu một cuốn sách là đã ngừng kinh doanh.
+- **Description**: Đánh dấu một cuốn sách là đã ngừng kinh doanh. Lưu ý: Endpoint này hiện tại chưa yêu cầu xác thực.
 - **Parameters**: 
   - `id`: ID của sách cần đánh dấu (bắt buộc).
 - **Body**: (Không cần body)
@@ -218,10 +171,10 @@ Hiện tại, các API quản lý sách chưa yêu cầu xác thực. Khi tích 
 #### 1.9. Kiểm tra sách có còn hàng không (Is Available)
 - **URL**: `/books/available/:id`
 - **Method**: `GET`
-- **Description**: Kiểm tra xem một cuốn sách có còn hàng và không bị ngừng kinh doanh không.
+- **Description**: Kiểm tra xem một cuốn sách có còn hàng và không bị ngừng kinh doanh không. Lưu ý: Endpoint này hiện tại chưa yêu cầu xác thực.
 - **Parameters**: 
   - `id`: ID của sách cần kiểm tra (bắt buộc).
-- **Response**:
+- **Response**: 
   ```json
   {
     "success": true,
@@ -229,111 +182,82 @@ Hiện tại, các API quản lý sách chưa yêu cầu xác thực. Khi tích 
   }
   ```
 
-### 2. Quản lý Nhập Kho (Restock)
+### 2. Quản lý Đơn Nhập Sách (Import Orders)
 
 #### 2.1. Xem sách sắp hết/đã hết
 - **URL**: `/books/lowstock`
 - **Method**: `GET`
-- **Description**: Lấy danh sách sách có số lượng tồn kho thấp hoặc đã hết.
-- **Response**:
+- **Description**: Lấy danh sách sách có số lượng tồn kho thấp hoặc đã hết. Lưu ý: Endpoint này hiện tại chưa yêu cầu xác thực.
+- **Response**: 
   ```json
   {
     "success": true,
-    "data": {
-      "threshold": "number", // Ngưỡng tồn kho thấp
-      "outOfStock": [
-        { "_id": "string", "title": "string", "author": "string", "quantity": 0, "warningLevel": "Out of Stock" }
-        // ...
-      ],
-      "lowStock": [
-        { "_id": "string", "title": "string", "author": "string", "quantity": "number", "warningLevel": "Low Stock" }
-        // ...
-      ]
-    }
+    "data": { /* ... */ }
   }
   ```
 
-#### 2.2. Tạo phiếu nhập kho
-- **URL**: `/books/restock`
+#### 2.2. Tạo đơn nhập sách
+- **URL**: `/books/import-order`
 - **Method**: `POST`
-- **Description**: Tạo một phiếu đề xuất nhập thêm sách vào kho.
-- **Body**:
+- **Description**: Tạo một đơn nhập sách mới. Có thể nhập nhiều loại sách cùng lúc trong một đơn. Lưu ý: Endpoint này hiện tại chưa yêu cầu xác thực.
+- **Body**: 
   ```json
   {
     "items": [
       {
         "bookId": "string",    // ID sách (bắt buộc)
-        "quantity": "number" // Số lượng cần nhập cho sách này (bắt buộc, từ 5 đến 100 theo quy định)
+        "quantity": "number" // Số lượng cần nhập cho sách này (bắt buộc, từ 5 đến 1000 theo quy định)
       }
       // ... có thể có nhiều item trong mảng
     ]
   }
   ```
-- **Response**:
+- **Response**: 
   ```json
   {
     "success": true,
-    "message": "Phiếu nhập kho đã được tạo thành công",
-    "data": {
-      "_id": "string", // ID của phiếu nhập
-      "orderItems": [
-         { "book": "string", "quantity": "number", "_id": "string" }
-      ],
-      "status": "pending", // Trạng thái ban đầu là pending
-      "createdBy": "string", // ID người tạo (hiện đang giả lập)
-      "createdAt": "string",
-      "updatedAt": "string",
-      "__v": "number"
-    }
+    "message": "Đã tạo đơn nhập sách thành công",
+    "data": { /* ... */ }
   }
   ```
 
-#### 2.3. Xác nhận phiếu nhập kho
-- **URL**: `/books/restock/confirm/:orderId`
+#### 2.3. Xác nhận đơn nhập sách
+- **URL**: `/books/import-order/confirm/:orderId`
 - **Method**: `PUT`
-- **Description**: Xác nhận một phiếu nhập kho đang ở trạng thái `pending`. Sau khi xác nhận, số lượng sách trong kho sẽ được cập nhật.
+- **Description**: Xác nhận một đơn nhập sách đang ở trạng thái pending. Sau khi xác nhận, số lượng sách trong kho sẽ được cập nhật và file PDF được tạo ra. Lưu ý: Endpoint này hiện tại chưa yêu cầu xác thực.
 - **Parameters**: 
-  - `orderId`: ID của phiếu nhập cần xác nhận (bắt buộc).
+  - `orderId`: ID của đơn nhập cần xác nhận (bắt buộc).
 - **Body**: (Không cần body)
-- **Response**:
-  ```json
-  {
-    "success": true,
-    "message": "Phiếu nhập kho đã được xác nhận và số lượng sách đã được cập nhật",
-    "data": { ... // Thông tin phiếu nhập sau khi xác nhận (status: 'confirmed') }
-  }
-  ```
+- **Response**: File PDF (Content-Type: application/pdf). Nếu xác nhận thành công, backend sẽ trả về file PDF.
 
-#### 2.4. Tải PDF phiếu nhập kho
-- **URL**: `/books/restock/:orderId/pdf`
+#### 2.4. Tải PDF đơn nhập sách
+- **URL**: `/books/import-order/:orderId/pdf`
 - **Method**: `GET`
-- **Description**: Tạo và tải về file PDF của một phiếu nhập kho đã xác nhận.
+- **Description**: Lấy file PDF của một đơn nhập sách đã xác nhận. Lưu ý: Endpoint này hiện tại chưa yêu cầu xác thực.
 - **Parameters**: 
-  - `orderId`: ID của phiếu nhập cần tạo PDF (bắt buộc).
+  - `orderId`: ID của đơn nhập cần tạo PDF (bắt buộc).
 - **Response**: File PDF (Content-Type: application/pdf)
 
-### 3. Quản lý tài khoản
+### 3. Quản lý tài khoản (Authentication)
 
 #### 3.1 Đăng nhập
 
 - **URL**: `/auth/login`
 - **Method**: `POST`
 - **Description**: Nhân viên đăng nhập để sử dụng website.
-- **Body**:
+- **Body**: 
   ```json
   {
     "username": "string",    // ID nhân viên (bắt buộc)
     "password": "string" // mật khẩu (bắt buộc, tối thiểu 8 kí tự)
   }
   ```
-- **Response**:
+- **Response**: 
   ```json
   {
     "success": true,
     "message": "Đăng nhập thành công",
-    "data": {
-      "token": "string", 
-    }
+    "data": { "token": "string" }
   }
   ```
 
@@ -341,7 +265,7 @@ Hiện tại, các API quản lý sách chưa yêu cầu xác thực. Khi tích 
 - **URL**: `/auth/create-account`
 - **Method**: `POST`
 - **Description**: Cửa hàng trưởng dùng để tạo tài khoản cho nhân viên, đồng thời lưu thông tin nhân viên.
-- **Body**:
+- **Body**: 
   ```json
   {
     "username": "string",
@@ -354,45 +278,34 @@ Hiện tại, các API quản lý sách chưa yêu cầu xác thực. Khi tích 
     "role": "string" // giá trị: ['manager', 'staff', 'accountant']
   }
   ```
-- **Response**:
+- **Response**: 
   ```json
   {
     "success": true,
     "message": "Tạo tài khoản thành công",
-    "data": {
-      "username": "string",
-      "password": "token",
-      "role": "string",
-      "status": "string", // default: active
-      "_id": "string"
-    }
+    "data": { /* ... */ }
   }
   ```
+
 ### 4. Quản lý nhân viên:
 
 #### 4.1 Tạo các thông tin tự động cho nhân viên
 - **URL**: `/staff/fill-staff-auto`
 - **Method**: `POST`
 - **Description**: Tự động tạo thông tin mã nhân viên, email, tên đăng nhập, mật khẩu khi nhập thông tin nhân viên mới
-- **Body**:
+- **Body**: 
   ```json
   {
     "role": "string",
     "CCCD": "string"
   }
   ```
-- **Response**:
+- **Response**: 
   ```json
   {
     "success": true,
     "message": "Tạo thông tin nhân viên tự động thành công",
-    "data": {
-      "username": "string",
-      "password": "token",
-      "role": "string",
-      "status": "string", // default: active
-      "_id": "string"
-    }
+    "data": { /* ... */ }
   }
   ```
 
@@ -410,5 +323,13 @@ Tất cả các API đều có thể trả về lỗi với format:
 - `200 OK`: Yêu cầu thành công.
 - `201 Created`: Yêu cầu tạo tài nguyên thành công.
 - `400 Bad Request`: Yêu cầu không hợp lệ (ví dụ: thiếu/sai dữ liệu, ID sai format, dữ liệu trùng lặp).
+- `401 Unauthorized`: Chưa xác thực hoặc token không hợp lệ (áp dụng cho các endpoint yêu cầu Auth).
+- `403 Forbidden`: Không có quyền truy cập (áp dụng cho các endpoint yêu cầu Auth và phân quyền).
 - `404 Not Found`: Không tìm thấy tài nguyên được yêu cầu (ví dụ: không tìm thấy sách theo ID).
-- `500 Internal Server Error`: Lỗi xảy ra ở phía server. 
+- `500 Internal Server Error`: Lỗi xảy ra ở phía server.
+
+## Rate Limiting
+
+API có giới hạn số lượng request để tránh quá tải:
+- 100 requests/15 minutes cho mỗi IP
+- 1000 requests/24 hours cho mỗi IP 

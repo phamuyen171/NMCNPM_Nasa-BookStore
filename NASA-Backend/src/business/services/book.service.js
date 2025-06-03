@@ -7,14 +7,39 @@ const mongoose = require('mongoose');
 const STOCK_THRESHOLD = 10;
 const MIN_RESTOCK_QUANTITY = 5;  // Số lượng tối thiểu cho mỗi lần nhập
 const MAX_RESTOCK_QUANTITY = 100; // Số lượng tối đa cho mỗi lần nhập
+const ImportOrder = require('../models/import-order.model');
 
 class BookService {
     // Service: Xử lý logic thêm sách mới vào hệ thống
     async createBook(bookData) {
         try {
-            const book = new Book(bookData);
-            return await book.save();
+            // Xử lý dữ liệu trước khi lưu
+            const processBookData = (data) => {
+                return {
+                    ...data,
+                    // Đảm bảo quantity có giá trị mặc định
+                    quantity: data.quantity || 0,
+                    // Đảm bảo description có giá trị mặc định
+                    description: data.description || '',
+                    // Đảm bảo status có giá trị mặc định
+                    status: data.status || 'Available'
+                };
+            };
+
+            // Kiểm tra nếu bookData là một mảng (thêm nhiều sách)
+            if (Array.isArray(bookData)) {
+                // Xử lý từng item trong mảng
+                const processedData = bookData.map(processBookData);
+                // Sử dụng insertMany để thêm nhiều document cùng lúc
+                return await Book.insertMany(processedData);
+            } else {
+                // Nếu không phải mảng, xử lý một sách
+                const processedData = processBookData(bookData);
+                const book = new Book(processedData);
+                return await book.save();
+            }
         } catch (error) {
+            // Xử lý lỗi validation hoặc các lỗi khác từ Mongoose
             throw error;
         }
     }
@@ -27,7 +52,8 @@ class BookService {
             // Xây dựng điều kiện lọc
             const filter = { isDeleted: false };
             if (category) {
-                filter.category = category; // Lọc theo thể loại
+                // Use regex for partial and case-insensitive match
+                filter.category = new RegExp(category, 'i');
             }
             if (author) {
                 filter.author = author; // Lọc theo tác giả
@@ -35,10 +61,10 @@ class BookService {
             if (minPrice !== undefined || maxPrice !== undefined) {
                 filter.price = {};
                 if (minPrice !== undefined) {
-                    filter.price.$gte = minPrice; // Lọc giá từ minPrice trở lên
+                    filter.price.$gte = minPrice;
                 }
                 if (maxPrice !== undefined) {
-                    filter.price.$lte = maxPrice; // Lọc giá đến maxPrice trở xuống
+                    filter.price.$lte = maxPrice;
                 }
             }
 
@@ -50,13 +76,13 @@ class BookService {
 
             // Thực hiện query với lọc, phân trang, và sắp xếp
             const books = await Book.find(filter)
-                .select('title author price quantity description category publisher priceImport status coverImage')
-                .sort({ [sortBy]: order }) // Sắp xếp theo sortBy và order
+                .select('title author price quantity description category publisher priceImport status image') // Đã sửa coverImage thành image
+                .sort({ [sortBy]: order })
                 .skip(skip)
                 .limit(limit);
 
             return {
-                total: totalBooks, // Tổng số sách (không phân trang)
+                total: totalBooks,
                 page: page,
                 limit: limit,
                 books: books
@@ -82,7 +108,6 @@ class BookService {
     // Service: Cập nhật thông tin của một cuốn sách
     async updateBook(id, updateData) {
         try {
-            // Tìm sách trước để kiểm tra số lượng hiện tại và các trường khác nếu cần
             const book = await Book.findOne({ _id: id, isDeleted: false });
 
             if (!book) {
@@ -97,20 +122,16 @@ class BookService {
                 if (book.quantity === 0) {
                     book.status = 'Out of Stock';
                 } else if (book.quantity > 0 && book.status === 'Out of Stock') {
-                    // Nếu số lượng > 0 và trước đó đang hết hàng, chuyển sang Available
                     book.status = 'Available';
                 } else if (book.quantity > 0 && book.status === 'Discontinued') {
-                    // Nếu số lượng > 0 và đang ngừng kinh doanh, giữ nguyên trạng thái Discontinued
-                    // Không làm gì ở đây
+                    // Giữ nguyên trạng thái Discontinued
                 } else if (book.quantity > 0 && book.status === 'Available') {
-                    // Nếu số lượng > 0 và đang Available, giữ nguyên trạng thái Available
-                    // Không làm gì ở đây
+                    // Giữ nguyên trạng thái Available
                 }
             }
 
-            // Lưu các thay đổi vào DB (bao gồm cả status nếu có thay đổi tự động hoặc từ updateData)
             await book.save({
-                runValidators: true // Chạy validator của Mongoose schema
+                runValidators: true
             });
 
             return book;
@@ -119,16 +140,12 @@ class BookService {
         }
     }
 
-    // Service: Đánh dấu một cuốn sách là đã xóa mềm (không xóa hẳn khỏi DB)
+    // Service: Đánh dấu một cuốn sách là đã xóa mềm (đánh dấu isDeleted = true trong DB)
     async deleteBook(id) {
         try {
-            const book = await Book.findOneAndUpdate(
-                { _id: id, isDeleted: false },
-                { isDeleted: true },
-                { new: true }
-            );
+            const book = await Book.findOneAndUpdate({ _id: id, isDeleted: false }, { isDeleted: true, status: 'Discontinued' }, { new: true });
             if (!book) {
-                throw new Error('Không tìm thấy sách');
+                throw new Error('Không tìm thấy sách để xóa mềm');
             }
             return book;
         } catch (error) {
@@ -141,44 +158,32 @@ class BookService {
     // Service: Tìm và phân loại sách có số lượng tồn kho thấp hoặc đã hết
     async getLowStockBooks() {
         try {
-            // Tìm sách có quantity <= ngưỡng và chưa bị xóa mềm
-            const lowStockBooks = await Book.find({
-                isDeleted: false,
-                quantity: { $lte: STOCK_THRESHOLD }
-            }).select('_id title author quantity'); // Chỉ lấy các trường cần thiết
+            const outOfStock = await Book.find({ isDeleted: false, quantity: 0 });
+            const lowStock = await Book.find({ isDeleted: false, quantity: { $gt: 0, $lte: STOCK_THRESHOLD } });
 
-            // Thêm trường warningLevel và phân loại
-            const booksWithWarnings = lowStockBooks.map(book => {
-                let warningLevel = '';
-                if (book.quantity === 0) {
-                    warningLevel = 'Out of Stock';
-                } else if (book.quantity > 0 && book.quantity <= STOCK_THRESHOLD) {
-                    warningLevel = 'Low Stock';
-                }
-                // Không cần else cho quantity > STOCK_THRESHOLD vì chúng ta chỉ query sách <= STOCK_THRESHOLD
+            // Thêm trường warningLevel để dễ phân biệt ở frontend
+            const formattedOutOfStock = outOfStock.map(book => ({
+                ...book.toObject(),
+                warningLevel: 'Out of Stock'
+            }));
 
-                return {
-                    _id: book._id,
-                    title: book.title,
-                    author: book.author,
-                    quantity: book.quantity,
-                    warningLevel: warningLevel // Thêm trường warningLevel
-                };
-            });
+            const formattedLowStock = lowStock.map(book => ({
+                ...book.toObject(),
+                warningLevel: 'Low Stock'
+            }));
 
-            // Phân loại thành sắp hết (>0) và đã hết (=0) dựa trên quantity
-            const outOfStock = booksWithWarnings.filter(book => book.quantity === 0);
-            const lowStock = booksWithWarnings.filter(book => book.quantity > 0);
-
-            return { outOfStock, lowStock }; // outOfStock và lowStock giờ đây chứa các đối tượng có warningLevel
-
+            return {
+                threshold: STOCK_THRESHOLD,
+                outOfStock: formattedOutOfStock,
+                lowStock: formattedLowStock,
+            };
         } catch (error) {
             throw error;
         }
     }
 
     // Service: Xử lý việc tạo một phiếu đề xuất nhập thêm sách
-    async processRestockOrder(restockData, userCreatingOrder) {
+    async processRestockOrder(restockData) {
         if (!Array.isArray(restockData) || restockData.length === 0) {
             throw new Error('Dữ liệu nhập sách không hợp lệ');
         }
@@ -188,7 +193,10 @@ class BookService {
         const existingBooks = await Book.find({ _id: { $in: bookIds } });
 
         if (existingBooks.length !== bookIds.length) {
-            throw new Error('Một hoặc nhiều sách không tồn tại');
+            // Tìm các ID không tồn tại để báo lỗi cụ thể hơn
+            const existingBookIds = existingBooks.map(book => book._id.toString());
+            const nonExistingIds = bookIds.filter(id => !existingBookIds.includes(id));
+            throw new Error(`Một hoặc nhiều sách không tồn tại với các ID: ${nonExistingIds.join(', ')}`);
         }
 
         // Validate quantities
@@ -211,7 +219,6 @@ class BookService {
         const restockOrder = new RestockOrder({
             orderItems: orderItems,
             status: 'pending',
-            createdBy: userCreatingOrder._id
         });
 
         await restockOrder.save();
@@ -219,15 +226,11 @@ class BookService {
     }
 
     // Service: Xác nhận một phiếu nhập kho đang chờ xử lý
-    async confirmRestockOrder(orderId, user) {
+    async confirmRestockOrder(orderId) {
         try {
-            // Kiểm tra quyền người dùng
-            if (!user || user.role !== 'manager') {
-                throw new Error('Chỉ Cửa hàng trưởng mới được phép xác nhận phiếu nhập kho');
-            }
 
             // Tìm phiếu nhập và cập nhật trạng thái
-            const order = await RestockOrder.findById(orderId);
+            const order = await RestockOrder.findById(orderId).populate('orderItems.book'); // Populate để lấy thông tin sách
             if (!order) {
                 throw new Error('Không tìm thấy phiếu nhập');
             }
@@ -238,16 +241,17 @@ class BookService {
 
             // Cập nhật trạng thái phiếu nhập
             order.status = 'confirmed';
-            order.confirmedBy = user._id;
             order.confirmedAt = new Date();
 
             // Cập nhật số lượng sách trong kho
-            for (const item of order.items) {
-                const book = await Book.findById(item.book);
+            for (const item of order.orderItems) { // Đã sửa order.items thành order.orderItems
+                const book = item.book; // Lấy thông tin sách đã populate
                 if (!book) {
-                    throw new Error(`Không tìm thấy sách với ID ${item.book}`);
+                    console.error(`[Confirm Restock] Không tìm thấy sách với ID ${item.book} khi cập nhật số lượng.`);
+                    continue; // Bỏ qua mục này nếu không tìm thấy sách 
                 }
                 book.quantity += item.quantity;
+                // Cập nhật status nếu cần thiết
                 if (book.quantity > 0 && book.status === 'Out of Stock') {
                     book.status = 'Available';
                 }
@@ -267,21 +271,23 @@ class BookService {
     async generateRestockPdf(orderId) {
         try {
             const order = await RestockOrder.findById(orderId)
-                .populate('items.book', 'title author')
-                .populate('createdBy', 'username');
+                .populate('orderItems.book', 'title author priceImport') // Populate book info needed for PDF
 
             if (!order) {
                 throw new Error('Không tìm thấy phiếu nhập');
             }
+            if (order.status !== 'confirmed') {
+                throw new Error('Chỉ có thể tạo PDF cho phiếu nhập đã xác nhận');
+            }
 
             // Tạo PDF
             const doc = new PDFDocument();
-            const pdfPath = path.join(__dirname, `../../temp/restock_${orderId}.pdf`);
-
-            // Đảm bảo thư mục temp tồn tại
-            if (!fs.existsSync(path.join(__dirname, '../../temp'))) {
-                fs.mkdirSync(path.join(__dirname, '../../temp'));
+            // Ensure the temp directory exists - relative to the project root
+            const tempDir = path.join(__dirname, '../../temp');
+            if (!fs.existsSync(tempDir)) {
+                fs.mkdirSync(tempDir, { recursive: true }); // Use recursive: true for nested dirs
             }
+            const pdfPath = path.join(tempDir, `restock_${orderId}.pdf`);
 
             // Tạo stream để ghi file
             const stream = fs.createWriteStream(pdfPath);
@@ -292,36 +298,69 @@ class BookService {
             doc.moveDown();
             doc.fontSize(12).text(`Mã phiếu: ${order._id}`);
             doc.text(`Ngày tạo: ${order.createdAt.toLocaleDateString('vi-VN')}`);
-            doc.text(`Người tạo: ${order.createdBy ? order.createdBy.username : 'Không xác định'}`);
             doc.moveDown();
 
             // Tạo bảng danh sách sách
-            const tableTop = 200;
-            doc.fontSize(12).text('Danh sách sách cần nhập:', 50, tableTop);
+            const tableTop = doc.y; // Start table below previous text
+            const itemHeight = 25;
 
-            let y = tableTop + 30;
-            doc.fontSize(10);
-            doc.text('STT', 50, y);
-            doc.text('Tên sách', 100, y);
-            doc.text('Tác giả', 300, y);
-            doc.text('Số lượng', 450, y);
+            // Header
+            doc.font('Helvetica-Bold')
+                .text('STT', 50, tableTop, { width: 50, align: 'left' })
+                .text('Tên sách', 100, tableTop, { width: 200, align: 'left' })
+                .text('Số lượng', 300, tableTop, { width: 80, align: 'right' })
+                .text('Giá nhập (đ)', 380, tableTop, { width: 80, align: 'right' })
+                .text('Thành tiền (đ)', 460, tableTop, { width: 80, align: 'right' });
 
-            y += 20;
-            order.items.forEach((item, index) => {
-                doc.text(`${index + 1}`, 50, y);
-                doc.text(item.book.title, 100, y);
-                doc.text(item.book.author, 300, y);
-                doc.text(item.quantity.toString(), 450, y);
-                y += 20;
-            });
+            doc.font('Helvetica');
+            let currentY = tableTop + itemHeight;
+            let totalAmount = 0;
+
+            for (let i = 0; i < order.orderItems.length; i++) {
+                const item = order.orderItems[i];
+                // Kiểm tra xem item.book có tồn tại sau populate không
+                if (!item.book) {
+                    console.error(`[Generate PDF] Không tìm thấy thông tin sách cho item ID ${item._id}`);
+                    continue; // Bỏ qua item này nếu thông tin sách bị thiếu
+                }
+                const thànhTien = item.quantity * (item.book.priceImport || 0);
+                totalAmount += thànhTien;
+
+                doc.text((i + 1).toString(), 50, currentY, { width: 50, align: 'left' })
+                    .text(item.book.title, 100, currentY, { width: 200, align: 'left' })
+                    .text(item.quantity.toString(), 300, currentY, { width: 80, align: 'right' })
+                    .text((item.book.priceImport || 0).toLocaleString('vi-VN'), 380, currentY, { width: 80, align: 'right' })
+                    .text(thànhTien.toLocaleString('vi-VN'), 460, currentY, { width: 80, align: 'right' });
+
+                currentY += itemHeight;
+                // Add a page break if needed
+                if (currentY + itemHeight > doc.page.height - doc.page.margins.bottom) {
+                    doc.addPage();
+                    currentY = doc.page.margins.top; // Reset Y to top margin of new page
+                    // Re-print headers on new page
+                    doc.font('Helvetica-Bold')
+                        .text('STT', 50, currentY, { width: 50, align: 'left' })
+                        .text('Tên sách', 100, currentY, { width: 200, align: 'left' })
+                        .text('Số lượng', 300, currentY, { width: 80, align: 'right' })
+                        .text('Giá nhập (đ)', 380, currentY, { width: 80, align: 'right' })
+                        .text('Thành tiền (đ)', 460, currentY, { width: 80, align: 'right' });
+                    doc.font('Helvetica');
+                    currentY += itemHeight;
+                }
+            }
+
+            // Total
+            doc.moveDown();
+            doc.font('Helvetica-Bold')
+                .text('Tổng cộng:', 380, currentY, { width: 80, align: 'right' })
+                .text(totalAmount.toLocaleString('vi-VN'), 460, currentY, { width: 80, align: 'right' });
 
             // Kết thúc PDF
             doc.end();
 
-            return new Promise((resolve, reject) => {
-                stream.on('finish', () => resolve(pdfPath));
-                stream.on('error', reject);
-            });
+            // Trả về đường dẫn file PDF
+            return pdfPath;
+
         } catch (error) {
             throw error;
         }
@@ -427,17 +466,274 @@ class BookService {
             throw new Error('Danh sách ID sách không hợp lệ.');
         }
 
-        // Sử dụng Mongoose để tìm và cập nhật tất cả các sách có ID trong danh sách
-        // $in operator tìm các document có trường _id nằm trong mảng bookIds
-        // { new: true } tùy chọn trả về document sau khi cập nhật (không cần thiết ở đây, chỉ cần số lượng)
-        // { multi: true } tùy chọn cần thiết cho updateMany nếu không dùng filter $in
         const result = await Book.updateMany(
-            { _id: { $in: bookIds }, isDeleted: false }, // Chỉ cập nhật những sách chưa bị xóa mềm
-            { $set: { isDeleted: true, status: 'Discontinued' } } // Đặt isDeleted thành true và status thành Discontinued
+            { _id: { $in: bookIds }, isDeleted: false },
+            { $set: { isDeleted: true, status: 'Discontinued' } }
         );
 
-        // result.nModified chứa số lượng document đã bị thay đổi
         return result.nModified;
+    }
+
+    async batchUpdateQuantity(req, res, next) {
+        try {
+            console.log('=== Batch Update Quantity Request ==='); // Log start
+            console.log('Received req.body type:', typeof req.body); // Log body type
+            console.log('Received req.body:', JSON.stringify(req.body, null, 2)); // Log full body
+
+            const updates = req.body; // Request body dự kiến là một mảng [{ bookId: '...', quantity: ... }, ...]
+
+            // Kiểm tra dữ liệu đầu vào cơ bản
+            if (!Array.isArray(updates) || updates.length === 0) {
+                console.log('Validation failed: Body is not an array or is empty.'); // Log validation failure
+                return res.status(400).json({
+                    success: false,
+                    message: 'Dữ liệu cập nhật không hợp lệ: phải là một mảng không rỗng.'
+                });
+            }
+
+            // Kiểm tra từng phần tử trong mảng
+            for (const update of updates) {
+                console.log('Validating update item:', JSON.stringify(update, null, 2)); // Log each item
+
+                if (!update.bookId) {
+                    console.log(`Validation failed: bookId is missing in item ${JSON.stringify(update)}.`); // Log validation failure
+                    return res.status(400).json({
+                        success: false,
+                        message: `ID sách không hợp lệ: ${update.bookId}. ID phải là một chuỗi ObjectId hợp lệ.`
+                    });
+                }
+
+                if (!mongoose.Types.ObjectId.isValid(update.bookId)) {
+                    console.log(`Validation failed: Invalid ObjectId format for ID ${update.bookId}.`); // Log validation failure
+                    return res.status(400).json({
+                        success: false,
+                        message: `ID sách không hợp lệ: ${update.bookId}. ID phải là một chuỗi ObjectId hợp lệ.`
+                    });
+                }
+
+                if (typeof update.quantity !== 'number' || update.quantity < 0) {
+                    console.log(`Validation failed: Invalid quantity ${update.quantity} for bookId ${update.bookId}.`); // Log validation failure
+                    return res.status(400).json({
+                        success: false,
+                        message: `Số lượng không hợp lệ cho sách ID ${update.bookId}: ${update.quantity}. Số lượng phải là số >= 0.`
+                    });
+                }
+                console.log(`Validation passed for item with bookId ${update.bookId}.`); // Log validation success
+            }
+
+            console.log('All items validated. Calling service...'); // Log before service call
+            const result = await bookService.batchUpdateQuantity(updates);
+
+            console.log('Service call successful. Result:', JSON.stringify(result, null, 2)); // Log service result
+
+            res.status(200).json({
+                success: true,
+                message: `Đã cập nhật số lượng cho ${result.modifiedCount || result.nModified} cuốn sách.`,
+                data: result
+            });
+
+        } catch (error) {
+            // Xử lý lỗi từ service hoặc các lỗi khác
+            console.error('=== Error in batchUpdateQuantity controller ===', error); // Log error
+            next(error);
+        }
+    }
+
+    // Service: Cập nhật số lượng cho tất cả sách
+    async updateAllQuantity(quantity) {
+        try {
+            // Đảm bảo quantity là số không âm
+            if (typeof quantity !== 'number' || quantity < 0) {
+                throw new Error('Số lượng cập nhật không hợp lệ. Phải là số không âm.');
+            }
+
+            // Sử dụng updateMany để cập nhật tất cả các document (filter trống {})
+            const result = await Book.updateMany({}, { $set: { quantity: quantity } });
+
+            // Cập nhật trạng thái nếu số lượng thay đổi
+            // Nếu quantity = 0, tất cả sách sẽ là 'Out of Stock'
+            // Nếu quantity > 0, tất cả sách sẽ là 'Available' (trừ những sách đã Discontinued)
+            let statusUpdate = {};
+            if (quantity === 0) {
+                statusUpdate = { status: 'Out of Stock' };
+            } else {
+                // Chỉ cập nhật status sang 'Available' cho những sách chưa bị đánh dấu Discontinued
+                const availableResult = await Book.updateMany(
+                    { isDeleted: false, status: { $ne: 'Discontinued' } },
+                    {
+                        $set: { status: 'Available' }
+                    });
+                console.log(`Updated status to Available for ${availableResult.modifiedCount} books.`);
+            }
+
+            if (Object.keys(statusUpdate).length > 0) {
+                const statusResult = await Book.updateMany({}, { $set: statusUpdate });
+                console.log(`Updated status to Out of Stock for ${statusResult.modifiedCount} books where quantity is 0.`);
+            }
+
+            return result;
+
+        } catch (error) {
+            console.error('Error in updateAllQuantity service:', error);
+            throw error;
+        }
+    }
+
+    // Tạo đơn nhập sách mới
+    // Thay thế hàm createImportOrder trong book.controller.js:
+    async createImportOrder(req, res, next) {
+        try {
+            // Kiểm tra và chuyển đổi dữ liệu đầu vào thành mảng
+            const orders = Array.isArray(req.body) ? req.body : [req.body];
+
+            // Validate dữ liệu đầu vào
+            for (const item of orders) {
+                if (!item.bookId || typeof item.quantity !== 'number' || item.quantity <= 0) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Dữ liệu không hợp lệ. Mỗi item phải có bookId và quantity > 0'
+                    });
+                }
+            }
+
+            // Tạo các đơn nhập
+            const results = [];
+            for (const item of orders) {
+                const importOrder = await bookService.createImportOrderById(item.bookId, item.quantity);
+                results.push(importOrder);
+            }
+
+            res.status(201).json({
+                success: true,
+                message: `Đã tạo ${results.length} đơn nhập sách thành công`,
+                data: results
+            });
+        } catch (error) {
+            if (error.message.startsWith('Không tìm thấy sách')) {
+                res.status(404).json({ success: false, message: error.message });
+            } else {
+                next(error);
+            }
+        }
+    }
+
+    // Xác nhận đơn nhập sách và cập nhật số lượng
+    async confirmImportOrder(orderId) {
+        const importOrder = await ImportOrder.findById(orderId);
+        if (!importOrder) {
+            throw new Error('Không tìm thấy đơn nhập sách');
+        }
+
+        if (importOrder.status !== 'pending') {
+            throw new Error('Đơn nhập sách không ở trạng thái chờ xác nhận');
+        }
+
+        const book = await Book.findById(importOrder.bookId);
+        if (!book) {
+            throw new Error('Không tìm thấy sách');
+        }
+
+        book.quantity += importOrder.quantity;
+        await book.save();
+
+        importOrder.status = 'confirmed';
+        importOrder.updatedAt = new Date();
+        await importOrder.save();
+
+        return {
+            book,
+            importOrder
+        };
+    }
+
+    // Lấy danh sách đơn nhập sách
+    async getImportOrders() {
+        return await ImportOrder.find().sort({ createdAt: -1 });
+    }
+
+    // Generate PDF for an import order
+    async generateImportOrderPdf(orderId) {
+
+        if (!mongoose.Types.ObjectId.isValid(orderId)) {
+            throw new Error('ID đơn nhập không hợp lệ');
+        }
+
+        // Find the import order by ID
+        // TODO: Nếu ImportOrder model được sửa để hỗ trợ nhiều sách, cần populate sách ở đây
+        const order = await ImportOrder.findById(orderId);
+
+        if (!order) {
+            throw new Error('Không tìm thấy đơn nhập với ID đã cung cấp');
+        }
+
+        // Định nghĩa nội dung PDF (document definition)
+        // TODO: Cập nhật nếu ImportOrder model hỗ trợ nhiều sách
+        const documentDefinition = {
+            content: [
+                { text: 'PHIẾU NHẬP SÁCH', style: 'header' },
+                { text: `Mã đơn nhập: ${order._id}`, style: 'subheader' },
+                { text: `Ngày tạo: ${order.createdAt.toLocaleDateString()}`, style: 'subheader' },
+                { text: `Trạng thái: ${order.status}`, style: 'subheader' },
+                {
+                    style: 'tableExample',
+                    table: {
+                        widths: ['*', 100, 50], // Cột Tên sách rộng tự động, ID 100, Số lượng 50
+                        body: [
+                            [{ text: 'Tên sách', style: 'tableHeader' }, { text: 'ID sách', style: 'tableHeader' }, { text: 'Số lượng', style: 'tableHeader' }],
+                            // Dòng dữ liệu sách - TODO: Cập nhật nếu ImportOrder hỗ trợ nhiều sách
+                            [order.title, order.bookId.toString(), order.quantity.toString()]
+                        ]
+                    },
+                    layout: 'lightHorizontalLines' // Kiểu bảng có đường kẻ ngang nhẹ
+                },
+                { text: '\nLưu ý: Phiếu này chỉ ghi nhận yêu cầu nhập, chưa cập nhật vào kho.', style: 'note' }
+            ],
+            styles: {
+                header: { fontSize: 18, bold: true, margin: [0, 0, 0, 20] },
+                subheader: { fontSize: 14, bold: true, margin: [0, 10, 0, 5] },
+                tableExample: { margin: [0, 5, 0, 15] },
+                tableHeader: { bold: true, fontSize: 12, color: 'black' },
+                note: { italics: true, fontSize: 10, margin: [0, 20, 0, 0] }
+            },
+            defaultStyle: {
+                font: 'Roboto' // Có thể cần cấu hình font khác cho tiếng Việt
+            }
+        };
+
+        // Import pdfMake library và fonts VFS
+        const pdfMakePrinter = require('pdfmake/src/printer'); // Sử dụng module printer
+        const vfsFonts = require('pdfmake/build/vfs_fonts.js');
+
+        const fontDescriptors = {
+            Roboto: {
+                normal: Buffer.from(vfsFonts.pdfMake.vfs['Roboto-Regular.ttf'], 'base64'),
+                bold: Buffer.from(vfsFonts.pdfMake.vfs['Roboto-Medium.ttf'], 'base64')
+            }
+
+        };
+
+        const printer = new pdfMakePrinter(fontDescriptors);
+
+        // Tạo tài liệu PDF
+        const pdfDoc = printer.createPdfKitDocument(documentDefinition);
+
+        // Trả về stream của tài liệu PDF
+        return pdfDoc;
+    }
+
+    // Tạo đơn nhập sách mới bằng ID sách
+    async createImportOrderById(bookId, quantity) {
+        const book = await Book.findById(bookId);
+        if (!book) {
+            throw new Error('Không tìm thấy sách');
+        }
+        const importOrder = new ImportOrder({
+            bookId: book._id,
+            title: book.title,
+            quantity: quantity
+        });
+        await importOrder.save();
+        return importOrder;
     }
 }
 
