@@ -1,5 +1,5 @@
 window.addEventListener("DOMContentLoaded", () => {
-  ["banner", "footer"].forEach(id => {
+  ["banner", "header" ,"footer"].forEach(id => {
     const el = document.getElementById(id);
     const url = el?.dataset?.url;
 

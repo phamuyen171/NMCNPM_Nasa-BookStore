@@ -1,6 +1,14 @@
 body {
   background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
 }
+
+.container-fluid {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
 
 .banner-image{
   max-height: 170px;
@@ -16,6 +24,8 @@ header {
   background-color: #4365b4;
 }
 
+
+
 footer {
   background-color: #4365b4;
 }
@@ -23,7 +33,6 @@ footer {
   color:#D9D9D9;
   font-size: 13px;
 }
-
 
 /* Cụm 1 */
 .logo-footer{
@@ -33,7 +42,7 @@ footer {
   background-color: #D9D9D9;
   padding: 0 8px 0;
   display: inline-block;
-  width: 150px;
+  width: 120px;
 }
 .logo-img {
   max-width: 100%;
@@ -44,7 +53,7 @@ footer {
 .since-footer {
   background-color: #4365b4;
   display: inline-block;
-  width: 150px;
+  width: 120px;
 }
 .since-text {
   margin-left: 0;

@@ -1,3 +1,7 @@
+function showModalError(message) {
+    alert("Lỗi: " + message); // hoặc thay bằng code hiện modal của bạn
+}
+
 document.getElementById('loginBtn').addEventListener('click', async () => {
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value;
@@ -56,7 +60,7 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
     localStorage.setItem('user', JSON.stringify(data.user));
 
     // Chuyển hướng đến trang dashboard sau khi đăng nhập thành công
-    window.location.href = './pages/dashboard/dashboard.html';
+    window.location.href = './pages/book/detailBooks.html';
   }
   catch (error) {
     console.error('Lỗi khi đăng nhập:', error);

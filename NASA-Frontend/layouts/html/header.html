@@ -1,0 +1,69 @@
+<nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm px-4 py-2">
+  <div class="container-fluid d--md-flex flex-md-row flex-row-reverse justify-content-between">
+
+    <!-- Logo -->
+    <a class="navbar-brand d-flex align-items-center" href="../../pages/dashboard/dashboard.html">
+      <img src="../../assets/images/logo.svg" alt="Logo" style="height: 40px;" class="me-3 px-2" />
+    </a>
+
+    <!-- Toggle button for mobile -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarContent">
+      <!-- Left: Search + Menu -->
+      <div class="d-flex flex-column flex-md-row align-items-md-center gap-4 w-100">
+
+        <!-- Search -->
+        <div class="search-box position-relative me-md-4" style="min-width: 200px;">
+          <i class="fa fa-search position-absolute" style="top: 50%; left: 10px; transform: translateY(-50%); color: #4365b4;"></i>
+          <input
+            type="text"
+            placeholder="Tìm kiếm..."
+            class="form-control"
+            style="padding-left: 35px; border: none; border-bottom: 1px solid #ccc; outline: none; box-shadow: none;"
+          />
+        </div>
+
+        <!-- Menu Items -->
+        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-4">
+          <a href="../../pages/book/detailBooks.html" class="d-flex align-items-center gap-1 text-dark">
+            <i class="fa-solid fa-book" style="color: #4365b4;"></i>
+            <span style="color: #4365b4;">Sách</span>
+          </a>
+
+          <a href="../../pages/bill/bill.html" class="d-flex align-items-center gap-1 text-dark">
+            <i class="fa-solid fa-money-bills" style="color: #4365b4;"></i>
+            <span style="color: #4365b4;">Hoá đơn</span>
+          </a>
+
+          <a href="../../pages/customer/customer.html" class="d-flex align-items-center gap-1 text-dark">
+            <i class="fa-solid fa-user" style="color: #4365b4;"></i>
+            <span style="color: #4365b4;">Khách hàng</span>
+          </a>
+
+          <a href="../../pages/staff/staff.html" class="d-flex align-items-center gap-1 text-dark">
+            <i class="fa-solid fa-clipboard-user" style="color: #4365b4;"></i>
+            <span style="color: #4365b4;">Nhân viên</span>
+          </a>
+        </div>
+
+        <!-- Right: Thông báo & Cá nhân -->
+        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 ms-md-auto mt-3 mt-md-0">
+            <div class="d-flex align-items-center gap-1">
+                <i class="fa-solid fa-bell" style="color: #4365b4;"></i>
+                <span style="color: #4365b4;">Thông báo</span>
+            </div>
+            <a href="../../pages/individual/individual.html" class="d-flex align-items-center gap-1 text-dark">
+                <i class="fa-solid fa-user" style="color: #4365b4;"></i>
+                <span style="color: #4365b4;">Cá nhân</span>
+            </a>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</nav>
