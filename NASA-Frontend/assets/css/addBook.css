@@ -1,42 +1,20 @@
-.add-book-container {
+.right-frame {
   padding: 20px;
-  max-width: 600px;
 }
 
-.add-book-container h2 {
-  margin-bottom: 20px;
-}
-
-.add-book-container form div {
-  margin-bottom: 15px;
-}
-
-.add-book-container label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.add-book-container input[type="text"],
-.add-book-container input[type="number"],
-.add-book-container textarea {
-  width: 100%;
-  padding: 8px 10px;
+.form-container {
   border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
+  border-radius: 8px;
+  padding: 20px;
+
+  background-color: #fff;
 }
 
-.add-book-container button {
-  padding: 10px 16px;
-  background-color: #4a63f6;
-  border: none;
-  color: white;
-  font-weight: 600;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.add-book-container button:hover {
-  background-color: #374fcc;
+.upload-box {
+  min-height: 200px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 2px solid #4365b4;
 }
