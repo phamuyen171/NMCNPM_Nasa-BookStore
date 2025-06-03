@@ -1,0 +1,19 @@
+<!-- Modal Thông báo lỗi -->
+<div class="modal-overlay" id="errorModal" style="display: none;">
+  <div class="modal-box text-center p-4 rounded">
+    <div class="modal-header mb-3 d-flex justify-content-center align-items-center gap-2">
+      <img id="linkIcon" src="../../components/images/warning-icon.svg" alt="error icon" width="24">
+      <span id="modalErrorTitle" class="fw-bold text-danger">LỖI ĐĂNG NHẬP</span>
+    </div>
+    <div class="modal-body mb-3 d-flex justify-content-center align-items-center">
+      <p id="modalErrorMessage">Lỗi mặc định...</p>
+    </div>
+    <!-- <div class="modal-footer d-flex justify-content-center gap-2">
+      <button class="btn btn-primary" onclick="closeModal()">THÊM NHÂN VIÊN</button>
+      <button class="btn btn-secondary" onclick="closeModal()">HỦY</button>
+    </div> -->
+    <div class="modal-footer d-flex justify-content-center gap-2">
+      <button class="btn btn-secondary" onclick="closeModal()">ĐÓNG</button>
+    </div>
+  </div>
+</div>
