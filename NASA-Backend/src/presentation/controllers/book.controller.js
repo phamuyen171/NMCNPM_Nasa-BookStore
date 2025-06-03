@@ -1,64 +1,73 @@
 const bookService = require('../../business/services/book.service');
-const mongoose = require('mongoose'); // Import mongoose để kiểm tra loại lỗi
-const { STOCK_THRESHOLD } = require('../../business/services/book.service'); // Import STOCK_THRESHOLD từ service
-const path = require('path'); // Import path module
+const mongoose = require('mongoose');
+const { STOCK_THRESHOLD } = require('../../business/services/book.service');
+const path = require('path');
 
-class BookController {
+const bookController = {
     // Thêm sách mới
-    async createBook(req, res, next) { // Thêm 'next' vào tham số
+    async createBook(req, res, next) {
         try {
-            const book = await bookService.createBook(req.body);
-            res.status(201).json({
-                success: true,
-                message: 'Thêm sách thành công',
-                data: book
-            });
-        } catch (error) {
-            // Kiểm tra nếu là lỗi Mongoose Validation
-            if (error.name === 'ValidationError') {
-                res.status(400).json({
-                    success: false,
-                    message: error.message // Mongoose validation error message đã chi tiết
+            const bookData = req.body; // Lấy dữ liệu từ body, có thể là 1 object hoặc 1 array
+            const result = await bookService.createBook(bookData);
+
+            if (Array.isArray(bookData)) {
+                // Nếu là thêm nhiều sách
+                res.status(201).json({
+                    success: true,
+                    message: `Đã thêm thành công ${result.length} cuốn sách.`, // Thông báo số lượng sách đã thêm
+                    data: result // Trả về danh sách sách đã thêm
                 });
             } else {
-                // Nếu không phải validation error, ném lỗi cho middleware xử lý
+                // Nếu là thêm 1 sách
+                res.status(201).json({
+                    success: true,
+                    message: 'Thêm sách thành công',
+                    data: result
+                });
+            }
+        } catch (error) {
+            if (error.name === 'ValidationError') {
+                // Lỗi validation có thể xảy ra cho từng sách trong mảng
+                res.status(400).json({
+                    success: false,
+                    message: 'Lỗi validation khi thêm sách',
+                    errors: error.errors // Mongoose ValidationError có trường errors chi tiết
+                });
+            } else {
                 next(error);
             }
         }
-    }
+    },
 
-    // Lấy danh sách sách (thường lỗi ở đây là lỗi server, có thể dùng try/catch hoặc để middleware bắt)
-    async getAllBooks(req, res, next) { // Thêm 'next'
+    // Lấy danh sách sách
+    async getAllBooks(req, res, next) {
         try {
-            // Lấy các tham số phân trang và lọc từ req.query
             const queryOptions = {
-                page: parseInt(req.query.page) || 1, // Trang hiện tại, mặc định là 1
-                limit: parseInt(req.query.limit) || 10, // Số lượng sách trên mỗi trang, mặc định là 10
-                sortBy: req.query.sortBy || 'title', // Trường sắp xếp, mặc định là title
-                order: parseInt(req.query.order) || 1, // Thứ tự sắp xếp (1: ASC, -1: DESC), mặc định là 1
-                category: req.query.category, // Lọc theo thể loại
-                author: req.query.author, // Lọc theo tác giả
-                minPrice: parseFloat(req.query.minPrice), // Lọc giá từ (chuyển sang số thực)
-                maxPrice: parseFloat(req.query.maxPrice), // Lọc giá đến (chuyển sang số thực)
+                page: parseInt(req.query.page) || 1,
+                limit: parseInt(req.query.limit) || 10,
+                sortBy: req.query.sortBy || 'title',
+                order: parseInt(req.query.order) || 1,
+                category: req.query.category,
+                author: req.query.author,
+                minPrice: parseFloat(req.query.minPrice),
+                maxPrice: parseFloat(req.query.maxPrice),
             };
 
-            // Loại bỏ các tham số undefined hoặc NaN sau khi parse để không ảnh hưởng đến query
             Object.keys(queryOptions).forEach(key => {
                 if (queryOptions[key] === undefined || (typeof queryOptions[key] === 'number' && isNaN(queryOptions[key]))) {
                     delete queryOptions[key];
                 }
             });
 
-            const result = await bookService.getAllBooks(queryOptions); // Truyền queryOptions cho service
+            const result = await bookService.getAllBooks(queryOptions);
             res.status(200).json({
                 success: true,
-                data: result // service đã trả về result bao gồm total, page, limit và books
+                data: result
             });
         } catch (error) {
-            // Lỗi khi lấy danh sách thường là lỗi server/DB
             next(error);
         }
-    }
+    },
 
     // Lấy thông tin một cuốn sách
     async getBookById(req, res, next) {
@@ -70,19 +79,17 @@ class BookController {
             });
         } catch (error) {
             if (error.message.startsWith('Không tìm thấy sách')) {
-                res.status(404).json({ success: false, message: error.message }); // Sách không tồn tại
+                res.status(404).json({ success: false, message: error.message });
             } else if (error instanceof mongoose.Error.CastError) {
                 res.status(400).json({ success: false, message: 'ID sách không hợp lệ' });
-            }
-            else {
+            } else {
                 next(error);
             }
         }
-    }
-
+    },
 
     // Cập nhật thông tin sách
-    async updateBook(req, res, next) { // Thêm 'next'
+    async updateBook(req, res, next) {
         try {
             const book = await bookService.updateBook(req.params.id, req.body);
             res.status(200).json({
@@ -97,22 +104,20 @@ class BookController {
                     message: error.message
                 });
             } else if (error instanceof mongoose.Error.CastError) {
-                // Xử lý lỗi CastError nếu ID không đúng định dạng
                 res.status(400).json({
                     success: false,
                     message: 'ID sách không hợp lệ'
                 });
             } else if (error.message.startsWith('Không tìm thấy sách')) {
-                res.status(404).json({ success: false, message: error.message }); // Sách không tồn tại
-            }
-            else {
+                res.status(404).json({ success: false, message: error.message });
+            } else {
                 next(error);
             }
         }
-    }
+    },
 
     // Xóa sách
-    async deleteBook(req, res, next) { // Thêm 'next'
+    async deleteBook(req, res, next) {
         try {
             await bookService.deleteBook(req.params.id);
             res.status(200).json({
@@ -121,110 +126,63 @@ class BookController {
             });
         } catch (error) {
             if (error.message.startsWith('Không tìm thấy sách')) {
-                res.status(404).json({ success: false, message: error.message }); // Sách không tồn tại
+                res.status(404).json({ success: false, message: error.message });
             } else if (error instanceof mongoose.Error.CastError) {
-                // Xử lý lỗi CastError nếu ID không đúng định dạng
                 res.status(400).json({
                     success: false,
                     message: 'ID sách không hợp lệ'
                 });
-            }
-            else {
+            } else {
                 next(error);
             }
         }
-    }
+    },
 
-    // Controller for batch soft deleting books
-    async batchSoftDeleteBooks(req, res, next) {
-        try {
-            const { bookIds } = req.body; // Expecting an array of book IDs in the request body
-
-            // Validate that bookIds is an array and not empty
-            if (!Array.isArray(bookIds) || bookIds.length === 0) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Request body must contain a non-empty array of bookIds.',
-                });
-            }
-
-            const deletedCount = await bookService.batchSoftDeleteBooks(bookIds);
-
-            res.status(200).json({
-                success: true,
-                message: `Đã xóa mềm thành công ${deletedCount} cuốn sách.`, // Use deletedCount in message
-                data: { deletedCount }, // Include deletedCount in data
-            });
-        } catch (error) {
-            // Handle specific errors or pass to general error middleware
-            // Error from service: 'Danh sách ID sách không hợp lệ.'
-            if (error.message === 'Danh sách ID sách không hợp lệ.') {
-                return res.status(400).json({
-                    success: false,
-                    message: error.message,
-                });
-            }
-            next(error); // Pass other errors to the next middleware (error handler)
-        }
-    }
-
-    //////// Quản lý kho sách ////////
-    // Controller lấy danh sách sách sắp hết/đã hết (UC-2.4 Step 3)
-    // Endpoint: GET /api/books/lowstock
+    // Lấy danh sách sách sắp hết/đã hết
     async getLowStockBooks(req, res, next) {
         try {
-            // req.user không còn được đảm bảo tồn tại ở đây nữa
             const { outOfStock, lowStock } = await bookService.getLowStockBooks();
             res.status(200).json({
                 success: true,
                 data: {
-                    threshold: STOCK_THRESHOLD, // Trả về ngưỡng để frontend hiển thị
-                    outOfStock, // Danh sách sách đã hết (quantity === 0)
-                    lowStock // Danh sách sách sắp hết (0 < quantity <= threshold)
+                    threshold: STOCK_THRESHOLD,
+                    outOfStock,
+                    lowStock
                 }
             });
         } catch (error) {
-            next(error); // Chuyển lỗi cho middleware xử lý chung
+            next(error);
         }
-    }
+    },
 
-    // Controller xử lý phiếu nhập thêm sách (UC-2.4)
-    // Endpoint: POST /api/books/restock
+    // Xử lý phiếu nhập thêm sách
     async processRestockOrder(req, res, next) {
         try {
-            console.log('Received restock data:', req.body); // <-- Giữ dòng này để debug
-
-            const restockData = req.body.items; // Frontend gửi mảng [{ bookId: '...', quantity: ... }, ...]
-
-            // Tạo user giả cho mục đích test, sau này cần lấy từ req.user
-            // const userCreatingOrder = { _id: req.user._id };
-            const userCreatingOrder = { _id: new mongoose.Types.ObjectId() }; // User giả
-
-            // Gọi service để tạo phiếu nhập
+            console.log('Received restock data:', req.body);
+            const restockData = req.body.items;
+            const userCreatingOrder = { _id: new mongoose.Types.ObjectId() };
             const restockOrder = await bookService.processRestockOrder(restockData, userCreatingOrder);
-
-            // Trả về thông báo thành công và dữ liệu phiếu nhập dưới dạng JSON
             res.status(200).json({
                 success: true,
                 message: 'Phiếu nhập kho đã được tạo thành công',
                 data: restockOrder
             });
-
         } catch (error) {
-            if (error.message.startsWith('Dữ liệu nhập sách không hợp lệ') || error.message.startsWith('Một hoặc nhiều sách không tồn tại') || error.message.startsWith('Số lượng nhập cho sách')) {
+            if (error.message.startsWith('Dữ liệu nhập sách không hợp lệ') ||
+                error.message.startsWith('Một hoặc nhiều sách không tồn tại') ||
+                error.message.startsWith('Số lượng nhập cho sách')) {
                 res.status(400).json({ success: false, message: error.message });
             } else {
                 next(error);
             }
         }
-    }
+    },
 
-    // Controller tìm kiếm sách (UC-2.6)
+    // Tìm kiếm sách
     async searchBooks(req, res, next) {
         try {
             const { searchTerm } = req.query;
             const result = await bookService.searchBooks(searchTerm);
-
             if (result.total === 0) {
                 return res.status(200).json({
                     success: true,
@@ -232,120 +190,300 @@ class BookController {
                     data: { books: [], total: 0 }
                 });
             }
+            res.status(200).json({
+                success: true,
+                data: result
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    // Tăng số lượng sách
+    async importBookQuantity(req, res, next) {
+        try {
+            const book = await bookService.importBookQuantity(req.params.id, req.body.quantity);
+            res.status(200).json({
+                success: true,
+                message: 'Nhập thêm sách thành công',
+                data: book
+            });
+        } catch (error) {
+            if (error.message.startsWith('Không tìm thấy sách')) {
+                res.status(404).json({ success: false, message: error.message });
+            } else if (error instanceof mongoose.Error.CastError) {
+                res.status(400).json({ success: false, message: 'ID sách không hợp lệ' });
+            } else {
+                next(error);
+            }
+        }
+    },
+
+    // Đánh dấu sách ngừng kinh doanh
+    async markBookAsDiscontinued(req, res, next) {
+        try {
+            const book = await bookService.markBookAsDiscontinued(req.params.id);
+            res.status(200).json({
+                success: true,
+                message: 'Đã đánh dấu sách ngừng kinh doanh',
+                data: book
+            });
+        } catch (error) {
+            if (error.message.startsWith('Không tìm thấy sách')) {
+                res.status(404).json({ success: false, message: error.message });
+            } else if (error instanceof mongoose.Error.CastError) {
+                res.status(400).json({ success: false, message: 'ID sách không hợp lệ' });
+            } else {
+                next(error);
+            }
+        }
+    },
+
+    // Kiểm tra sách có còn hàng không
+    async isBookAvailable(req, res, next) {
+        try {
+            const isAvailable = await bookService.isBookAvailable(req.params.id);
+            res.status(200).json({
+                success: true,
+                data: { isAvailable }
+            });
+        } catch (error) {
+            if (error.message.startsWith('Không tìm thấy sách')) {
+                res.status(404).json({ success: false, message: error.message });
+            } else if (error instanceof mongoose.Error.CastError) {
+                res.status(400).json({ success: false, message: 'ID sách không hợp lệ' });
+            } else {
+                next(error);
+            }
+        }
+    },
+
+    // Xác nhận phiếu nhập kho
+    async confirmRestockOrder(req, res, next) {
+        try {
+            const order = await bookService.confirmRestockOrder(req.params.orderId);
+            res.status(200).json({
+                success: true,
+                message: 'Phiếu nhập kho đã được xác nhận',
+                data: order
+            });
+        } catch (error) {
+            if (error.message.startsWith('Không tìm thấy phiếu nhập kho')) {
+                res.status(404).json({ success: false, message: error.message });
+            } else if (error.message.startsWith('Phiếu nhập kho đã được xác nhận')) {
+                res.status(400).json({ success: false, message: error.message });
+            } else {
+                next(error);
+            }
+        }
+    },
+
+    // Tạo PDF phiếu nhập
+    async generateRestockPdf(req, res, next) {
+        try {
+            const pdfBuffer = await bookService.generateRestockPdf(req.params.orderId);
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `attachment; filename=restock-order-${req.params.orderId}.pdf`);
+            res.send(pdfBuffer);
+        } catch (error) {
+            if (error.message.startsWith('Không tìm thấy phiếu nhập kho')) {
+                res.status(404).json({ success: false, message: error.message });
+            } else {
+                next(error);
+            }
+        }
+    },
+
+    // Controller: Xóa mềm nhiều sách
+    async batchSoftDeleteBooks(req, res, next) {
+        try {
+            const bookIds = req.body.bookIds;
+            if (!Array.isArray(bookIds) || bookIds.length === 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Dữ liệu xóa hàng loạt không hợp lệ: phải là một mảng ID không rỗng.'
+                });
+            }
+            const result = await bookService.batchSoftDeleteBooks(bookIds);
+            res.status(200).json({
+                success: true,
+                message: `Đã xóa mềm thành công ${result} cuốn sách.`, // result là số lượng sách đã sửa đổi
+                data: { modifiedCount: result } // Trả về số lượng sách đã sửa đổi
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    // Controller: Cập nhật số lượng cho nhiều sách cùng lúc
+    async batchUpdateQuantity(req, res, next) {
+        try {
+            console.log('=== Batch Update Quantity Request ==='); // Log start
+            console.log('Received req.body type:', typeof req.body); // Log body type
+            console.log('Received req.body:', JSON.stringify(req.body, null, 2)); // Log full body
+
+            const updates = req.body; // Request body dự kiến là một mảng [{ bookId: '...', quantity: ... }, ...]
+
+            // Kiểm tra dữ liệu đầu vào cơ bản
+            if (!Array.isArray(updates) || updates.length === 0) {
+                console.log('Validation failed: Body is not an array or is empty.'); // Log validation failure
+                return res.status(400).json({
+                    success: false,
+                    message: 'Dữ liệu cập nhật không hợp lệ: phải là một mảng không rỗng.'
+                });
+            }
+
+            // Kiểm tra từng phần tử trong mảng
+            for (const update of updates) {
+                console.log('Validating update item:', JSON.stringify(update, null, 2)); // Log each item
+
+                if (!update.bookId) {
+                    console.log(`Validation failed: bookId is missing in item ${JSON.stringify(update)}.`); // Log validation failure
+                    return res.status(400).json({
+                        success: false,
+                        message: `ID sách không hợp lệ: ${update.bookId}. ID phải là một chuỗi ObjectId hợp lệ.`
+                    });
+                }
+
+                if (!mongoose.Types.ObjectId.isValid(update.bookId)) {
+                    console.log(`Validation failed: Invalid ObjectId format for ID ${update.bookId}.`); // Log validation failure
+                    return res.status(400).json({
+                        success: false,
+                        message: `ID sách không hợp lệ: ${update.bookId}. ID phải là một chuỗi ObjectId hợp lệ.`
+                    });
+                }
+
+                if (typeof update.quantity !== 'number' || update.quantity < 0) {
+                    console.log(`Validation failed: Invalid quantity ${update.quantity} for bookId ${update.bookId}.`); // Log validation failure
+                    return res.status(400).json({
+                        success: false,
+                        message: `Số lượng không hợp lệ cho sách ID ${update.bookId}: ${update.quantity}. Số lượng phải là số >= 0.`
+                    });
+                }
+                console.log(`Validation passed for item with bookId ${update.bookId}.`); // Log validation success
+            }
+
+            console.log('All items validated. Calling service...'); // Log before service call
+            const result = await bookService.batchUpdateQuantity(updates);
+
+            console.log('Service call successful. Result:', JSON.stringify(result, null, 2)); // Log service result
 
             res.status(200).json({
                 success: true,
-                message: 'Tìm kiếm thành công',
+                message: `Đã cập nhật số lượng cho ${result.modifiedCount || result.nModified} cuốn sách.`, // Sử dụng modifiedCount cho Mongoose 6+, nModified cho cũ hơn
                 data: result
             });
 
         } catch (error) {
+            // Xử lý lỗi từ service hoặc các lỗi khác
+            console.error('=== Error in batchUpdateQuantity controller ===', error); // Log error
             next(error);
         }
-    }
+    },
 
-    // Controller để tăng số lượng sách cho một cuốn cụ thể (tương đương importMore)
-    async importBookQuantity(req, res, next) {
+    // Controller: Cập nhật số lượng cho tất cả sách
+    async updateAllBooksQuantity(req, res, next) {
         try {
-            const { id } = req.params; // Lấy ID sách từ URL
-            const { quantity } = req.body; // Lấy số lượng cần nhập từ body
+            const { quantity } = req.body; // Lấy số lượng từ body request
 
-            // Validate quantity
-            if (!quantity || typeof quantity !== 'number' || quantity <= 0) {
-                return res.status(400).json({ success: false, message: 'Số lượng nhập không hợp lệ' });
+            // Kiểm tra tính hợp lệ của số lượng
+            if (typeof quantity !== 'number' || quantity < 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Số lượng cập nhật không hợp lệ. Phải là số không âm.'
+                });
             }
 
-            const updatedBook = await bookService.importBookQuantity(id, quantity);
+            // Gọi service để cập nhật số lượng cho tất cả sách
+            const result = await bookService.updateAllQuantity(quantity);
 
             res.status(200).json({
                 success: true,
-                message: `Đã nhập thêm ${quantity} cuốn cho sách ${updatedBook.title}`, // Thông báo thành công
-                data: updatedBook // Trả về thông tin sách sau khi cập nhật
+                message: `Đã cập nhật số lượng cho ${result.modifiedCount} cuốn sách.`, // modifiedCount từ bulkWrite result
+                data: result
             });
 
         } catch (error) {
-            if (error.message.startsWith('Không tìm thấy sách') || error.message.startsWith('Số lượng nhập thêm phải lớn hơn 0')) {
-                res.status(400).json({ success: false, message: error.message });
-            } else if (error instanceof mongoose.Error.CastError) {
-                res.status(400).json({ success: false, message: 'ID sách không hợp lệ' });
-            }
-            else {
-                next(error); // Chuyển lỗi cho middleware xử lý
-            }
+            console.error('Error in updateAllBooksQuantity controller:', error);
+            next(error); // Chuyển lỗi cho middleware xử lý lỗi chung
         }
-    }
+    },
 
-    // Controller để đánh dấu sách ngừng kinh doanh (tương đương markAsDiscontinued)
-    async markBookAsDiscontinued(req, res, next) {
+    // Tạo đơn nhập sách (bước 1: chỉ ghi nhận, chưa tăng kho)
+    async createImportOrder(req, res, next) {
         try {
-            const { id } = req.params; // Lấy ID sách từ URL
-
-            const updatedBook = await bookService.markBookAsDiscontinued(id);
-
-            res.status(200).json({
+            const { bookId, quantity } = req.body;
+            if (!bookId || typeof quantity !== 'number' || quantity <= 0) {
+                return res.status(400).json({ success: false, message: 'Thiếu hoặc sai dữ liệu bookId/quantity' });
+            }
+            const importOrder = await bookService.createImportOrderById(bookId, quantity);
+            res.status(201).json({
                 success: true,
-                message: `Sách ${updatedBook.title} đã được đánh dấu ngừng kinh doanh`, // Thông báo thành công
-                data: updatedBook // Trả về thông tin sách sau khi cập nhật
+                message: 'Đã tạo đơn nhập sách thành công',
+                data: importOrder
             });
-
         } catch (error) {
             if (error.message.startsWith('Không tìm thấy sách')) {
-                res.status(400).json({ success: false, message: error.message });
-            } else if (error instanceof mongoose.Error.CastError) {
-                res.status(400).json({ success: false, message: 'ID sách không hợp lệ' });
-            }
-            else {
-                next(error); // Chuyển lỗi cho middleware xử lý
+                res.status(404).json({ success: false, message: error.message });
+            } else {
+                next(error);
             }
         }
-    }
+    },
 
-    // Controller để kiểm tra sách có còn hàng không (tương đương isAvailable)
-    async isBookAvailable(req, res, next) {
-        try {
-            const { id } = req.params; // Lấy ID sách từ URL
-
-            const isAvailable = await bookService.isBookAvailable(id);
-
-            res.status(200).json({
-                success: true,
-                data: { isAvailable: isAvailable } // Trả về kết quả kiểm tra
-            });
-
-        } catch (error) {
-            // Lỗi khi kiểm tra khả dụng có thể do nhiều nguyên nhân, chuyển cho middleware
-            // Hoặc có thể xử lý riêng lỗi CastError nếu ID không hợp lệ
-            if (error instanceof mongoose.Error.CastError) {
-                res.status(400).json({ success: false, message: 'ID sách không hợp lệ' });
-            }
-            else {
-                next(error); // Chuyển lỗi cho middleware xử lý
-            }
-        }
-    }
-
-    // Controller để xác nhận phiếu nhập kho
-    async confirmRestockOrder(req, res, next) {
+    // Xác nhận đơn nhập sách (bước 2: tăng kho)
+    async confirmImportOrder(req, res, next) {
         try {
             const { orderId } = req.params;
-
-            // Tạo user giả cho mục đích test
-            const user = {
-                _id: new mongoose.Types.ObjectId(),
-                role: 'manager' // Thêm role để pass qua check trong service
-            };
-
-            const confirmedOrder = await bookService.confirmRestockOrder(orderId, user);
-
+            const result = await bookService.confirmImportOrder(orderId);
             res.status(200).json({
                 success: true,
-                message: 'Phiếu nhập kho đã được xác nhận và số lượng sách đã được cập nhật',
-                data: confirmedOrder
+                message: 'Xác nhận đơn nhập sách thành công',
+                data: result
             });
         } catch (error) {
-            if (error.message.startsWith('Không tìm thấy phiếu nhập') ||
-                error.message.startsWith('Phiếu nhập không ở trạng thái chờ xác nhận') ||
-                error.message.startsWith('Chỉ Cửa hàng trưởng mới được phép xác nhận phiếu nhập')) {
+            if (error.message.startsWith('Không tìm thấy')) {
+                res.status(404).json({ success: false, message: error.message });
+            } else if (error.message.includes('trạng thái')) {
+                res.status(400).json({ success: false, message: error.message });
+            } else {
+                next(error);
+            }
+        }
+    },
+
+    // Lấy danh sách đơn nhập sách
+    async getImportOrders(req, res, next) {
+        try {
+            const importOrders = await bookService.getImportOrders();
+            res.status(200).json({
+                success: true,
+                data: importOrders
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+
+    // Generate PDF for an import order
+    async generateImportOrderPdf(req, res, next) {
+        try {
+            const orderId = req.params.orderId;
+
+            // Get PDF document stream from service
+            const pdfDoc = await bookService.generateImportOrderPdf(orderId);
+
+            // Set headers for PDF download
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `attachment; filename=phieu_nhap_sach_${orderId}.pdf`);
+
+            // Pipe PDF document stream to response
+            pdfDoc.pipe(res);
+            pdfDoc.end();
+
+        } catch (error) {
+            if (error.message.startsWith('ID đơn nhập không hợp lệ') || error.message.startsWith('Không tìm thấy đơn nhập')) {
                 res.status(400).json({ success: false, message: error.message });
             } else {
                 next(error);
@@ -353,41 +491,6 @@ class BookController {
         }
     }
 
-    // Controller để tạo PDF phiếu nhập
-    async generateRestockPdf(req, res, next) {
-        try {
-            const { orderId } = req.params; // Lấy ID phiếu nhập từ URL
+};
 
-            const pdfPath = await bookService.generateRestockPdf(orderId);
-
-            // Gửi file PDF về client
-            res.download(pdfPath, `phieu_nhap_kho_${orderId}.pdf`, (err) => {
-                if (err) {
-                    console.error('Error sending PDF file:', err);
-                    // Nếu có lỗi khi gửi file, chuyển tiếp lỗi
-                    next(err);
-                } else {
-                    // Xóa file PDF tạm sau khi gửi xong
-                    fs.unlink(pdfPath, (unlinkErr) => {
-                        if (unlinkErr) {
-                            console.error('Error deleting temporary PDF file:', unlinkErr);
-                        }
-                    });
-                }
-            });
-
-        } catch (error) {
-            if (error.message.startsWith('Không tìm thấy phiếu nhập')) {
-                res.status(400).json({ success: false, message: error.message });
-            } else if (error instanceof mongoose.Error.CastError) {
-                res.status(400).json({ success: false, message: 'ID phiếu nhập không hợp lệ' });
-            }
-            else {
-                next(error); // Chuyển lỗi cho middleware xử lý
-            }
-        }
-    }
-
-}
-
-module.exports = new BookController();
+module.exports = bookController;
