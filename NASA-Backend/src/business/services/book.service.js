@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const STOCK_THRESHOLD = 10;
 const MIN_RESTOCK_QUANTITY = 5;  // Số lượng tối thiểu cho mỗi lần nhập
 const MAX_RESTOCK_QUANTITY = 100; // Số lượng tối đa cho mỗi lần nhập
-const ImportOrder = require('../models/import-order.model');
+const ImportOrder = require('../../data/models/import-order.model');
 
 class BookService {
     // Service: Xử lý logic thêm sách mới vào hệ thống

@@ -1,4 +1,4 @@
-const ImportOrder = require('../models/import-order.model');
+const ImportOrder = require('../../data/models/import-order.model');
 const Book = require('../../data/models/book.model');
 const PDFDocument = require('pdfkit');
 const path = require('path');

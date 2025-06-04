@@ -1,13 +1,12 @@
-window.addEventListener("DOMContentLoaded", () => {
-  // Tự động load modal khi DOM sẵn sàng
-  const modalSrc = document.body.getAttribute("data-modal-src");
-  fetch(modalSrc)
-    .then(res => res.text())
-    .then(html => {
-      document.body.insertAdjacentHTML("beforeend", html);
-    });
-});
-
+ window.addEventListener("DOMContentLoaded", () => {
+    const modalSrc = document.body.getAttribute('data-modal-error-src');
+    fetch(modalSrc)
+      .then(res => res.text())
+      .then(html => {
+        document.body.insertAdjacentHTML("beforeend", html);
+      });
+  });
+  
 function showModalError(title = "Lỗi", message = "Đã xảy ra lỗi!", link_icon="") {
   const modal = document.getElementById("errorModal");
   const msgEl = document.getElementById("modalErrorMessage");

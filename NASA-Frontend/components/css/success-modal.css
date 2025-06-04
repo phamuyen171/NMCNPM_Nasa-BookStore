@@ -1,4 +1,4 @@
-.modal-overlay {
+.modal-overlay.success {
   position: fixed;
   top: 0;
   left: 0;
@@ -11,24 +11,14 @@
   z-index: 9999;
 }
 
-.modal-box {
+.modal-box.success {
   background: #fff;
   max-width: 450px;
   width: 90%;
-  border: 2px solid #dc3545;
+  border: 2px solid #123eb6;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.modal-header {
+.modal-header.success {
   width: 100%;
-}
-
-.btn-red {
-  background-color: #dc3545; /* Màu đỏ */
-  color: white;
-  border: none;
-}
-
-.btn-red:hover {
-  background-color: #c82333; /* Màu đỏ đậm khi hover */
 }

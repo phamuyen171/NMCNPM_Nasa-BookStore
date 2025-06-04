@@ -27,11 +27,14 @@ const bookController = {
             }
         } catch (error) {
             if (error.name === 'ValidationError') {
-                // Lỗi validation có thể xảy ra cho từng sách trong mảng
+                const firstInvalidField = Object.keys(error.errors)[0];
+                const firstErrorMessage = error.errors[firstInvalidField].message;
+
                 res.status(400).json({
                     success: false,
-                    message: 'Lỗi validation khi thêm sách',
-                    errors: error.errors // Mongoose ValidationError có trường errors chi tiết
+                    message: `Lỗi validation: ${firstErrorMessage}`,
+                    invalidField: firstInvalidField, // Trường không hợp lệ
+                    errorType: error.errors[firstInvalidField].kind 
                 });
             } else {
                 next(error);

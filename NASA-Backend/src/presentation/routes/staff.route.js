@@ -6,4 +6,6 @@ const staffController = require('../controllers/staff.controller'); // Đường
 
 router.post('/fill-staff-auto', staffController.fillStaffAuto);
 
+router.get('/get-staff-by-page', staffController.getStaffByPage);
+
 module.exports = router;

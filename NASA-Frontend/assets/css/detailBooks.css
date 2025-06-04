@@ -56,7 +56,7 @@ a{
 }
 
 .card {
-  margin-top: 20px;
+  margin-top: 10px;
   min-height: 280px;
   max-height: 280px;
 }
@@ -65,7 +65,7 @@ a{
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 3;       /* số dòng hiển thị tối đa */
+  -webkit-line-clamp: 2;       /* số dòng hiển thị tối đa */
   -webkit-box-orient: vertical;
   line-height: 1.5em;          
 }

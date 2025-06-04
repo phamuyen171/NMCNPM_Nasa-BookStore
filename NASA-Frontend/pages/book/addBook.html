@@ -15,10 +15,13 @@
     <link rel="stylesheet" href="../../assets/css/detailBooks.css" />
     <link rel="stylesheet" href="../../assets/css/addBook.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../components/css/confirm-modal.css" />
+    <link rel="stylesheet" href="../../components/css/error-modal.css" />
+    <link rel="stylesheet" href="../../components/css/success-modal.css" />
     <title>Nhà Sách NASA</title>
 
   </head>
-  <body>
+  <body data-modal-error-src="../../components/html/error-modal.html" data-modal-success-src="../../components/html/success-modal.html" data-modal-confirm-src="../../components/html/confirm-modal.html">
     <div class="container-fluid layout-root min-vh-100 d-flex flex-column justify-content-between">
       <!-- Header -->
       <div id="header" data-url="../../layouts/html/header.html"></div>
@@ -43,30 +46,59 @@
               <!-- Row 1 -->
               <div class="row">
                 <!-- col-md-8: Inputs -->
+                <!-- <div class="col-md-9">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label class="form-label">Tên sách:</label>
+                      <input type="text" class="form-control" placeholder="Nhập tên sách" id="book-name">
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Tác giả:</label>
+                      <input type="text" class="form-control" placeholder="Nhập tên tác giả" id="book-author">
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Thể loại:</label>
+                      <input type="text" class="form-control" placeholder="Nhập thể loại" id="book-category">
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Số lượng:</label>
+                      <input type="number" class="form-control" placeholder="Số lượng" id="book-quantity">
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Giá bán:</label>
+                      <input type="number" class="form-control" placeholder="Giá" id="book-price">
+                    </div>
+                  </div>
+                </div> -->
                 <div class="col-md-9">
                   <div class="row g-3">
                     <div class="col-md-6">
                       <label class="form-label">Tên sách:</label>
-                      <input type="text" class="form-control" placeholder="Nhập tên sách">
+                      <input type="text" class="form-control" placeholder="Nhập tên sách" id="book-name">
                     </div>
                     <div class="col-md-6">
                       <label class="form-label">Tác giả:</label>
-                      <input type="text" class="form-control" placeholder="Nhập tên tác giả">
+                      <input type="text" class="form-control" placeholder="Nhập tên tác giả" id="book-author">
                     </div>
                     <div class="col-md-6">
                       <label class="form-label">Thể loại:</label>
-                      <input type="text" class="form-control" placeholder="Nhập thể loại">
+                      <input type="text" class="form-control" placeholder="Nhập thể loại" id="book-category">
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Nhà xuất bản:</label>
+                      <input type="text" class="form-control" placeholder="Nhập nhà xuất bản" id="book-publisher">
                     </div>
                     <div class="col-md-3">
                       <label class="form-label">Số lượng:</label>
-                      <input type="number" class="form-control" placeholder="Số lượng">
+                      <input type="number" class="form-control" placeholder="Số lượng" id="book-quantity">
                     </div>
                     <div class="col-md-3">
                       <label class="form-label">Giá bán:</label>
-                      <input type="number" class="form-control" placeholder="Giá">
+                      <input type="number" class="form-control" placeholder="Giá" id="book-price">
                     </div>
                   </div>
                 </div>
+
 
                 <!-- col-md-4: Upload ảnh -->
                 <div class="col-md-3 d-flex justify-content-center align-items-start">
@@ -84,15 +116,16 @@
               <!-- Row 2: Mô tả -->
               <div class="mb-4">
                 <label class="form-label">Mô tả:</label>
-                <textarea class="form-control" rows="3" placeholder="Nhập mô tả sách"></textarea>
+                <textarea class="form-control" rows="3" placeholder="Nhập mô tả sách" id="book-description"></textarea>
               </div>
 
               <!-- Row 3: Button -->
               <div class="text-end">
-                <button type="button" class="btn btn-primary px-4" data-bs-toggle="modal" data-bs-target="#confirmModal">Thêm</button>
+                <!-- <button type="button" class="btn btn-primary px-4" data-bs-toggle="modal" data-bs-target="#confirmModal">Thêm</button> -->
+                 <button type="button" class="btn btn-primary px-4" id="submitBtn">Thêm</button>
               </div>
               <!-- Modal Xác nhận -->
-              <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+              <!-- <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
@@ -108,7 +141,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> -->
             </form>
           </div>
         </div>
@@ -120,7 +153,7 @@
 
       
 
-      <script>
+      <!-- <script>
         document.getElementById('confirmSaveBtn').addEventListener('click', function() {
           // Gọi hàm lưu dữ liệu tại đây
           console.log("Đã lưu!");
@@ -130,7 +163,7 @@
           var modal = bootstrap.Modal.getInstance(myModalEl);
           modal.hide();
         });
-      </script>
+      </script> -->
 
       <script type="module" src="../../assets/js/addBook.js"></script>
       <!-- js bootstrap -->
@@ -141,6 +174,8 @@
       ></script>
     </div>
     <script src="../../layouts/js/layout-loader.js"></script>
-    <!-- <script src="../../components/js/error-modal.js"></script> -->
+    <script src="../../components/js/confirm-modal.js"></script>
+    <script src="../../components/js/error-modal.js"></script>
+    <script src="../../components/js/success-modal.js"></script>
   </body>
 </html>
