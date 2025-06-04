@@ -38,6 +38,7 @@ function renderBooks(bookList) {
           <h5 class="mb-1">${book.title}</h5>
           <p class="mb-1 book-author"><strong>Tác giả:</strong> ${book.author}</p>
           <p class="mb-1 book-cate"><strong>Thể loại:</strong> ${book.category}</p>
+          <p class="mb-1 book-publisher"><strong>Nhà xuất bản:</strong> ${book.publisher}</p>
           <p class="mb-1 book-price"><strong>Giá:</strong> ${book.price} đ</p>
           <p class="mb-1 book-quan"><strong>Số lượng:</strong> ${book.quantity}</p>
           <p class="mb-1 book-des"><strong>Mô tả:</strong> ${book.description}</p>
@@ -69,7 +70,8 @@ function setupSearchEvent(bookList) {
       book.title.toLowerCase().includes(keyword) ||
       book.author.toLowerCase().includes(keyword) ||
       book.category.toLowerCase().includes(keyword) ||
-      book.description.toLowerCase().includes(keyword)
+      book.description.toLowerCase().includes(keyword) ||
+      book.publisher.toLowerCase().includes(keyword)
     );
 
     renderBooks(filtered);
