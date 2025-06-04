@@ -42,6 +42,35 @@ class staffController {
     }
   }
 
+  async getStaffByPage(req, res) {
+    try {
+        const queryOptions = {
+            page: parseInt(req.query.page) || 1, 
+            limit: parseInt(req.query.limit) || 8,
+            sortBy: req.query.sortBy || 'username',
+            order: parseInt(req.query.order) || 1,
+            role: req.query.role
+        }
+
+        Object.keys(queryOptions).forEach(key => {
+            if (queryOptions[key] === undefined || (typeof queryOptions[key] === 'number' && isNaN(queryOptions[key]))) {
+                delete queryOptions[key];
+            }
+        });
+
+        const staffList = await staffService.getStaffByPage(queryOptions);
+        if (!staffList || staffList.length === 0) {
+            return res.status(404).json({ success: false, message: 'Không tìm thấy nhân viên nào' });
+        }
+        return res.status(200).json({
+            success: true,
+            message: 'Lấy danh sách nhân viên thành công',
+            data: staffList
+        });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+  }
 
 }
 

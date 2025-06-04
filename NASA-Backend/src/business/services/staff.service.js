@@ -88,6 +88,37 @@ class StaffService {
 
         return await newStaff.save();
     }
+
+    async getStaffByPage(queryOptions = {}) {
+        try {
+            const { page = 1, limit = 8, sortBy = 'username', order = 1, role } = queryOptions;
+
+            let find = {
+                status: 'active'
+            };
+            if (role) {
+                find.role = role;
+            }
+
+            const skip = (page - 1) * limit;
+            const totalStaffs = await Staff.countDocuments({ status: 'active' });
+
+            const staffList = await Staff.find(find)
+                .skip(skip)
+                .limit(limit)
+                .sort({ [sortBy]: order });
+
+            return {
+                total: totalStaffs,
+                page: page,
+                limit: limit,
+                staffs: staffList
+            };
+        }
+        catch (error) {
+            throw new Error(`Lỗi khi lấy danh sách nhân viên: ${error.message}`);
+        }
+    }
 }
 
 module.exports = new StaffService();
