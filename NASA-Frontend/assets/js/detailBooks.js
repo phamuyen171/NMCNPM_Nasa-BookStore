@@ -1,7 +1,7 @@
 // books.js
-import { renderPagination } from "../../components/js/pagination";
+import { renderPagination } from "../../components/js/pagination.js";
 
-async function getBooksByPage(apiUrl) {
+export async function getBooksByPage(apiUrl) {
   const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
@@ -20,7 +20,7 @@ async function getBooksByPage(apiUrl) {
     return data.data; 
 }
 
-function renderBooks(bookList) {
+export function renderBooks(bookList) {
   const container = document.getElementById("books-container");
   container.innerHTML = "";
   if (bookList.length === 0) {
@@ -57,7 +57,7 @@ function renderBooks(bookList) {
 
 
 //tìm kiếm
-function setupSearchEvent(bookList) {
+export function setupSearchEvent(bookList) {
   console.log(bookList);
   const searchInput = document.getElementById("search-input");
   if (!searchInput) return;
@@ -76,7 +76,7 @@ function setupSearchEvent(bookList) {
   });
 }
 
-async function getAllBooks() {
+export async function getAllBooks() {
   const bookList = [];
   const url = `http://localhost:3000/api/books`;
   const data = await getBooksByPage(url);
@@ -106,6 +106,8 @@ async function initBooks(page = 1) {
   
 }
 
-initBooks();
+if (window.location.pathname.includes("detailBooks.html")) {
+  initBooks();
+}
 
 

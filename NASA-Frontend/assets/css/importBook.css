@@ -1,0 +1,17 @@
+.book-quan{
+    color: red;
+    font-weight: bold;
+    font-size: large;
+}
+
+#floating-import-button {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+  z-index: 1050;
+  color: white;
+  background-color: rgb(37, 200, 37);
+}

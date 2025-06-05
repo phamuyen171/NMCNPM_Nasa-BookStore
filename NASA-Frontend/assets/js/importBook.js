@@ -1,0 +1,173 @@
+// books.js
+import { renderPagination } from "../../components/js/pagination.js";
+import { getBooksByPage, renderBooks, setupSearchEvent, getAllBooks } from "./detailBooks.js";
+
+const min_quantity = 100;
+const max_import = 300;
+const min_import = 100;
+
+
+// =======================Xử lý việc in ra danh sách các sách cần nhập========================
+
+// Lọc sách cần nhập thêm (còn thiếu số lượng)
+const needImportBook = (bookList) => {
+    return bookList.filter(book => book.quantity < min_quantity);
+};
+
+// Render danh sách sách cần nhập, mỗi cuốn có input để nhập số lượng cần nhập thêm
+const renderImportList = (bookList) => {
+    const booksToImport = needImportBook(bookList);
+    const container = document.getElementById('import-list');
+    container.innerHTML = ''; // Xóa nội dung cũ
+
+    if (booksToImport.length === 0) {
+        container.innerHTML = '<p>Không có sách nào cần nhập thêm.</p>';
+        return;
+    }
+
+    booksToImport.forEach(book => {
+        const bookRow = document.createElement('div');
+        bookRow.className = 'mb-3 d-flex align-items-center justify-content-between';
+
+        bookRow.innerHTML = `
+            <label class="form-label mb-0 me-2" style="flex: 1;">${book.title}:</label>
+            <input type="number" class="form-control" style="width: 100px;" min="1" id="import-${book._id}" placeholder="Số lượng"/>
+        `;
+
+        container.appendChild(bookRow);
+    });
+};
+// ==================================================================
+
+// In ra danh sách
+async function initBooks(page = 1) {
+  const url = `http://localhost:3000/api/books?page=${page}`;
+  const data = await getBooksByPage(url);
+
+  //in sách ra trang html
+  const lowStockBooks = needImportBook(data.books);
+  renderBooks(lowStockBooks);
+
+  // Khi nhấn nút thì render danh sách sách cần nhập trong modal
+  document.getElementById('floating-import-button').addEventListener('click', () => {
+    renderImportList(data.books);
+  });
+
+  renderPagination(data.total, data.limit, data.page, (newPage) => {
+    initBooks(newPage);
+  });
+}
+initBooks();
+
+// ===================================================
+
+//xử lý khi nhấn nút áp dụng chung
+document.getElementById('apply-common-quantity').addEventListener('click', () => {
+    const value = parseInt(document.getElementById('common-import-quantity').value);
+
+    if (isNaN(value) || value <= 0) {
+        alert('Vui lòng nhập số lượng hợp lệ lớn hơn 0.');
+        return;
+    }
+
+    if (value > max_import) {
+        alert(`Số lượng vượt quá giới hạn cho phép (${max_import}).`);
+        return;
+    }
+
+    if (value < min_import) {
+        alert(`Số lượng nhỏ hơn giới hạn cho phép (${min_import}).`);
+        return;
+    }
+
+    const inputs = document.querySelectorAll('#import-list input[type="number"]');
+    inputs.forEach(input => {
+        input.value = value;
+    });
+});
+
+// xử lý sự kiện khi nhấn nút "Nhập sách" trong modal
+document.getElementById('confirmImport').addEventListener('click', () => {
+    const container = document.getElementById('import-list');
+    const inputs = container.querySelectorAll('input[type="number"]');
+
+    const importData = [];
+    let hasInvalidInput = false;
+
+    inputs.forEach(input => {
+        const value = parseInt(input.value);
+        const bookId = input.id?.replace('import-', '');
+
+        if (!bookId) {
+            console.warn('Không thể xác định bookId từ input:', input);
+            return;
+        }
+
+        if (!isNaN(value) && value > 0) {
+            if (value > max_import) {
+                alert(`Số lượng nhập cho sách ID ${bookId} với số lượng ${value} vượt quá giới hạn ${max_import}.`);
+                hasInvalidInput = true;
+                return;
+            }
+
+            if (value < min_import) {
+                alert(`Số lượng nhập cho sách ID ${bookId} với số lượng ${value} nhỏ hơn số lượng tối thiểu ${min_import}.`);
+                hasInvalidInput = true;
+                return;
+            }
+
+            importData.push({ bookId, quantityToImport: value });
+        }
+    });
+
+    if (hasInvalidInput) {
+        return; // Dừng nếu có lỗi vượt max
+    }
+
+    if (importData.length === 0) {
+        alert('Vui lòng nhập ít nhất một sách với số lượng hợp lệ (> 0).');
+        return;
+    }
+
+    
+
+    // ✅ Chỉ khi thành công mới đóng modal nhập sách
+    const importModal = bootstrap.Modal.getInstance(document.getElementById('importBookModal'));
+    if (importModal) {
+        importModal.hide();
+    }
+
+    // ✅ Mở modal xác nhận
+    const confirmModal = new bootstrap.Modal(document.getElementById('confirmImportBookModal'));
+    confirmModal.show();
+
+    
+    //Gửi sang BE
+    // fetch('http://localhost:3000/api/import-order', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify(importData)
+    // })
+    // .then(response => response.json())
+    // .then(result => {
+    //     console.log('Server response:', result);
+
+    //     // // ✅ Chỉ khi thành công mới đóng modal nhập sách
+    //     // const importModal = bootstrap.Modal.getInstance(document.getElementById('importBookModal'));
+    //     // if (importModal) {
+    //     //     importModal.hide();
+    //     // }
+
+    //     // // ✅ Mở modal xác nhận
+    //     // const confirmModal = new bootstrap.Modal(document.getElementById('confirmImportBookModal'));
+    //     // confirmModal.show();
+    // })
+    // .catch(error => {
+    //     console.error('Lỗi khi gửi dữ liệu:', error);
+    //     alert('Gửi dữ liệu thất bại!');
+    // });
+});
+
+
+
+
