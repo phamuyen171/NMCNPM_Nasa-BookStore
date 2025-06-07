@@ -56,7 +56,6 @@ export function renderBooks(bookList) {
   });
 }
 
-
 //tìm kiếm
 export function setupSearchEvent(bookList) {
   console.log(bookList);
