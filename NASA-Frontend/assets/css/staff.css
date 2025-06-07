@@ -1,0 +1,28 @@
+.table thead {
+  color: #fff;
+  font-weight: bold;
+}
+.table-primary {
+  --bs-table-bg: #1a3a9c !important;
+}
+
+.table td, .table th {
+  vertical-align: middle;
+}
+
+.badge.bg-danger {
+  background-color: #f8352762 !important;
+  color: red;
+}
+
+#staffs-container{
+    padding: 5px 20px 0 0 ;
+}
+
+tr.selected {
+  background-color: #dbe4fe !important;
+}
+
+/* .table-hover{
+    background-color: #9ca5c1;
+} */

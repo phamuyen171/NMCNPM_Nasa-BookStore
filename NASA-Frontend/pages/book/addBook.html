@@ -30,7 +30,7 @@
       <!-- Content -->
       <div class="row">
         <!-- LEFT -->
-        <div class="col-md-3 main-layout">
+        <div class="col-md-2 main-layout">
           <div class="sidebar">
             <a href="./detailBooks.html" class="nav-item">Xem danh sách</a>
             <a href="./addBook.html" class="nav-item active">Thêm Sách</a>
@@ -39,37 +39,13 @@
         </div>
 
         <!-- RIGHT -->
-        <div class="col-md-9 right-frame">
+        <div class="col-md-10 right-frame">
           <div class="form-container p-4">
             <h5 class="mb-4">Thêm sách mới</h5>
             <form class="add-book-form">
               <!-- Row 1 -->
               <div class="row">
-                <!-- col-md-8: Inputs -->
-                <!-- <div class="col-md-9">
-                  <div class="row g-3">
-                    <div class="col-md-6">
-                      <label class="form-label">Tên sách:</label>
-                      <input type="text" class="form-control" placeholder="Nhập tên sách" id="book-name">
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label">Tác giả:</label>
-                      <input type="text" class="form-control" placeholder="Nhập tên tác giả" id="book-author">
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label">Thể loại:</label>
-                      <input type="text" class="form-control" placeholder="Nhập thể loại" id="book-category">
-                    </div>
-                    <div class="col-md-3">
-                      <label class="form-label">Số lượng:</label>
-                      <input type="number" class="form-control" placeholder="Số lượng" id="book-quantity">
-                    </div>
-                    <div class="col-md-3">
-                      <label class="form-label">Giá bán:</label>
-                      <input type="number" class="form-control" placeholder="Giá" id="book-price">
-                    </div>
-                  </div>
-                </div> -->
+                <!-- col-md-9: Inputs -->
                 <div class="col-md-9">
                   <div class="row g-3">
                     <div class="col-md-6">
@@ -98,9 +74,8 @@
                     </div>
                   </div>
                 </div>
-
-
-                <!-- col-md-4: Upload ảnh -->
+                
+                <!-- col-md-3: Upload ảnh -->
                 <div class="col-md-3 d-flex justify-content-center align-items-start">
                   <div class="upload-box border border-2 rounded text-center w-100 p-3">
                     <div id="placeholder">
@@ -121,27 +96,8 @@
 
               <!-- Row 3: Button -->
               <div class="text-end">
-                <!-- <button type="button" class="btn btn-primary px-4" data-bs-toggle="modal" data-bs-target="#confirmModal">Thêm</button> -->
-                 <button type="button" class="btn btn-primary px-4" id="submitBtn">Thêm</button>
+                <button type="button" class="btn btn-primary px-4" id="submitBtn">Thêm</button>
               </div>
-              <!-- Modal Xác nhận -->
-              <!-- <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="confirmModalLabel">Xác nhận</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
-                    </div>
-                    <div class="modal-body">
-                      Bạn có chắc chắn muốn thêm sách mới không?
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                      <button type="button" class="btn btn-primary" id="confirmSaveBtn">Xác nhận</button>
-                    </div>
-                  </div>
-                </div>
-              </div> -->
             </form>
           </div>
         </div>
@@ -152,18 +108,6 @@
       <div id="footer" data-url="../../layouts/html/footer.html"></div>
 
       
-
-      <!-- <script>
-        document.getElementById('confirmSaveBtn').addEventListener('click', function() {
-          // Gọi hàm lưu dữ liệu tại đây
-          console.log("Đã lưu!");
-          
-          // Đóng modal sau khi xác nhận
-          var myModalEl = document.getElementById('confirmModal');
-          var modal = bootstrap.Modal.getInstance(myModalEl);
-          modal.hide();
-        });
-      </script> -->
 
       <script type="module" src="../../assets/js/addBook.js"></script>
       <!-- js bootstrap -->

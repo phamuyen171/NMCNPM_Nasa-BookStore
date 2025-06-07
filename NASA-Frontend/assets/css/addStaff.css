@@ -1,0 +1,31 @@
+.card {
+  font-size: 0.9rem; /* hoặc 0.85rem */
+}
+.card-body {
+  padding: 0.5rem 1rem; /* hoặc thấp hơn như 0.5rem */
+}
+.card-header {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #0F107C;
+}
+
+
+.col-form-label{
+  color: #1a3a9c;
+  font-weight: bold;
+}
+
+
+.btn-add-staff {
+  background-color: #1a3a9c;
+  float: right;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+.btn-add-staff:hover{
+  background-color: #3f5aab;
+  color: white;
+}
