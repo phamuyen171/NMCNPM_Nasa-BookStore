@@ -15,12 +15,9 @@ router.put('/:id', bookController.updateBook); // Cập nhật sách
 router.delete('/:id', bookController.deleteBook); // Xóa mềm sách
 router.post('/batch-delete', bookController.batchSoftDeleteBooks); // Xóa mềm hàng loạt
 
-// Routes liên quan đến nhập kho - Thường chỉ Quản lý (manager, admin) mới có quyền tạo/xác nhận phiếu
-router.post('/restock', bookController.processRestockOrder); // Xử lý tạo phiếu nhập
-router.put('/restock/confirm/:orderId', bookController.confirmRestockOrder); // Xác nhận phiếu nhập
-router.put('/import/:id', bookController.importBookQuantity); // Nhập đơn lẻ (có thể phân quyền khác tùy nghiệp vụ)
+
 router.put('/discontinue/:id', bookController.markBookAsDiscontinued); // Ngừng kinh doanh (cần quyền quản lý)
-router.get('/restock/:orderId/pdf', bookController.generateRestockPdf); // Tạo PDF phiếu nhập
+
 
 // Route cập nhật thông tin sách
 router.put('/:id', bookController.updateBook);
