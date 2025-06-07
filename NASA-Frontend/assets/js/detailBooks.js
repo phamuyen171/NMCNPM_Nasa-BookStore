@@ -94,7 +94,6 @@ export function renderBooks(bookList, importMode=false) {
   });
 }
 
-
 //tìm kiếm
 export function setupSearchEvent(bookList, id_search = "search-input", importMode = false) {
   // console.log(bookList);
