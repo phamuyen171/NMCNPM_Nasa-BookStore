@@ -2,8 +2,6 @@ const express = require('express');
 const router = express.Router();
 const importOrderController = require('../controllers/import-order.controller');
 
-// Lấy danh sách sách sắp hết/hết hàng
-router.get('/lowstock', importOrderController.getLowStockBooks);
 
 // Tạo đơn nhập sách mới
 router.post('/import-order', importOrderController.createImportOrder);
