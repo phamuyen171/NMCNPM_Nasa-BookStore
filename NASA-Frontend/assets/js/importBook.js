@@ -162,19 +162,19 @@ document.getElementById('apply-common-quantity').addEventListener('click', () =>
 
     if (isNaN(value) || value <= 0) {
         // alert('Vui lòng nhập số lượng hợp lệ lớn hơn 0.');
-        showModalError(title, 'Vui lòng nhập số lượng hợp lệ lớn hơn 0.');
+        showModalError(title, 'Vui lòng nhập số lượng hợp lệ lớn hơn (tối thiểu <b>${max_import}</b> và tối đa <b>${min_import}</b>).');
         return;
     }
 
     if (value > max_import) {
         // alert(`Số lượng vượt quá giới hạn cho phép (${max_import}).`);
-        showModalError(title, `Số lượng vượt quá giới hạn cho phép (${max_import}).`);
+        showModalError(title, `Số lượng nhập thêm không được vượt quá giới hạn tối đa cho phép <b>${max_import}</b>.`);
         return;
     }
 
     if (value < min_import) {
         // alert(`Số lượng nhỏ hơn giới hạn cho phép (${min_import}).`);
-        showModalError(title, `Số lượng nhỏ hơn giới hạn cho phép (${min_import}).`);
+        showModalError(title, `Số lượng nhập thêm phải lớn hơn giới hạn tối thiểu cho phép <b>${min_import}</b>.`);
         return;
     }
 
@@ -228,23 +228,22 @@ document.getElementById('confirmImport').addEventListener('click', () => {
         if (overMaxBooks.length > 0 && underMinBooks.length > 0) {
             showModalError('LỖI NHẬP SÁCH', 
                 `Số lượng nhập cho các sách: ${overMaxBooks.join(', ')} vượt quá giới hạn <b>${max_import}</b>.
-                <br> Số lượng nhập cho các sách: ${underMinBooks.join(', ')} nhỏ hơn số lượng tối thiểu <b>${min_import}</b>.`,
-                "", true);
+                <br> Số lượng nhập cho các sách: ${underMinBooks.join(', ')} nhỏ hơn số lượng tối thiểu <b>${min_import}</b>.`);
         }
         else if (overMaxBooks.length > 0) {
             // alert(`Số lượng nhập cho sách ${overMaxBooks.join(', ')} vượt quá giới hạn ${max_import}.`);
-            showModalError('LỖI NHẬP SÁCH', `Số lượng nhập cho các sách: ${overMaxBooks.join(', ')} vượt quá giới hạn <b>${max_import}</b>.`, "", true);
+            showModalError('LỖI NHẬP SÁCH', `Số lượng nhập cho các sách: ${overMaxBooks.join(', ')} vượt quá giới hạn <b>${max_import}</b>.`);
         }
         else {
             // alert(`Số lượng nhập cho sách ${underMinBooks.join(', ')} nhỏ hơn số lượng tối thiểu ${min_import}.`);
-            showModalError('LỖI NHẬP SÁCH', `Số lượng nhập cho các sách: ${underMinBooks.join(', ')} nhỏ hơn số lượng tối thiểu <b>${min_import}</b>.`, "", true);
+            showModalError('LỖI NHẬP SÁCH', `Số lượng nhập cho các sách: ${underMinBooks.join(', ')} nhỏ hơn số lượng tối thiểu <b>${min_import}</b>.`);
         }
         return; // Dừng nếu có lỗi vượt max
     }
 
     if (importData.length === 0) {
         // alert('Vui lòng nhập ít nhất một sách với số lượng hợp lệ (> 0).');
-        showModalError('LỖI NHẬP SÁCH', 'Vui lòng nhập ít nhất một sách với số lượng hợp lệ (> 0).');
+        showModalError('LỖI NHẬP SÁCH', `Vui lòng nhập ít nhất một sách với số lượng hợp lệ (tối thiểu <b>${max_import}</b> và tối đa <b>${min_import}</b>).`);
         return;
     }
 
@@ -269,7 +268,7 @@ document.getElementById('confirmImport').addEventListener('click', () => {
                     ]
                 );
             } catch (err) {
-                showModalError(errorTitle, 'Lỗi khi nhập sách: ' + err.message, "", true);
+                showModalError(errorTitle, 'Lỗi khi nhập sách: ' + err.message);
             }
         }
     );

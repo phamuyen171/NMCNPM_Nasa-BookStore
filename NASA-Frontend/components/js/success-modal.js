@@ -14,7 +14,8 @@ function showSuccessModal(title = 'THÀNH CÔNG', message = '', buttons = []) {
   const btnContainer = document.getElementById('successModalButtons');
 
   titleElem.innerHTML = `<i class="fa fa-check-circle" style="color:rgb(33, 43, 233);"></i> ${title}`;
-  msgElem.textContent = message;
+  const pattern = /<[^>]+>/;
+  if (!pattern.test(message)) msgElem.textContent = message; else msgElem.innerHTML = message;
   btnContainer.innerHTML = ''; // Xóa các nút cũ
 
   btnContainer.className = 'modal-footer d-flex justify-content-center gap-2';

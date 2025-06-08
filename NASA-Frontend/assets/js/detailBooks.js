@@ -12,7 +12,7 @@ export async function getBooksByPage(apiUrl) {
     const data = await response.json();
 
     if (!response.ok) {
-      const message = data?.message || 'Tải sach thất bại. Vui lòng thử lại sau!';
+      const message = data?.message || 'Tải sách thất bại. Vui lòng thử lại sau!';
       const errorTiltle = 'Lỗi tải sách';
       showModalError(errorTiltle, message, './');
       return;
@@ -51,7 +51,7 @@ export function renderBooks(bookList, importMode=false) {
               <button class="btn bg-white btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"></button>
               <ul class="dropdown-menu">
                 <li><a class="dropdown-item update-btn" href="#">Cập nhật</a></li>
-                <li><a class="dropdown-item delete-btn" href="#">Xoá</a></li>
+                <li><a class="dropdown-item delete-btn" data-id="${book._id}" data-title="${book.title}">Xoá</a></li>
               </ul>
             </div>
           </div>

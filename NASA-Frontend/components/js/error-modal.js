@@ -7,13 +7,13 @@
       });
   });
   
-function showModalError(title = "Lỗi", message = "Đã xảy ra lỗi!", link_icon="", is_div=false) {
+function showModalError(title = "Lỗi", message = "Đã xảy ra lỗi!", link_icon="") {
   const modal = document.getElementById("errorModal");
   const msgEl = document.getElementById("modalErrorMessage");
   const titleEl = document.getElementById("modalErrorTitle");
-
+  const pattern = /<[^>]+>/;
   if (msgEl) {
-    if (!is_div) {
+    if (!pattern.test(message)) {
       msgEl.textContent = message;
     }
     else {

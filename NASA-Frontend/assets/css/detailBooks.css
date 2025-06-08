@@ -74,3 +74,6 @@ a{
   margin-bottom: 15px;
 }
 
+.dropdown {
+  display: none;
+}
