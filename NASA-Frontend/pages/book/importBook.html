@@ -15,10 +15,14 @@
     <link rel="stylesheet" href="../../assets/css/detailBooks.css" />
     <link rel="stylesheet" href="../../assets/css/importBook.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../../components/css/confirm-modal.css" />
+    <link rel="stylesheet" href="../../components/css/error-modal.css" />
+    <link rel="stylesheet" href="../../components/css/success-modal.css" />
     <title>Nhà Sách NASA</title>
 
   </head>
-  <body>
+  <body data-modal-error-src="../../components/html/error-modal.html" data-modal-success-src="../../components/html/success-modal.html" data-modal-confirm-src="../../components/html/confirm-modal.html">
     <div class="container-fluid layout-root min-vh-100 d-flex flex-column justify-content-between">
       <!-- Header -->
       <div id="header" data-url="../../layouts/html/header.html"></div>
@@ -59,7 +63,7 @@
 
       <!-- Modal Nút nhập sách trên trang Nhập Sách -->
       <div class="modal fade" id="importBookModal" tabindex="-1" aria-labelledby="importBookModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
             <div class="modal-header" style="color: #ffffff; background-color:#4365b4">
                 <h5 class="modal-title" id="importBookModalLabel">Nhập Sách</h5>
@@ -75,6 +79,18 @@
                 </button>
               </div>
               <hr>
+
+                <div class="mb-3 position-relative">
+                  <div class="mb-3 position-relative">
+                    <i class="fa fa-search position-absolute" style="top: 50%; left: 12px; transform: translateY(-50%); color: #4365b4;"></i>
+                    <input
+                      type="text"
+                      class="form-control ps-5"
+                      id="import-search-input"
+                      placeholder="Tìm kiếm sách ..."
+                    >
+                </div>
+
                 <div id="import-list"></div>
             </div>
             <div class="modal-footer">
@@ -86,7 +102,7 @@
       </div>
 
       <!-- Modal xác nhận nhập sách -->
-      <div class="modal fade" id="confirmImportBookModal" tabindex="-1" aria-labelledby="confirmImportBookModalLabel" aria-hidden="true">
+      <!-- <div class="modal fade" id="confirmImportBookModal" tabindex="-1" aria-labelledby="confirmImportBookModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
             <div class="modal-header" style="color: #ffffff; background-color:#4365b4">
@@ -102,14 +118,14 @@
             </div>
             </div>
         </div>
-      </div>
+      </div> -->
 
       <!-- Modal thông báo -->
-      <div class="modal fade" id="informSuccessImportBookModal" tabindex="-1" aria-labelledby="informSuccessImportBookModalLabel" aria-hidden="true">
+      <!-- <div class="modal fade" id="informSuccessImportBookModal" tabindex="-1" aria-labelledby="informSuccessImportBookModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
             <div class="modal-header" style="color: #ffffff; background-color:#4365b4">
-                <!-- <h5 class="modal-title" id="importBookModalLabel">Nhập Sách</h5> -->
+                
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
             <div class="modal-body d-flex justify-content-center align-items-center">
@@ -121,10 +137,10 @@
             </div>
             </div>
         </div>
-      </div>
+      </div> -->
 
       <!-- script đóng mở modal -->
-      <script>
+      <!-- <script>
         //đóng modal xác nhận và hiện modal thông báo
         document.getElementById('informSuccessImportBook').addEventListener('click', () => {
             // Ẩn modal nhập sách
@@ -135,7 +151,7 @@
             const confirmModal = new bootstrap.Modal(document.getElementById('informSuccessImportBookModal'));
             confirmModal.show();
         });
-      </script>
+      </script> -->
 
       <!-- ============================================================================================= -->
 
@@ -150,6 +166,8 @@
       ></script>
     </div>
     <script src="../../layouts/js/layout-loader.js"></script>
-    <!-- <script src="../../components/js/error-modal.js"></script> --> 
+    <script src="../../components/js/confirm-modal.js"></script>
+    <script src="../../components/js/error-modal.js"></script>
+    <script src="../../components/js/success-modal.js"></script>
   </body>
 </html>

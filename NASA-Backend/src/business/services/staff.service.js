@@ -83,6 +83,7 @@ class StaffService {
             DoB: dateObject,
             thumbnail: staffData.thumbnail,
             role: staffData.role,
+            email: staffData.email,
             startdate: new Date()
         });
 
@@ -116,6 +117,20 @@ class StaffService {
             };
         }
         catch (error) {
+            throw new Error(`Lỗi khi lấy danh sách nhân viên: ${error.message}`);
+        }
+    }
+
+    async getAllStaffs(){
+        let filter = {
+            isDeleted: 'false'
+        }
+
+        try{
+            const staffList = await Staff.find(filter).sort({['username']:1});
+            return staffList;
+        }
+        catch (error){
             throw new Error(`Lỗi khi lấy danh sách nhân viên: ${error.message}`);
         }
     }

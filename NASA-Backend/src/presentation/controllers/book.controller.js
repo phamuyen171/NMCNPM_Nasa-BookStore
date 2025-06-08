@@ -128,7 +128,7 @@ const bookController = {
                 message: 'Xóa sách thành công'
             });
         } catch (error) {
-            if (error.message.startsWith('Không tìm thấy sách')) {
+            if (error.message.startsWith('Không tìm thấy sách') || error.message.startsWith('Chỉ xóa sách có số lượng nhỏ hơn')) {
                 res.status(404).json({ success: false, message: error.message });
             } else if (error instanceof mongoose.Error.CastError) {
                 res.status(400).json({

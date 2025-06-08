@@ -72,6 +72,26 @@ class staffController {
     }
   }
 
+  async getAllStaffs(req, res){
+    try{
+        const staffList = await staffService.getAllStaffs();
+            if (!staffList || staffList.length === 0){
+                return res.status(404).json({
+                    success: false,
+                    message: "Không tìm thấy nhân viên nào"
+                });
+            }
+            return res.status(200).json({
+                success: true,
+                message: "Lấy danh sách nhân viên thành công",
+                data: staffList
+            });
+    }
+    catch (error){
+        return res.status(500).json({ success: false, message: error.message });
+    }
+  }
+
 }
 
 

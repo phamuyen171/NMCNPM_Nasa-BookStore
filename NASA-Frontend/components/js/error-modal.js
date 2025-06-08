@@ -11,8 +11,15 @@ function showModalError(title = "Lỗi", message = "Đã xảy ra lỗi!", link_
   const modal = document.getElementById("errorModal");
   const msgEl = document.getElementById("modalErrorMessage");
   const titleEl = document.getElementById("modalErrorTitle");
-
-  if (msgEl) msgEl.textContent = message;
+  const pattern = /<[^>]+>/;
+  if (msgEl) {
+    if (!pattern.test(message)) {
+      msgEl.textContent = message;
+    }
+    else {
+      msgEl.innerHTML = message;
+    }
+  }
   if (modal) modal.style.display = "flex";
   if (titleEl) titleEl.textContent = title;
 

@@ -27,8 +27,8 @@ class ImportOrderService {
     async createImportOrder(items) {
         // Kiểm tra số lượng nhập cho từng sách
         for (const item of items) {
-            if (item.quantity < 5 || item.quantity > 1000) {
-                throw new Error(`Số lượng nhập cho sách ${item.bookId} phải từ 5 đến 1000`);
+            if (item.quantity < 100 || item.quantity > 300) {
+                throw new Error(`Số lượng nhập cho sách ${item.bookId} phải từ 100 đến 300`);
             }
         }
 

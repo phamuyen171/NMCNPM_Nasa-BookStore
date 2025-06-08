@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const STOCK_THRESHOLD = 10;
 const MIN_RESTOCK_QUANTITY = 5;  // Số lượng tối thiểu cho mỗi lần nhập
 const MAX_RESTOCK_QUANTITY = 100; // Số lượng tối đa cho mỗi lần nhập
+const DELETE_QUANTITY_THRESHOLD = 10; // số lượng tối đa để xóa sách
 const ImportOrder = require('../../data/models/import-order.model');
 
 class BookService {
@@ -143,11 +144,19 @@ class BookService {
     // Service: Đánh dấu một cuốn sách là đã xóa mềm (đánh dấu isDeleted = true trong DB)
     async deleteBook(id) {
         try {
-            const book = await Book.findOneAndUpdate({ _id: id, isDeleted: false }, { isDeleted: true, status: 'Discontinued' }, { new: true });
+            // const book = await Book.findOneAndUpdate({ _id: id, isDeleted: false }, { isDeleted: true, status: 'Discontinued' }, { new: true });
+            const book = await Book.findOne({_id: id, isDeleted: false});
             if (!book) {
                 throw new Error('Không tìm thấy sách để xóa mềm');
             }
-            return book;
+            if (book.quantity >= DELETE_QUANTITY_THRESHOLD){
+                throw new Error(`Chỉ xóa sách có số lượng nhỏ hơn <b>${DELETE_QUANTITY_THRESHOLD}</b>.`)
+            }
+            book.isDeleted = true;
+            book.status = 'Discontinued';
+            const updateBook = await book.save();
+
+            return updateBook;
         } catch (error) {
             throw error;
         }
