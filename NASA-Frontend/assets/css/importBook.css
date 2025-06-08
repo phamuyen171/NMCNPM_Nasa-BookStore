@@ -15,3 +15,7 @@
   color: white;
   background-color: rgb(37, 200, 37);
 }
+
+.dropdown {
+  display: none;
+}
