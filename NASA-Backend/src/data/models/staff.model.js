@@ -26,6 +26,12 @@ const staffSchema = new mongoose.Schema({
     trim: true,
     unique: true
   },
+  email:{
+    type: String,
+    required: [true, "Email là bắt buộc"],
+    trim: true,
+    unique: true
+  },
   CCCD: {
     type: String, 
     required: [true, "CCCD là bắt buộc"],
@@ -34,7 +40,7 @@ const staffSchema = new mongoose.Schema({
   },
 
   status: {
-    // Trạng thái của nhân viên (active, inactive)
+    // Trạng thái của nhân viên (active: vẫn còn làm, inactive: đã sa thải)
     type: String, 
     enum: ['active', 'inactive'], 
     default: 'active'
@@ -50,6 +56,12 @@ const staffSchema = new mongoose.Schema({
     enum: ['manager', 'staff', 'accountant'], 
     default: 'staff'
   },
+  
+  isDeleted: {
+    type: Boolean,
+    default: false
+  },
+
   deletedAt: Date,
 
   resetToken: String,

@@ -109,52 +109,48 @@ if (window.location.pathname.includes("importBook.html")) {
 
 // ===================================================
 async function handleImportAndConfirm(items) {
+    // Gọi API tạo đơn nhập
+    const response = await fetch('http://localhost:3000/api/books/import-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: items })
+    });
+
+    const text = await response.text();
+
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+
+    let data;
     try {
-        // Gọi API tạo đơn nhập
-        const response = await fetch('http://localhost:3000/api/books/import-order', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ items: items })
-        });
+        data = JSON.parse(text);
+    } catch {
+        throw new Error("Không thể phân tích phản hồi từ server");
+    }
 
-        const text = await response.text();
+    if (!data || !data.data || !data.data._id) {
+        throw new Error('Không nhận được ID đơn nhập sách từ server');
+    }
 
-        if (!response.ok) {
-            throw new Error(response.statusText);
-        }
+    const orderId = data.data._id;
 
-        let data;
-        try {
-            data = JSON.parse(text);
-        } catch {
-            throw new Error("Không thể phân tích phản hồi từ server");
-        }
+    // Gọi API để cập nhật trạng thái đơn nhập sang "confirmed"
+    const confirmResponse = await fetch(`http://localhost:3000/api/books/import-order/confirm/${orderId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' }
+    });
 
-        if (!data || !data.data || !data.data._id) {
-            throw new Error('Không nhận được ID đơn nhập sách từ server');
-        }
+    if (!confirmResponse.ok) {
+        throw new Error("Lỗi khi xác nhận đơn nhập sách");
+    }
 
-        const orderId = data.data._id;
-
-        // Gọi API để cập nhật trạng thái đơn nhập sang "confirmed"
-        const confirmResponse = await fetch(`http://localhost:3000/api/books/import-order/confirm/${orderId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' }
-        });
-
-        if (!confirmResponse.ok) {
-            throw new Error("Lỗi khi xác nhận đơn nhập sách");
-        }
-
-        const updateReponse = await fetch(`http://localhost:3000/api/books/import-order/receive/${orderId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' }
-        });
-        if (!confirmResponse.ok) {
-            throw new Error("Lỗi khi cập nhập số lượng sách trong kho.");
-        }
-    } catch (err) {
-        showModalError(errorTitle, 'Lỗi xử lý đơn nhập sách: ' + err.message, "", true);
+    const updateReponse = await fetch(`http://localhost:3000/api/books/import-order/receive/${orderId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' }
+    });
+    if (!confirmResponse.ok) {
+        throw new Error("Lỗi khi cập nhập số lượng sách trong kho.");
     }
 }
 // ===================================================

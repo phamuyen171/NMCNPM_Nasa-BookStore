@@ -8,4 +8,6 @@ router.post('/fill-staff-auto', staffController.fillStaffAuto);
 
 router.get('/get-staff-by-page', staffController.getStaffByPage);
 
+router.get('/get-all-staffs', staffController.getAllStaffs)
+
 module.exports = router;
