@@ -22,7 +22,6 @@
   <body>
     <div class="container-fluid layout-root min-vh-100 d-flex flex-column">
       <!-- Header -->
-      <div id="banner" data-url="../../layouts/html/banner.html"></div>
       <div id="header" data-url="../../layouts/html/header.html"></div>
       
 
@@ -45,37 +44,37 @@
             <div class="row gx-3 gy-3">
               <!-- TT cá nhân -->
               <div class="col-md-7">
-                <div class="card">
+                <div class="card custom-card-height">
                   <h5 class="card-header">THÔNG TIN CÁ NHÂN</h5>
                   <div class="card-body">
                     <div class="form-group row mb-1">
                         <label class="col-sm-3 col-form-label">Họ và tên:</label>
                         <div class="col-sm-9">
-                          <input type="text" class="form-control" placeholder="Nguyễn Văn A">
+                          <input type="text" class="form-control" placeholder="Nguyễn Văn A" id="name">
                         </div>
                       </div>
                       <div class="form-group row mb-1">
                         <label class="col-sm-3 col-form-label">Địa chỉ:</label>
                         <div class="col-sm-9">
-                          <input type="text" class="form-control" placeholder="Dịa chỉ tạm trú hoặc thường trú">
+                          <input type="text" class="form-control" placeholder="Dịa chỉ tạm trú hoặc thường trú" id="address">
                         </div>
                       </div>
                       <div class="form-group row mb-1">
                         <label class="col-sm-3 col-form-label">Số điện thoại:</label>
                         <div class="col-sm-9">
-                          <input type="text" class="form-control" placeholder="Di động hoặc cố định">
+                          <input type="text" class="form-control" placeholder="Di động hoặc cố định" id="phone">
                         </div>
                       </div>
                       <div class="form-group row mb-1">
                         <label class="col-sm-3 col-form-label">CCCD:</label>
                         <div class="col-sm-9">
-                          <input type="text" class="form-control" placeholder="Số căn cước công dân">
+                          <input type="text" class="form-control" placeholder="Số căn cước công dân" id="cccd">
                         </div>
                       </div>
                       <div class="form-group row mb-1">
                           <label class="col-sm-3 col-form-label">Ngày sinh:</label>
                           <div class="col-sm-9">
-                            <input type="text" class="form-control" placeholder="dd/mm/yyyy">
+                            <input type="text" class="form-control" placeholder="dd/mm/yyyy" id="birth">
                           </div>
                       </div>
                   </div>
@@ -85,17 +84,19 @@
               <div class="col-md-5">
                 <div class="card">
                   <h5 class="card-header">ẢNH NHÂN VIÊN</h5>
-                    <div class="card-body text-center">
-                      <div class="text-center" id="placeholder">
-                        <i class="fa-solid fa-camera fa-2x mb-2"></i>
-                        <p class="mb-2 fw-bold">Dán link hình ảnh</p>
-                      </div>
-                    <!-- Hiển thị ảnh từ URL -->
-                    <img id="preview-image" src="" alt="Preview" class="img-fluid mb-2" style="display: none; max-height: 200px;" />
-                    <!-- Ô nhập URL -->
-                    <input type="text" class="form-control mb-2 px-5" placeholder="https://example.com/image.jpg" id="image-url">
+                  <div class="card-body text-center">
+                    <div class="text-center" id="placeholder">
+                      <i class="fa-solid fa-camera fa-2x mb-2"></i>
+                      <p class="mb-2 fw-bold">Chọn ảnh từ máy</p>
                     </div>
+
+                    <!-- Hiển thị ảnh -->
+                    <img id="preview-image" src="" alt="" class="img-fluid mb-2 mx-auto d-block" style="display: none; max-height: 200px;" />
+
+                    <!-- Chọn ảnh từ máy -->
+                    <input type="file" class="form-control mb-2" id="image-file" accept="image/*">
                   </div>
+                </div>
               </div>
             </div>
 
@@ -110,25 +111,30 @@
                       <div class="form-group row mb-1">
                         <label class="col-sm-3 col-form-label">Chức vụ:</label>
                         <div class="col-sm-9">
-                          <input type="text" class="form-control" placeholder="">
+                          <select id="chucvu-select" class="form-control">
+                            <option value="">-- Chọn chức vụ --</option>
+                            <option value="manager">Quản lý</option>
+                            <option value="staff">Nhân viên bán hàng</option>
+                            <option value="accountant">Kế toán</option>
+                          </select>
                         </div>
                       </div>
                       <div class="form-group row mb-1">
                         <label class="col-sm-3 col-form-label">Mã nhân viên:</label>
                         <div class="col-sm-9">
-                          <input type="text" class="form-control" placeholder="">
+                          <input type="text" class="form-control" placeholder="" id="manv" readonly>
                         </div>
                       </div>
                       <div class="form-group row mb-1">
                         <label class="col-sm-3 col-form-label">Email:</label>
                         <div class="col-sm-9">
-                          <input type="text" class="form-control" placeholder="abcd@gmail.com">
+                          <input type="text" class="form-control" placeholder="" id="email" readonly>
                         </div>
                       </div>
                       <div class="form-group row">
                         <label class="col-sm-3 col-form-label">Ngày vào làm:</label>
                         <div class="col-sm-9">
-                          <input type="text" class="form-control" placeholder="dd/mm/yyyy">
+                          <input type="text" class="form-control" placeholder="dd/mm/yyyy" id="start-work-day" readonly>
                         </div>
                     </div>
                     </div>
@@ -142,15 +148,15 @@
                   <h5 class="card-header">THÔNG TIN TÀI KHOẢN</h5>
                   <div class="card-body">
                     <div class="form-group row mb-1">
-                        <label class="col-sm-3 col-form-label">Tên tài khoản:</label>
-                        <div class="col-sm-9">
-                          <input type="text" class="form-control" placeholder="">
+                        <label class="col-sm-4 col-form-label">Tên tài khoản:</label>
+                        <div class="col-sm-8">
+                          <input type="text" class="form-control" placeholder="" id="username" readonly>
                         </div>
                       </div>
                       <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Mật khẩu mặc định:</label>
-                        <div class="col-sm-9">
-                          <input type="text" class="form-control" placeholder="">
+                        <label class="col-sm-4 col-form-label">Mật khẩu mặc định:</label>
+                        <div class="col-sm-8">
+                          <input type="text" class="form-control" placeholder="" id="password" readonly>
                         </div>
                       </div>
                   </div>
@@ -160,7 +166,7 @@
 
             <!-- button thêm -->
             <div class="d-flex justify-content-end py-1">
-              <button class="btn floating btn-add-staff">Thêm Nhân Viên</button>
+              <button class="btn floating btn-add-staff" id="create-account">Thêm Nhân Viên</button>
             </div>
           </div>
         </div>    
@@ -168,7 +174,7 @@
 
 
       <!-- Footer -->
-      <!-- <div id="footer" data-url="../../layouts/html/footer.html"></div> -->
+      <div id="footer" data-url="../../layouts/html/footer.html"></div>
     </div>
 
       <script type="module" src="../../assets/js/addStaff.js"></script>
@@ -181,5 +187,37 @@
     </div>
     <script src="../../layouts/js/layout-loader.js"></script>
     <!-- <script src="../../components/js/error-modal.js"></script> -->
+
+    <!-- Modal xác nhận -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold" id="confirmModalLabel">Xác nhận thêm nhân viên</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Bạn có chắc chắn muốn thêm nhân viên này không?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            <button type="button" class="btn btn-primary" id="confirmAddBtn">Xác nhận</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal thành công -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-body text-center">
+            <h5 class="text-success mb-3">Thêm nhân viên thành công!</h5>
+            <button type="button" class="btn btn-success" data-bs-dismiss="modal">Đóng</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </body>
 </html>
