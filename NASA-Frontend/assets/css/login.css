@@ -1,7 +1,30 @@
+/* FIX HEADER */
+/* #header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: white;
+} */
+
+/* FIX FOOTER */
+/* #footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: #4365b4;
+} */
+
+
 body {
   background-color: #f8f9fa;
   margin: 0;
   padding: 0;
+  /* padding-top: 65px; Chừa chiều cao tương ứng với header (banner + header) */
+  /* padding-bottom: 110px; Chừa chiều cao footer để không che nội dung */
 }
 
 .container-fluid {
@@ -23,8 +46,6 @@ header {
 .btn{
   background-color: #4365b4;
 }
-
-
 
 footer {
   background-color: #4365b4;

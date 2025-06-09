@@ -1,15 +1,11 @@
-.card {
-  font-size: 0.9rem; /* hoặc 0.85rem */
-}
-.card-body {
-  padding: 0.5rem 1rem; /* hoặc thấp hơn như 0.5rem */
-}
 .card-header {
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
   font-weight: bold;
   color: #0F107C;
 }
+
+
 
 
 .col-form-label{
