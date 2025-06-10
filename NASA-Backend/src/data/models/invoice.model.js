@@ -29,15 +29,26 @@ const invoiceSchema = new mongoose.Schema({
     },
     customerPhone: {
         type: String,
-        required: false
+        required: false,
+        validate: {
+            validator: function (v) {
+                return !v || /^[0-9]{10}$/.test(v);
+            },
+            message: 'Số điện thoại phải có 10 chữ số'
+        }
     },
     customerType: {
         type: String,
         enum: ['retail', 'wholesale'],
         default: 'retail'
     },
-    createdBy: {
+    points: {
+        type: Number,
+        default: 0
+    },
+    paymentMethod: {
         type: String,
+        enum: ['cash', 'debt'],
         required: true
     },
     appliedPromotion: {
@@ -45,10 +56,26 @@ const invoiceSchema = new mongoose.Schema({
         ref: 'Promotion',
         default: null
     },
+    promotionDiscount: {
+        type: Number,
+        default: 0
+    },
+    createdBy: {
+        type: String,
+        required: true
+    },
     isDeleted: {
         type: Boolean,
         default: false
     }
 }, { timestamps: true });
+
+// Middleware để tự động tính điểm tích lũy (1% giá trị hóa đơn)
+invoiceSchema.pre('save', function (next) {
+    if (this.customerPhone && this.total > 0) {
+        this.points = Math.floor(this.total * 0.01); // 1% giá trị hóa đơn
+    }
+    next();
+});
 
 module.exports = mongoose.model('Invoice', invoiceSchema);

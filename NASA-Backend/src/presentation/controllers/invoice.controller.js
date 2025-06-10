@@ -1,4 +1,6 @@
 const invoiceService = require('../../business/services/invoice.service');
+const Invoice = require('../../data/models/invoice.model');
+const mongoose = require('mongoose'); // Import mongoose để kiểm tra ObjectId
 
 class InvoiceController {
     // Lấy danh sách sách phổ biến
@@ -32,10 +34,22 @@ class InvoiceController {
     // Lấy danh sách hóa đơn
     async getInvoices(req, res, next) {
         try {
-            const { page, limit } = req.query;
+            const { page, limit, status, customerPhone, startDate, endDate, keyword, sortBy, sortOrder } = req.query;
+            const currentUser = req.user;
+
             const result = await invoiceService.getInvoices(
-                parseInt(page) || 1,
-                parseInt(limit) || 10
+                currentUser,
+                {
+                    page: parseInt(page) || 1,
+                    limit: parseInt(limit) || 10,
+                    status,
+                    customerPhone,
+                    startDate,
+                    endDate,
+                    keyword,
+                    sortBy,
+                    sortOrder
+                }
             );
             res.json({
                 success: true,
@@ -61,17 +75,50 @@ class InvoiceController {
     }
 
     // Soft delete hóa đơn
-    async deleteInvoice(req, res, next) {
+    async deleteInvoice(req, res) {
         try {
-            const { invoiceId } = req.params;
-            const deletedInvoice = await invoiceService.softDeleteInvoice(invoiceId);
-            res.json({
+            const { id } = req.params;
+            let invoice = null;
+
+            // Thử tìm bằng _id trước (nếu là ObjectId hợp lệ)
+            if (mongoose.Types.ObjectId.isValid(id)) {
+                invoice = await Invoice.findById(id);
+            }
+
+            // Nếu không tìm thấy bằng _id hoặc id không phải ObjectId, thử tìm bằng invoiceID
+            if (!invoice) {
+                invoice = await Invoice.findOne({ invoiceID: id });
+            }
+
+            if (!invoice) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Không tìm thấy hóa đơn'
+                });
+            }
+
+            // Kiểm tra nếu hóa đơn đang nợ
+            if (invoice.status === 'debt') {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Không thể xóa hóa đơn đang còn nợ'
+                });
+            }
+
+            // Nếu không nợ thì mới cho xóa
+            invoice.isDeleted = true;
+            await invoice.save();
+
+            return res.status(200).json({
                 success: true,
-                message: 'Xóa mềm hóa đơn thành công',
-                data: deletedInvoice // Có thể trả về thông tin hóa đơn đã xóa mềm
+                message: 'Xóa hóa đơn thành công'
             });
         } catch (error) {
-            next(error); // Chuyển lỗi đến middleware xử lý lỗi tập trung
+            return res.status(500).json({
+                success: false,
+                message: 'Lỗi server',
+                error: error.message
+            });
         }
     }
 }

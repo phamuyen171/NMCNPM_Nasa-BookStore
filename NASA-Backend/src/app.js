@@ -8,6 +8,7 @@ const authRoutes = require('./presentation/routes/auth.routes');
 const staffRoutes = require('./presentation/routes/staff.route'); // Đường dẫn đến staff routes
 const importOrderRoutes = require('./presentation/routes/import-order.routes'); // Thêm routes cho đơn nhập sách
 const invoiceRoutes = require('./presentation/routes/invoice.routes'); // Đường dẫn đến invoice routes
+const customerRoutes = require('./presentation/routes/customer.routes');
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/staff', staffRoutes);
 app.use('/api/books', importOrderRoutes); // Thêm routes cho đơn nhập sách (sử dụng chung prefix /api/books)
 app.use('/api/invoices', invoiceRoutes); // Thêm routes cho hóa đơn
+app.use('/api/customers', customerRoutes); // Thêm routes cho khách hàng
 
 // Middleware xử lý lỗi TẬP TRUNG
 // Bắt các lỗi được ném ra (thrown) từ controllers hoặc service
