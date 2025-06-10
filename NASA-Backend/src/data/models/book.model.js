@@ -59,6 +59,10 @@ const bookSchema = new mongoose.Schema({
         enum: ['Available', 'Out of Stock', 'Discontinued'],
         default: 'Available'
     },
+    soldQuantity: {
+        type: Number,
+        default: 0
+    },
     // Đánh dấu sách đã bị xóa mềm hay chưa
     isDeleted: {
         type: Boolean,
