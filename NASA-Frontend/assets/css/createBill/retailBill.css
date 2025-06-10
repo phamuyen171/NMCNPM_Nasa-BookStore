@@ -1,0 +1,14 @@
+.list-board,
+.detail-board {
+    background-color: #fff !important;
+}
+
+/* ==============================Danh sách====================== */
+#books-container .card {
+  transition: transform 0.2s ease-in-out;
+}
+
+#books-container .card:hover {
+  transform: scale(1.02);
+  cursor: pointer;
+}

@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="../../assets/css/login.css" />
     <link rel="stylesheet" href="../../assets/css/detailBooks.css" />
     <link rel="stylesheet" href="../../assets/css/bill.css" />
+    <link rel="stylesheet" href="../../assets/css/createBill/retailBill.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 
     <link rel="stylesheet" href="../../components/css/delete-modal.css" />
@@ -44,19 +45,38 @@
             <!-- Chọn loại Bill -->
             <div class="row-select-bill d-flex justify-content-start align-items-center mt-3">
               <p class="p-select-bill px-4"><strong>CHỌN LOẠI HOÁ ĐƠN</strong></p>
-              <a href="./retailBill.html" class="retail-bill px-3 d-inline-block gx-3">HOÁ ĐƠN BÁN LẺ</a>
+              <a href="./retailBill.html" class="retail-bill px-3 d-inline-block gx-3 bill-active">HOÁ ĐƠN BÁN LẺ</a>
               <a href="./wholesaleBill.html" class="wholesale-bill px-3">HOÁ ĐƠN BÁN SỈ</a>
             </div>
 
             <!-- Chia 2 bảng -->
             <div class="split-board d-flex justify-content-center align-items-start">
                 <!-- Bảng 1 -->
+                
                 <div class="container-fluid list-board d-flex flex-column">
                     <p class="board-title text-center">DANH SÁCH SẢN PHẨM</p>
-                    <div class="board-body d-flex justify-content-center align-items-center flex-grow-1">
-                      <p class="text-center">Vui lòng chọn loại hoá đơn</p>
+                    <!-- Ô Tìm kiếm -->
+                    <div class="board-body d-flex justify-content-center align-items-start flex-grow-1">
+                      <div class="search-box position-relative me-md-4" style="min-width: 200px;">
+                        <i class="fa fa-search position-absolute" style="top: 50%; left: 10px; transform: translateY(-50%); color: #4365b4;"></i>
+                        <input
+                          type="search"
+                          placeholder="Tìm kiếm..."
+                          class="form-control"
+                          id="search-input"
+                          aria-label="Search"
+                          style="padding-left: 35px; border: none; border-bottom: 1px solid #ccc; outline: none; box-shadow: none;"
+                        />
+                      </div>
                     </div>
+
+                    <!-- Danh sách sản phẩm-->
+                    <div id="books-container" class="row g-3 px-3"></div>    
+                    <div id="pagination-container" class="mt-3"></div>
                 </div>
+               
+
+
                 <!-- Bảng 2 -->
                 <div class="container-fluid detail-board d-flex flex-column">
                     <p class="board-title text-center">CHI TIẾT SẢN PHẨM</p>
@@ -80,6 +100,7 @@
 
 
       <script type="module" src="../../assets/js/bill.js"></script>
+      <script type="module" src="../../assets/js/detailBooks.js"></script>
       <!-- js bootstrap -->
       <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
