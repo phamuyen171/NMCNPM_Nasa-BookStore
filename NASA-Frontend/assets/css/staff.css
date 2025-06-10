@@ -16,7 +16,7 @@
 }
 
 #staffs-container{
-    padding: 5px 20px 0 0 ;
+  padding: 5px 20px 0 0 ;
 }
 
 tr.selected {
@@ -26,3 +26,39 @@ tr.selected {
 /* .table-hover{
     background-color: #9ca5c1;
 } */
+
+.layout-root {
+  height: 100vh; /* đảm bảo container chính cao full viewport */
+  display: flex;
+  flex-direction: column;
+}
+
+.row.flex-grow-1 {
+  flex-grow: 1;
+  display: flex; /* row với 2 cột thành flex container ngang */
+  overflow: hidden; /* để con bên phải overflow-auto hoạt động */
+}
+
+.col-md-2.main-layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar {
+  flex-grow: 1; /* cho sidebar kéo dài full chiều cao */
+}
+
+.col-md-10 {
+  display: flex;
+  flex-direction: column;
+}
+
+#staffs-container {
+  flex-grow: 1; /* chiếm toàn bộ phần trống, đẩy pagination xuống dưới */
+  overflow-y: auto; /* cuộn nếu danh sách dài */
+}
+
+#pagination-container {
+  /* không cần fix gì thêm, nó tự nằm dưới staffs-container */
+  margin-top: 10px;
+}

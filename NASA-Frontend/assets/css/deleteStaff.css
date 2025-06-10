@@ -1,0 +1,35 @@
+/* Tùy chỉnh nút "Xoá" */
+.btn-delete {
+  color: #1a3a9c;           /* Màu xanh Bootstrap */
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.2s ease;
+}
+
+.btn-delete:hover {
+  color: #0d64e8; /* Màu xanh đậm hơn khi hover */
+}
+
+.btn-delete:active {
+  color: #052c65; /* Màu xanh đậm hơn khi click */
+}
+
+/* Tùy chỉnh độ rộng cột */
+th:nth-child(1), td:nth-child(1) {
+  width: 10%;
+}
+
+th:nth-child(2), td:nth-child(2) {
+  width: 45%;
+}
+
+th:nth-child(3), td:nth-child(3) {
+  width: 30%;
+}
+
+th:nth-child(4), td:nth-child(4) {
+  width: 15%;
+}
