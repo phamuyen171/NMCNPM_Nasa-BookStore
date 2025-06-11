@@ -70,7 +70,7 @@ function createTable(staffs) {
         <td>
           ${staff.status === "inactive"
             ? `<span class="badge bg-danger">Đã sa thải</span>`
-            : ""
+            : `<span class="badge bg-success">Đang làm việc</span>`
           }
         </td>
       </tr>

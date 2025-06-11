@@ -18,7 +18,7 @@ class UserService {
     return token;
   }
 
-  async addUser(username, password, role) {
+  async addUser(username, password, role, imageId) {
     
     if (!username || !password || !role) {
       throw new Error('Vui lòng cung cấp username, password và role');
@@ -35,7 +35,8 @@ class UserService {
       const newUser = new User({
         username,
         password: hashedPassword,
-        role
+        role,
+        image: imageId
       });
 
       await newUser.save();

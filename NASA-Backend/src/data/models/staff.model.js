@@ -46,8 +46,19 @@ const staffSchema = new mongoose.Schema({
     default: 'active'
   },
 
-  DoB: Date,
-  startdate: Date,
+  DoB: {
+    // type: Date,
+    type: Date,
+    required: false
+  },
+
+  image: {
+    type: mongoose.Schema.Types.ObjectId,  // Tham chiếu tới file lưu trong GridFS
+    required: false,                       // Có thể là tùy chọn nếu chưa upload ảnh
+    ref: 'fs.files'                        // Bảng chứa metadata ảnh trong GridFS
+  },
+  
+  startDate: Date,
   thumbnail: String,
 
   role: {

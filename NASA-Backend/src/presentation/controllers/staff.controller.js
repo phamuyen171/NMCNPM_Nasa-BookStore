@@ -33,7 +33,8 @@ class staffController {
                 staffId: staffId,
                 username: username,
                 email: staffEmail,
-                password: password
+                password: password,
+                startDate: new Date()
             }            
         });
     }

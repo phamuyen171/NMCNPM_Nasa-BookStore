@@ -16,10 +16,14 @@
     <link rel="stylesheet" href="../../assets/css/addStaff.css" />
     <link rel="stylesheet" href="../../assets/css/addBook.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../../components/css/confirm-modal.css" />
+    <link rel="stylesheet" href="../../components/css/error-modal.css" />
+    <link rel="stylesheet" href="../../components/css/success-modal.css" />
     <title>Nhà Sách NASA</title>
 
   </head>
-  <body>
+  <body data-modal-error-src="../../components/html/error-modal.html" data-modal-success-src="../../components/html/success-modal.html" data-modal-confirm-src="../../components/html/confirm-modal.html">
     <div class="container-fluid layout-root min-vh-100 d-flex flex-column">
       <!-- Header -->
       <div id="header" data-url="../../layouts/html/header.html"></div>
@@ -91,7 +95,7 @@
                     </div>
 
                     <!-- Hiển thị ảnh -->
-                    <img id="preview-image" src="" alt="" class="img-fluid mb-2 mx-auto d-block" style="display: none; max-height: 200px;" />
+                    <img id="preview-image" src="" alt="" class="img-fluid mb-2 mx-auto d-block" style="display: none; max-height: 150px;" />
 
                     <!-- Chọn ảnh từ máy -->
                     <input type="file" class="form-control mb-2" id="image-file" accept="image/*">
@@ -186,10 +190,12 @@
       ></script>
     </div>
     <script src="../../layouts/js/layout-loader.js"></script>
-    <!-- <script src="../../components/js/error-modal.js"></script> -->
+    <script src="../../components/js/confirm-modal.js"></script>
+    <script src="../../components/js/error-modal.js"></script>
+    <script src="../../components/js/success-modal.js"></script>
 
     <!-- Modal xác nhận -->
-    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <!-- <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -205,10 +211,10 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- Modal thành công -->
-    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <!-- <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-body text-center">
@@ -217,7 +223,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
   </body>
 </html>

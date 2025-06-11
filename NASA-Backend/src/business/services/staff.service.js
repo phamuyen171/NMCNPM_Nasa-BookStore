@@ -47,7 +47,7 @@ class StaffService {
         if (!staffId) {
             throw new Error('Vui lòng cung cấp mã nhân viên');
         }
-        const email = `${ staffId.toLowerCase()}@gmail.com`;
+        const email = `${ staffId}@gmail.com`;
         return email;
     }
 
@@ -59,7 +59,7 @@ class StaffService {
         return password;
     }
 
-    async createStaff(staffData) {
+    async createStaff(staffData, image) {
         if (!staffData) {
             throw new Error('Vui lòng cung cấp thông tin nhân viên');
         }
@@ -84,7 +84,8 @@ class StaffService {
             thumbnail: staffData.thumbnail,
             role: staffData.role,
             email: staffData.email,
-            startdate: new Date()
+            startdate: new Date(),
+            image: image
         });
 
         return await newStaff.save();
