@@ -1,0 +1,77 @@
+/* =============================Row đầu tiên==================================== */
+.row-select-bill{
+    border: 2px #0f107c solid;
+    border-radius: 10px;
+    margin-right: 2px;
+    padding-top: 10px;   /* hoặc dùng padding-block: 10px  */
+    padding-bottom: 10px;
+}
+
+.p-select-bill {
+    color: #0f107c;
+    margin-right: 50px; /* Cách xa a1 */
+    margin-bottom: 0;    /* Đảm bảo không bị lệch do margin mặc định */
+}
+
+.retail-bill {
+    background-color: #c1cef4;
+    color: #000;
+    font-weight: bold;
+    margin-right: 5px;  /* Nhỏ hơn để gần a2 */
+}
+.retail-bill:hover{
+    color: white;
+    background-color: #214dd2;
+}
+
+.wholesale-bill {
+    background-color: #c1cef4;
+    color: #000;
+    font-weight: bold;
+}
+.wholesale-bill:hover{
+    color: white;
+    background-color: #214dd2;
+}
+
+.bill-active{
+    background-color: #1a3a9c;
+    color: white;
+}
+
+/* ======================================CHIA 2 BẢNG======================================= */
+.split-board {
+    margin: 0 2px;
+    height: calc(100vh - 300px); 
+
+.list-board,
+.detail-board {
+    background-color: #d9d9d9;
+    border-radius: 10px;
+    padding: 10px;
+    height: 100%; 
+    border: 1px #0f107c solid;
+}
+
+.list-board {
+    width: 60%;
+    margin-right: 10px;
+}
+
+.detail-board {
+    width: 40%;
+}
+
+.board-title {
+    color: #0f107c;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.board-body {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

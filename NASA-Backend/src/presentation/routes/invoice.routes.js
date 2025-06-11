@@ -14,7 +14,7 @@ router.get('/', invoiceController.getInvoices);
 // Lấy chi tiết hóa đơn
 router.get('/:id', invoiceController.getInvoiceById);
 
-// Xóa mềm hóa đơn theo ID
-router.delete('/:invoiceId', invoiceController.deleteInvoice);
+// Xóa hóa đơn
+router.delete('/:id', invoiceController.deleteInvoice);
 
 module.exports = router;
