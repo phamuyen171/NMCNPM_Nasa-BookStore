@@ -76,10 +76,12 @@ function createTable(staffs) {
         <td>${staff.CCCD}</td>
         <td><div class="reset-password" data-username="${staff.username}" data-name="${staff.fullName}" style="text-decoration: underline;">Reset</div></td>
         <td>
-          ${staff.status === "inactive"
-            ? `<span class="badge bg-danger">Đã sa thải</span>`
-            : `<span class="badge bg-success">Đang làm việc</span>`
-          }
+          <div class="change-status" data-id="${staff._id}" data-name="${staff.fullName}" data-value="${staff.status}">
+            ${staff.status === "inactive"
+              ? `<span class="badge bg-danger">Đã sa thải</span>`
+              : `<span class="badge bg-success">Đang làm việc</span>`
+            }
+          </div>
         </td>
       </tr>
     `;

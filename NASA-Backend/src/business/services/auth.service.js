@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 
 class UserService {
   async login(username, password) {
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username, status: 'active' });
     if (!user) throw new Error('Mã nhân viên không tồn tại');
 
     const match = await bcrypt.compare(password, user.password);
@@ -63,6 +63,27 @@ class UserService {
 
     } catch (error) {
         throw error;
+    }
+  }
+
+  async lockAccount(username){
+    try{
+      const user = await User.findOne({username, status:"active"});
+
+      if (!user){
+        throw new Error(`Không tìm thấy tài khoản cho mã nhân viên <b>${username}</b>!`);
+      }
+
+      user.status = 'inactive';
+
+      await user.save({
+        runValidators: true
+      });
+
+      return user;
+    }
+    catch (error){
+      throw error;
     }
   }
 

@@ -147,6 +147,25 @@ class StaffService {
             throw new Error(`Lỗi khi lấy danh sách nhân viên: ${error.message}`);
         }
     }
+
+    async changeStatus(staffId){
+        try{
+            const staff = await Staff.findOne({ _id: staffId, status: 'active'});
+            if (!staff){
+                throw new Error("Không tìm thấy nhân viên.");
+            }
+
+            staff.status = "inactive";
+
+            await staff.save({
+                runValidators: true
+            });
+
+            return staff;
+        } catch (error){
+            throw error;
+        }
+    }
 }
 
 module.exports = new StaffService();
