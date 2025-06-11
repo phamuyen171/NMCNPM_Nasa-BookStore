@@ -57,12 +57,20 @@ function createTable(staffs) {
   `;
 
   staffs.forEach(staff => {
+    let role;
+    if (staff.role === "manager"){
+      role = "Cửa hàng trưởng";
+    } else if (staff.role === "staff"){
+      role = "Nhân viên bán hàng";
+    } else {
+      role = "Kế toán";
+    }
     html += `
       <tr>
         <td>${staff.username}</td>
         <td>${staff.fullName}</td>
         <td>${formatDate(staff.DoB)}</td>
-        <td>${staff.role}</td>
+        <td>${role }</td>
         <td>${staff.email}</td>
         <td>${staff.phone}</td>
         <td>${staff.CCCD}</td>
@@ -99,7 +107,7 @@ function renderTableByPage(data, page) {
 }
 
 let currentPage = 1;
-const pageSize = 7;
+const pageSize = 8;
 
 document.addEventListener("DOMContentLoaded", async function () {
   try{
@@ -123,8 +131,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.getElementById("search-staff").addEventListener("input", function () {
       const keyword = this.value.trim().toLowerCase();
       const filtered = allStaffs.filter(staff =>
-        staff.id.toLowerCase().includes(keyword) ||
-        staff.name.toLowerCase().includes(keyword)
+        staff.fullName.toLowerCase().includes(keyword) ||
+        staff.username.toLowerCase().includes(keyword)
       );
       renderTableByPage(filtered, currentPage);
     });
