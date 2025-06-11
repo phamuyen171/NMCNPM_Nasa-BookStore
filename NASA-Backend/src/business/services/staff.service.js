@@ -166,6 +166,28 @@ class StaffService {
             throw error;
         }
     }
+
+    async deleteStaff(staffId){
+        try{
+            const staff = await Staff.findOne({ _id: staffId, isDeleted: false});
+            if (!staff){
+                throw new Error("Không tìm thấy nhân viên!");
+            }
+
+            if (staff.status === "active"){
+                throw new Error("Không thể xóa nhân viên đang còn làm việc!");
+            }
+
+            staff.isDeleted = true;
+            await staff.save({
+                runValidators: true
+            });
+
+            return staff;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 module.exports = new StaffService();

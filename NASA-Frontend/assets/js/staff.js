@@ -42,7 +42,7 @@ function createTable(staffs) {
       <table class="table table-bordered text-center table-hover">
         <thead class="table-primary">
           <tr>
-            <th>MÃ NHÂN VIÊN</th>
+            <th>MÃ NV</th>
             <th>HỌ VÀ TÊN</th>
             <th>NGÀY SINH</th>
             <th>CHỨC VỤ</th>
@@ -51,6 +51,7 @@ function createTable(staffs) {
             <th>CCCD</th>
             <th>MẬT KHẨU</th>
             <th>TÌNH TRẠNG</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -65,6 +66,7 @@ function createTable(staffs) {
     } else {
       role = "Kế toán";
     }
+    // console.log(staff._id);
     html += `
       <tr>
         <td>${staff.username}</td>
@@ -82,6 +84,9 @@ function createTable(staffs) {
               : `<span class="badge bg-success">Đang làm việc</span>`
             }
           </div>
+        </td>
+        <td>
+          <div class="delete-staff" data-id="${staff._id}" data-name="${staff.fullName}" style="text-decoration: underline;">Xóa</div>
         </td>
       </tr>
     `;

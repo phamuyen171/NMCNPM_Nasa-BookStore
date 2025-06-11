@@ -105,6 +105,16 @@ class staffController {
     }
   }
 
+  async deleteStaff(req, res){
+    try{
+        const staff = await staffService.deleteStaff(req.params.id);
+        return res.status(200).json({ success: true, message: "Xóa nhân viên thành công!"});
+    }
+    catch (error){
+        return res.status(500).json({ success: false, message: error.message});
+    }
+  }
+
 }
 
 
