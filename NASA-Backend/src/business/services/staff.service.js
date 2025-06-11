@@ -59,6 +59,18 @@ class StaffService {
         return password;
     }
 
+    async getStaffByUsername(username){
+        try{
+            const staff = await Staff.findOne({ username: username, status: 'active' });
+            if (!staff){
+                throw new Error(`Không tìm thấy nhân viên có mã nhân viên: <b>${username}</b>`)
+            }
+            return staff;
+        } catch (error){
+            throw error;
+        }
+    }
+
     async createStaff(staffData, image) {
         if (!staffData) {
             throw new Error('Vui lòng cung cấp thông tin nhân viên');

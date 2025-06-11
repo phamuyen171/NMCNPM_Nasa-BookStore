@@ -62,6 +62,23 @@ class authController {
         res.status(500).json({ success: false, message: err.message });
     }
   }
+
+  async resetPassWord(req, res){
+    try{
+      const staff = await staffService.getStaffByUsername(req.params.username);
+      const password = staffService.createStaffPassword(staff.CCCD);
+      const account = await authService.resetPassword(req.params.username, password);
+      return res.status(200).json({
+          success: true,
+          message: "Reset password nhân viên thành công",
+          data: account
+      });
+    }
+    catch (error){
+        return res.status(500).json({ success: false, message: error.message });
+    }
+  }
+  
 }
 
 

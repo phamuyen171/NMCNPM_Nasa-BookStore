@@ -66,7 +66,7 @@ function createTable(staffs) {
         <td>${staff.email}</td>
         <td>${staff.phone}</td>
         <td>${staff.CCCD}</td>
-        <td><a href="#">Reset</a></td>
+        <td><div class="reset-password" data-username="${staff.username}" data-name="${staff.fullName}" style="text-decoration: underline;">Reset</div></td>
         <td>
           ${staff.status === "inactive"
             ? `<span class="badge bg-danger">Đã sa thải</span>`

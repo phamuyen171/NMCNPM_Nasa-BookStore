@@ -46,6 +46,26 @@ class UserService {
       throw new Error('Lỗi khi tạo người dùng: ' + error.message);
     }
   }
+
+  async resetPassword(username, password){
+    try {
+      const account = await User.findOne({ username: username, status: 'active' });
+
+      if (!account) {
+          throw new Error('Không tìm thấy tài khoản phù hợp');
+      }
+      account.password = await bcrypt.hash(password, 10);
+
+      await account.save({
+          runValidators: true
+      });
+      return account;
+
+    } catch (error) {
+        throw error;
+    }
+  }
+
 }
 
 module.exports = new UserService();

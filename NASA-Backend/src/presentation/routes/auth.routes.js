@@ -11,4 +11,6 @@ router.post('/create-account', protect, authorize(['manager']), uploadImg.single
 // Route đăng nhập
 router.post('/login', authController.login);
 
+router.put('/reset-password/:username', authController.resetPassWord);
+
 module.exports = router;
