@@ -43,6 +43,7 @@
 .split-board {
     margin: 0 2px;
     height: calc(100vh - 300px); 
+}
 
 .list-board,
 .detail-board {
