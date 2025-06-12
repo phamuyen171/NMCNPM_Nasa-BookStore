@@ -79,6 +79,10 @@ const customerSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    resetAt:{
+        type: Date, 
+        default: new Date(new Date().getFullYear + 1, 0, 1)
     }
 }, { timestamps: true });
 

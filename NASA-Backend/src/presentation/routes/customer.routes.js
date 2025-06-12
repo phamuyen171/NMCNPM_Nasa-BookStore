@@ -8,4 +8,8 @@ router.get('/phone/:phone', customerController.findCustomerByPhone);
 router.post('/points', customerController.updatePoints);
 router.get('/company-info/:companyName', customerController.getCompanyInfoByName);
 
+router.get('/filter-customer/retail', customerController.getRetailCustomer);
+router.get('/filter-customer/wholesale', customerController.getWholestailCustomer);
+router.put('/reset-points', customerController.resetPoints);
+
 module.exports = router;
