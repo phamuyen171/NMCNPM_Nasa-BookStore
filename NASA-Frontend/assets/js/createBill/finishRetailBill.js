@@ -87,11 +87,13 @@ window.addEventListener('DOMContentLoaded', () => {
     const skipMsg = document.getElementById('skip-message');
     const skipSection = document.getElementById('skip-section');
     const customerBox = document.getElementById('customer-info');
+    const continueBtn = document.querySelector('.btn-continue');
 
     if (infoFields) infoFields.classList.add('d-none');
     if (skipSection) skipSection.classList.add('d-none');
     if (skipMsg) skipMsg.classList.remove('d-none');
     customerBox.style.backgroundColor = '#d9d9d9';
+    if (continueBtn) continueBtn.innerText = 'TẠO HÓA ĐƠN';
   });
 
   //============================== API TT khách hàng ====================================
