@@ -6,5 +6,6 @@ router.post('/', customerController.createOrGetCustomer);
 router.post('/add', customerController.addCustomer);
 router.get('/phone/:phone', customerController.findCustomerByPhone);
 router.post('/points', customerController.updatePoints);
+router.get('/company-info/:companyName', customerController.getCompanyInfoByName);
 
 module.exports = router;

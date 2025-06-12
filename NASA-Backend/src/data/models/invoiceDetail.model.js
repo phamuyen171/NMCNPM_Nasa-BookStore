@@ -6,6 +6,11 @@ const invoiceDetailSchema = new mongoose.Schema({
         ref: 'Invoice',
         required: true
     },
+    bookId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Book',
+        required: true
+    },
     bookTitle: {
         type: String,
         required: true

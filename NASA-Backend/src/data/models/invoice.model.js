@@ -6,17 +6,37 @@ const invoiceSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
+    invoiceFormNumber: {
+        type: String,
+        default: null
+    },
+    invoiceSerialNumber: {
+        type: String,
+        default: null
+    },
     date: {
         type: Date,
         default: Date.now
+    },
+    dueDate: {
+        type: Date,
+        default: null
+    },
+    paidAt: {
+        type: Date,
+        default: null
     },
     subtotal: {
         type: Number,
         required: true
     },
-    discount: {
+    totalDiscount: {
         type: Number,
         default: 0
+    },
+    discountPercentage: {
+        type: Number,
+        default: 10
     },
     total: {
         type: Number,
@@ -24,7 +44,7 @@ const invoiceSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['paid', 'debt'],
+        enum: ['paid', 'debt', 'bad_debt'],
         required: true
     },
     customerPhone: {
@@ -43,6 +63,10 @@ const invoiceSchema = new mongoose.Schema({
         default: 'retail'
     },
     points: {
+        type: Number,
+        default: 0
+    },
+    pointsUsed: {
         type: Number,
         default: 0
     },
@@ -69,13 +93,5 @@ const invoiceSchema = new mongoose.Schema({
         default: false
     }
 }, { timestamps: true });
-
-// Middleware để tự động tính điểm tích lũy (1% giá trị hóa đơn)
-invoiceSchema.pre('save', function (next) {
-    if (this.customerPhone && this.total > 0) {
-        this.points = Math.floor(this.total * 0.01); // 1% giá trị hóa đơn
-    }
-    next();
-});
 
 module.exports = mongoose.model('Invoice', invoiceSchema);
