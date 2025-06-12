@@ -47,7 +47,7 @@ class StaffService {
         if (!staffId) {
             throw new Error('Vui lòng cung cấp mã nhân viên');
         }
-        const email = `${ staffId.toLowerCase()}@gmail.com`;
+        const email = `${ staffId}@gmail.com`;
         return email;
     }
 
@@ -59,7 +59,19 @@ class StaffService {
         return password;
     }
 
-    async createStaff(staffData) {
+    async getStaffByUsername(username){
+        try{
+            const staff = await Staff.findOne({ username: username, status: 'active' });
+            if (!staff){
+                throw new Error(`Không tìm thấy nhân viên có mã nhân viên: <b>${username}</b>`)
+            }
+            return staff;
+        } catch (error){
+            throw error;
+        }
+    }
+
+    async createStaff(staffData, image) {
         if (!staffData) {
             throw new Error('Vui lòng cung cấp thông tin nhân viên');
         }
@@ -84,7 +96,8 @@ class StaffService {
             thumbnail: staffData.thumbnail,
             role: staffData.role,
             email: staffData.email,
-            startdate: new Date()
+            startdate: new Date(),
+            image: image
         });
 
         return await newStaff.save();
@@ -132,6 +145,47 @@ class StaffService {
         }
         catch (error){
             throw new Error(`Lỗi khi lấy danh sách nhân viên: ${error.message}`);
+        }
+    }
+
+    async changeStatus(staffId){
+        try{
+            const staff = await Staff.findOne({ _id: staffId, status: 'active'});
+            if (!staff){
+                throw new Error("Không tìm thấy nhân viên.");
+            }
+
+            staff.status = "inactive";
+
+            await staff.save({
+                runValidators: true
+            });
+
+            return staff;
+        } catch (error){
+            throw error;
+        }
+    }
+
+    async deleteStaff(staffId){
+        try{
+            const staff = await Staff.findOne({ _id: staffId, isDeleted: false});
+            if (!staff){
+                throw new Error("Không tìm thấy nhân viên!");
+            }
+
+            if (staff.status === "active"){
+                throw new Error("Không thể xóa nhân viên đang còn làm việc!");
+            }
+
+            staff.isDeleted = true;
+            await staff.save({
+                runValidators: true
+            });
+
+            return staff;
+        } catch (error) {
+            throw error;
         }
     }
 }

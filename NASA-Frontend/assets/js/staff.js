@@ -42,7 +42,7 @@ function createTable(staffs) {
       <table class="table table-bordered text-center table-hover">
         <thead class="table-primary">
           <tr>
-            <th>MÃ NHÂN VIÊN</th>
+            <th>MÃ NV</th>
             <th>HỌ VÀ TÊN</th>
             <th>NGÀY SINH</th>
             <th>CHỨC VỤ</th>
@@ -51,27 +51,42 @@ function createTable(staffs) {
             <th>CCCD</th>
             <th>MẬT KHẨU</th>
             <th>TÌNH TRẠNG</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
   `;
 
   staffs.forEach(staff => {
+    let role;
+    if (staff.role === "manager"){
+      role = "Cửa hàng trưởng";
+    } else if (staff.role === "staff"){
+      role = "Nhân viên bán hàng";
+    } else {
+      role = "Kế toán";
+    }
+    // console.log(staff._id);
     html += `
       <tr>
         <td>${staff.username}</td>
         <td>${staff.fullName}</td>
         <td>${formatDate(staff.DoB)}</td>
-        <td>${staff.role}</td>
+        <td>${role }</td>
         <td>${staff.email}</td>
         <td>${staff.phone}</td>
         <td>${staff.CCCD}</td>
-        <td><a href="#">Reset</a></td>
+        <td><div class="reset-password" data-username="${staff.username}" data-name="${staff.fullName}" style="text-decoration: underline;">Reset</div></td>
         <td>
-          ${staff.status === "inactive"
-            ? `<span class="badge bg-danger">Đã sa thải</span>`
-            : ""
-          }
+          <div class="change-status" data-id="${staff._id}" data-name="${staff.fullName}" data-value="${staff.status}">
+            ${staff.status === "inactive"
+              ? `<span class="badge bg-danger">Đã sa thải</span>`
+              : `<span class="badge bg-success">Đang làm việc</span>`
+            }
+          </div>
+        </td>
+        <td>
+          <div class="delete-staff" data-id="${staff._id}" data-name="${staff.fullName}" style="text-decoration: underline;">Xóa</div>
         </td>
       </tr>
     `;
@@ -99,7 +114,7 @@ function renderTableByPage(data, page) {
 }
 
 let currentPage = 1;
-const pageSize = 7;
+const pageSize = 8;
 
 document.addEventListener("DOMContentLoaded", async function () {
   try{
@@ -123,8 +138,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.getElementById("search-staff").addEventListener("input", function () {
       const keyword = this.value.trim().toLowerCase();
       const filtered = allStaffs.filter(staff =>
-        staff.id.toLowerCase().includes(keyword) ||
-        staff.name.toLowerCase().includes(keyword)
+        staff.fullName.toLowerCase().includes(keyword) ||
+        staff.username.toLowerCase().includes(keyword)
       );
       renderTableByPage(filtered, currentPage);
     });

@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 
 class UserService {
   async login(username, password) {
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username, status: 'active' });
     if (!user) throw new Error('Mã nhân viên không tồn tại');
 
     const match = await bcrypt.compare(password, user.password);
@@ -18,7 +18,7 @@ class UserService {
     return token;
   }
 
-  async addUser(username, password, role) {
+  async addUser(username, password, role, imageId) {
     
     if (!username || !password || !role) {
       throw new Error('Vui lòng cung cấp username, password và role');
@@ -35,7 +35,8 @@ class UserService {
       const newUser = new User({
         username,
         password: hashedPassword,
-        role
+        role,
+        image: imageId
       });
 
       await newUser.save();
@@ -45,6 +46,47 @@ class UserService {
       throw new Error('Lỗi khi tạo người dùng: ' + error.message);
     }
   }
+
+  async resetPassword(username, password){
+    try {
+      const account = await User.findOne({ username: username, status: 'active' });
+
+      if (!account) {
+          throw new Error('Không tìm thấy tài khoản phù hợp');
+      }
+      account.password = await bcrypt.hash(password, 10);
+
+      await account.save({
+          runValidators: true
+      });
+      return account;
+
+    } catch (error) {
+        throw error;
+    }
+  }
+
+  async lockAccount(username){
+    try{
+      const user = await User.findOne({username, status:"active"});
+
+      if (!user){
+        throw new Error(`Không tìm thấy tài khoản cho mã nhân viên <b>${username}</b>!`);
+      }
+
+      user.status = 'inactive';
+
+      await user.save({
+        runValidators: true
+      });
+
+      return user;
+    }
+    catch (error){
+      throw error;
+    }
+  }
+
 }
 
 module.exports = new UserService();

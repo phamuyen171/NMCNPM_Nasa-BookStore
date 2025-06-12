@@ -1,4 +1,5 @@
 const staffService = require('../../business/services/staff.service');
+const authService = require('../../business/services/auth.service');
 
 class staffController {
   // Route đăng ký người dùng (CHỈ DÙNG CHO USER CÓ ROLE CUA_HANG_TRUONG)
@@ -33,7 +34,8 @@ class staffController {
                 staffId: staffId,
                 username: username,
                 email: staffEmail,
-                password: password
+                password: password,
+                startDate: new Date()
             }            
         });
     }
@@ -89,6 +91,27 @@ class staffController {
     }
     catch (error){
         return res.status(500).json({ success: false, message: error.message });
+    }
+  }
+
+  async changeStatus(req, res){
+    try{
+        const staff = await staffService.changeStatus(req.params.id);
+        const user = await authService.lockAccount(staff.username);
+        return res.status(200).json({ success: true, message: "Sa thải nhân viên thành công!"});
+    }
+    catch (error){
+        return res.status(500).json({ success: false, message: error.message });
+    }
+  }
+
+  async deleteStaff(req, res){
+    try{
+        const staff = await staffService.deleteStaff(req.params.id);
+        return res.status(200).json({ success: true, message: "Xóa nhân viên thành công!"});
+    }
+    catch (error){
+        return res.status(500).json({ success: false, message: error.message});
     }
   }
 

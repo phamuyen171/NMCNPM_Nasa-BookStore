@@ -248,7 +248,7 @@ document.getElementById('confirmImport').addEventListener('click', () => {
     }
 
     const errorTitle = 'LỖI NHẬP SÁCH';    
-    showModalConfirm("NHẬP SÁCH", "Bạn có chắc chắn muốn nhập sách không?", "../../",
+    showModalConfirm("NHẬP SÁCH", `nhập sách`, "../../",
         async() =>{
             try {
                 await handleImportAndConfirm(importData);
