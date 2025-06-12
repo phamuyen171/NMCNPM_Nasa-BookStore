@@ -1,15 +1,18 @@
-const customerService = require('../../business/services/customer.service');
+const Customer = require('../../data/models/customer.model');
 
 // Tạo hoặc lấy thông tin khách hàng theo số điện thoại
 exports.createOrGetCustomer = async (req, res) => {
     try {
         const { phone, points, totalSpent } = req.body;
-        let customer = await customerService.findCustomerByPhone(phone);
+        let customer = await Customer.findOne({ phone: phone, isDeleted: false });
         if (!customer) {
-            customer = await customerService.createCustomer(phone);
+            customer = await Customer.create({ phone: phone, name: 'Khách hàng mới' });
         }
         if (points && totalSpent) {
-            customer = await customerService.updateCustomerPoints(phone, points, totalSpent);
+            // Logic này có thể được chuyển sang invoice.service hoặc bỏ nếu đã xử lý ở đó
+            customer.points += points;
+            customer.totalSpent += totalSpent;
+            await customer.save();
         }
         res.json({ success: true, data: customer });
     } catch (error) {
@@ -20,14 +23,14 @@ exports.createOrGetCustomer = async (req, res) => {
 // Thêm khách hàng mới (cho use-case Thêm khách hàng mới)
 exports.addCustomer = async (req, res) => {
     try {
-        const { phone, name, type, idCard } = req.body;
+        const { phone, name, type, idCard, companyName, taxId, address, discountPercentage } = req.body;
         // Kiểm tra số điện thoại đã tồn tại chưa
-        const existingCustomer = await customerService.findCustomerByPhone(phone);
+        const existingCustomer = await Customer.findOne({ phone: phone, isDeleted: false });
         if (existingCustomer) {
             return res.status(409).json({ success: false, message: 'Số điện thoại đã tồn tại' });
         }
 
-        const newCustomer = await customerService.createCustomer(phone, name, type, idCard);
+        const newCustomer = await Customer.create({ phone, name, type, idCard, companyName, taxId, address, discountPercentage });
         res.status(201).json({ success: true, message: 'Thêm khách hàng thành công', data: newCustomer });
     } catch (error) {
         console.error("Lỗi khi thêm khách hàng: ", error);
@@ -39,7 +42,7 @@ exports.addCustomer = async (req, res) => {
 exports.findCustomerByPhone = async (req, res) => {
     try {
         const { phone } = req.params;
-        const customer = await customerService.findCustomerByPhone(phone);
+        const customer = await Customer.findOne({ phone: phone, isDeleted: false });
         if (!customer) {
             return res.status(404).json({ success: false, message: 'Không tìm thấy khách hàng' });
         }
@@ -53,13 +56,39 @@ exports.findCustomerByPhone = async (req, res) => {
 exports.updatePoints = async (req, res) => {
     try {
         const { phone, points, totalSpent } = req.body;
-        let customer = await customerService.findCustomerByPhone(phone);
+        let customer = await Customer.findOne({ phone: phone, isDeleted: false });
         if (!customer) {
-            customer = await customerService.createCustomer(phone);
+            // Nếu khách hàng không tồn tại, tạo mới
+            customer = await Customer.create({ phone: phone, name: 'Khách hàng mới' });
         }
-        customer = await customerService.updateCustomerPoints(phone, points, totalSpent);
+        // Cập nhật điểm và tổng chi tiêu
+        customer.points += points;
+        customer.totalSpent += totalSpent;
+        await customer.save();
+
         res.json({ success: true, data: customer });
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
+    }
+};
+
+// Lấy thông tin công ty khách hàng sỉ theo tên công ty
+exports.getCompanyInfoByName = async (req, res) => {
+    try {
+        const { companyName } = req.params; // Lấy tên công ty từ URL params
+        const customer = await Customer.findOne({
+            companyName: new RegExp(companyName, 'i'), // Tìm kiếm không phân biệt hoa thường
+            type: 'wholesale',
+            isDeleted: false
+        });
+
+        if (!customer) {
+            return res.status(404).json({ success: false, message: 'Không tìm thấy công ty khách sỉ này' });
+        }
+
+        res.json({ success: true, data: { taxId: customer.taxId, address: customer.address } });
+    } catch (error) {
+        console.error("Lỗi khi lấy thông tin công ty: ", error);
+        res.status(500).json({ success: false, message: 'Lỗi server khi lấy thông tin công ty' });
     }
 }; 

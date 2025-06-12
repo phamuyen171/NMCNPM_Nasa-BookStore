@@ -50,6 +50,28 @@ const customerSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    discountPercentage: {
+        type: Number,
+        default: 0, // Mặc định là 0 nếu khách hàng không có chiết khấu đặc biệt
+        min: 0,
+        max: 100
+    },
+    // Thêm các trường cho thông tin khách hàng là tổ chức/sỉ (cho hóa đơn GTGT)
+    companyName: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    taxId: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    address: {
+        type: String,
+        trim: true,
+        default: null
+    },
     isDeleted: {
         type: Boolean,
         default: false

@@ -309,13 +309,131 @@ Authorization: Bearer <your_jwt_token>
   }
   ```
 
-### 5. Quản lý Hóa Đơn (Invoice Management)
+### 5. Quản lý Khách Hàng (Customer Management)
 
-#### 5.1. Lấy danh sách sách phổ biến
+#### 5.1. Tạo mới hoặc lấy thông tin khách hàng (Create or Get Customer)
+- **URL**: `/customers`
+- **Method**: `POST`
+- **Description**: Tìm kiếm khách hàng theo số điện thoại. Nếu không tìm thấy, tạo mới khách hàng chỉ với số điện thoại và tên mặc định. Nếu khách hàng đã tồn tại, có thể cập nhật điểm tích lũy và tổng chi tiêu (logic này có thể đã được chuyển sang service).
+- **Body**:
+  ```json
+  {
+    "phone": "string",         // Số điện thoại (bắt buộc, 10 chữ số)
+    "points": "number",        // Số điểm muốn cộng thêm (tùy chọn)
+    "totalSpent": "number"     // Tổng chi tiêu muốn cộng thêm (tùy chọn)
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "data": {
+      "_id": "string",
+      "phone": "string",
+      "name": "string",
+      "type": "string",
+      "points": "number",
+      "totalSpent": "number"
+    }
+  }
+  ```
+
+#### 5.2. Thêm khách hàng mới (Add New Customer)
+- **URL**: `/customers/add`
+- **Method**: `POST`
+- **Description**: Thêm một khách hàng mới vào hệ thống. Kiểm tra trùng lặp số điện thoại.
+- **Body**:
+  ```json
+  {
+    "phone": "string",            // Số điện thoại (bắt buộc, 10 chữ số)
+    "name": "string",             // Tên khách hàng (bắt buộc)
+    "type": "string",             // "retail" hoặc "wholesale" (tùy chọn, mặc định là "retail")
+    "idCard": "string",           // CCCD (tùy chọn, 9-12 chữ số)
+    "companyName": "string",      // Tên công ty (tùy chọn, cho khách sỉ)
+    "taxId": "string",            // Mã số thuế (tùy chọn, cho khách sỉ)
+    "address": "string",          // Địa chỉ (tùy chọn, cho khách sỉ)
+    "discountPercentage": "number" // Phần trăm chiết khấu (tùy chọn, 0-100, mặc định 0)
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "Thêm khách hàng thành công",
+    "data": {
+      "_id": "string",
+      "phone": "string",
+      "name": "string",
+      "type": "string",
+      "idCard": "string",
+      "companyName": "string",
+      "taxId": "string",
+      "address": "string",
+      "points": "number",
+      "totalSpent": "number",
+      "discountPercentage": "number"
+    }
+  }
+  ```
+
+#### 5.3. Tìm kiếm khách hàng theo số điện thoại (Find Customer by Phone)
+- **URL**: `/customers/phone/:phone`
+- **Method**: `GET`
+- **Description**: Lấy thông tin chi tiết của một khách hàng bằng số điện thoại.
+- **Parameters**:
+  - `phone`: Số điện thoại của khách hàng (bắt buộc).
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "data": { /* ... customer object ... */ }
+  }
+  ```
+
+#### 5.4. Cập nhật điểm tích lũy và tổng chi tiêu khách hàng (Update Customer Points and Total Spent)
+- **URL**: `/customers/points`
+- **Method**: `POST`
+- **Description**: Cập nhật điểm tích lũy và tổng chi tiêu hiện tại cho một khách hàng đã tồn tại. Nếu khách hàng không tìm thấy, một bản ghi khách hàng mới sẽ được tạo chỉ với số điện thoại.
+- **Body**:
+  ```json
+  {
+    "phone": "string",         // Số điện thoại khách hàng (bắt buộc)
+    "points": "number",        // Số điểm muốn cộng thêm (tùy chọn)
+    "totalSpent": "number"     // Tổng chi tiêu muốn cộng thêm (tùy chọn)
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "data": { /* ... updated customer object ... */ }
+  }
+  ```
+
+#### 5.5. Lấy thông tin công ty khách hàng sỉ theo tên (Get Wholesale Customer Company Info by Name)
+- **URL**: `/customers/company-info/:companyName`
+- **Method**: `GET`
+- **Description**: Lấy thông tin mã số thuế và địa chỉ của khách hàng sỉ theo tên công ty.
+- **Parameters**:
+  - `companyName`: Tên công ty của khách hàng sỉ (bắt buộc).
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "data": {
+      "taxId": "string",
+      "address": "string"
+    }
+  }
+  ```
+
+### 6. Quản lý Hóa Đơn (Invoice Management)
+
+#### 6.1. Lấy danh sách sách phổ biến (Get Popular Books)
 - **URL**: `/invoices/popular-books`
 - **Method**: `GET`
 - **Description**: Lấy danh sách các cuốn sách được bán chạy nhất.
-- **Response**: 
+- **Response**:
   ```json
   {
     "success": true,
@@ -325,17 +443,19 @@ Authorization: Bearer <your_jwt_token>
         "title": "string",
         "price": "number",
         "salesCount": "number",
-        "quantity": "number"
+        "quantity": "number",
+        "image": "string",
+        "description": "string"
       }
     ]
   }
   ```
 
-#### 5.2. Tạo hóa đơn mới
+#### 6.2. Tạo hóa đơn mới (Create New Invoice)
 - **URL**: `/invoices`
 - **Method**: `POST`
-- **Description**: Tạo một hóa đơn mới. Hệ thống sẽ tự động tạo khách hàng mới nếu số điện thoại chưa tồn tại.
-- **Body**: 
+- **Description**: Tạo một hóa đơn mới. Hỗ trợ tạo hóa đơn cho khách lẻ và khách sỉ, bao gồm xử lý chiết khấu, điểm tích lũy và các phương thức thanh toán.
+- **Body**:
   ```json
   {
     "items": [
@@ -344,12 +464,14 @@ Authorization: Bearer <your_jwt_token>
         "quantity": "number" // Số lượng sách (bắt buộc, > 0)
       }
     ],
-    "customerPhone": "string", // Số điện thoại khách hàng (tùy chọn)
-    "customerIdCard": "string",// CCCD khách hàng (tùy chọn, bắt buộc nếu tổng số lượng sách >= 20)
-    "paymentMethod": "string"  // Phương thức thanh toán ("cash" hoặc "debt", bắt buộc)
+    "customerPhone": "string", // Số điện thoại khách hàng (tùy chọn, bắt buộc nếu totalQuantity >= 20 hoặc paymentMethod là 'debt')
+    "customerIdCard": "string", // CCCD khách hàng (tùy chọn, bắt buộc nếu totalQuantity >= 20)
+    "paymentMethod": "string", // "cash" hoặc "debt" (bắt buộc, "debt" chỉ dành cho khách sỉ)
+    "pointsToUse": "number",   // Số điểm muốn sử dụng (tùy chọn, mặc định 0, >= 30 điểm mới được dùng)
+    "discountPercentage": "number" // Phần trăm chiết khấu tùy chỉnh cho hóa đơn (tùy chọn, 0-100)
   }
   ```
-- **Response**: 
+- **Response**:
   ```json
   {
     "success": true,
@@ -357,18 +479,25 @@ Authorization: Bearer <your_jwt_token>
     "data": {
       "invoiceID": "string",
       "subtotal": "number",
-      "discount": "number",
+      "totalDiscount": "number",
       "total": "number",
       "status": "string",
       "customerPhone": "string",
       "customerType": "string",
       "points": "number",
+      "pointsUsed": "number",
       "paymentMethod": "string",
-      "appliedPromotion": "string", // ID khuyến mãi đã áp dụng (nếu có)
-      "promotionDiscount": "number", // Số tiền giảm giá từ khuyến mãi
+      "appliedPromotion": {
+        "name": "string",
+        "discountType": "string",
+        "discountValue": "number"
+      },
+      "promotionDiscount": "number",
       "createdBy": "string",
-      "isDeleted": "boolean",
-      "details": [
+      "createdAt": "string",
+      "dueDate": "string",
+      "paidAt": "string",
+      "items": [
         {
           "bookId": "string",
           "bookTitle": "string",
@@ -381,68 +510,87 @@ Authorization: Bearer <your_jwt_token>
   }
   ```
 
-#### 5.3. Lấy danh sách hóa đơn
+#### 6.3. Lấy danh sách hóa đơn (Get Invoices)
 - **URL**: `/invoices`
 - **Method**: `GET`
-- **Description**: Lấy danh sách tất cả hóa đơn. Hỗ trợ phân trang, lọc và sắp xếp.
-- **Query Parameters**: 
+- **Description**: Lấy danh sách tất cả các hóa đơn. Hỗ trợ phân trang, lọc theo trạng thái, số điện thoại khách hàng, và khoảng thời gian.
+- **Query Parameters**:
   - `page` (optional): Số trang (mặc định: 1)
   - `limit` (optional): Số lượng hóa đơn trên mỗi trang (mặc định: 10)
-  - `status` (optional): Lọc theo trạng thái hóa đơn (`paid` hoặc `debt`).
-  - `customerPhone` (optional): Lọc theo số điện thoại khách hàng.
-  - `startDate` (optional): Lọc hóa đơn từ ngày này (định dạng YYYY-MM-DD).
-  - `endDate` (optional): Lọc hóa đơn đến ngày này (định dạng YYYY-MM-DD).
-  - `keyword` (optional): Tìm kiếm theo `invoiceID` (nếu bắt đầu bằng "INV-") hoặc `customerPhone`.
-  - `sortBy` (optional): Trường sắp xếp (ví dụ: `date`, `total`).
-  - `sortOrder` (optional): Thứ tự sắp xếp (`1` cho ASC, `-1` cho DESC) (mặc định: -1 cho `date`).
-- **Response**: 
+  - `status` (optional): Lọc theo trạng thái hóa đơn ("paid", "debt", "bad_debt")
+  - `customerPhone` (optional): Lọc theo số điện thoại khách hàng
+  - `startDate` (optional): Lọc hóa đơn từ ngày này (ISO 8601 format)
+  - `endDate` (optional): Lọc hóa đơn đến ngày này (ISO 8601 format)
+  - `keyword` (optional): Tìm kiếm theo invoiceID
+  - `sortBy` (optional): Trường sắp xếp (ví dụ: `date`, `total`)
+  - `sortOrder` (optional): Thứ tự sắp xếp (`asc` hoặc `desc`)
+- **Response**:
   ```json
   {
     "success": true,
     "data": {
+      "totalInvoices": "number",
+      "totalPages": "number",
+      "currentPage": "number",
       "invoices": [
-        { /* ... invoice object ... */ }
-      ],
-      "total": "number",
-      "page": "number",
-      "totalPages": "number"
+        {
+          "_id": "string",
+          "invoiceID": "string",
+          "customerPhone": "string",
+          "customerType": "string",
+          "subtotal": "number",
+          "totalDiscount": "number",
+          "total": "number",
+          "status": "string",
+          "points": "number",
+          "pointsUsed": "number",
+          "paymentMethod": "string",
+          "appliedPromotion": {
+            "name": "string",
+            "discountType": "string",
+            "discountValue": "number"
+          },
+          "promotionDiscount": "number",
+          "createdBy": "string",
+          "createdAt": "string",
+          "dueDate": "string",
+          "paidAt": "string",
+          "items": [
+            {
+              "bookId": "string",
+              "bookTitle": "string",
+              "quantity": "number",
+              "pricePerUnit": "number",
+              "subtotal": "number"
+            }
+          ]
+        }
+      ]
     }
   }
   ```
 
-#### 5.4. Lấy chi tiết hóa đơn
+#### 6.4. Lấy chi tiết hóa đơn (Get Invoice Details)
 - **URL**: `/invoices/:id`
 - **Method**: `GET`
-- **Description**: Lấy thông tin chi tiết của một hóa đơn theo ID hoặc `invoiceID`.
-- **Parameters**: 
+- **Description**: Lấy thông tin chi tiết của một hóa đơn bằng ID. Có thể sử dụng `_id` hoặc `invoiceID`.
+- **Parameters**:
   - `id`: ID của hóa đơn (có thể là `_id` hoặc `invoiceID`).
-- **Response**: 
+- **Response**:
   ```json
   {
     "success": true,
-    "data": {
-      "invoiceID": "string",
-      // ... các trường khác của hóa đơn ...
-      "details": [
-        { /* ... invoice detail object ... */ }
-      ],
-      "promotionInfo": { // Thông tin khuyến mãi nếu có
-        "_id": "string",
-        "code": "string",
-        "name": "string",
-        "discountValue": "number"
-      }
-    }
+    "data": { /* ... detailed invoice object ... */ }
   }
   ```
 
-#### 5.5. Xóa hóa đơn (Soft Delete)
+#### 6.5. Xóa hóa đơn (Soft Delete Invoice)
 - **URL**: `/invoices/:id`
 - **Method**: `DELETE`
-- **Description**: Đánh dấu một hóa đơn là đã xóa mềm (`isDeleted: true`). Không thể xóa hóa đơn đang ở trạng thái 'debt'.
-- **Parameters**: 
+- **Description**: Đánh dấu một hóa đơn là đã xóa mềm (`isDeleted: true`). Không thể xóa hóa đơn đang ở trạng thái `debt`. Có thể sử dụng `_id` hoặc `invoiceID`.
+- **Parameters**:
   - `id`: ID của hóa đơn (có thể là `_id` hoặc `invoiceID`).
-- **Response**: 
+- **Response**:
   ```json
   {
     "success": true,
@@ -450,99 +598,36 @@ Authorization: Bearer <your_jwt_token>
   }
   ```
 
-### 6. Quản lý Khách Hàng (Customer Management)
-
-#### 6.1. Tạo mới hoặc lấy thông tin khách hàng
-- **URL**: `/customers`
-- **Method**: `POST`
-- **Description**: Tìm kiếm khách hàng theo số điện thoại. Nếu không tìm thấy, tạo mới khách hàng chỉ với số điện thoại và tên mặc định. Nếu khách hàng đã tồn tại, có thể cập nhật điểm tích lũy và tổng chi tiêu.
-- **Body**: 
-  ```json
-  {
-    "phone": "string",         // Số điện thoại (bắt buộc, 10 chữ số)
-    "points": "number",        // Số điểm muốn cộng thêm (tùy chọn, mặc định 0 nếu không tồn tại hoặc không được gửi)
-    "totalSpent": "number"     // Tổng chi tiêu muốn cộng thêm (tùy chọn, mặc định 0 nếu không tồn tại hoặc không được gửi)
-    // Lưu ý: Các trường "name", "type", "idCard" có thể được gửi nhưng KHÔNG được sử dụng để tạo khách hàng mới bởi API này.
-  }
-  ```
-- **Response**: 
+#### 6.6. Đánh dấu hóa đơn đã thanh toán (Mark Invoice As Paid)
+- **URL**: `/invoices/:id/mark-as-paid`
+- **Method**: `PATCH`
+- **Description**: Đánh dấu một hóa đơn công nợ (`status: 'debt'`) là đã thanh toán (`status: 'paid'`). Cập nhật thời gian thanh toán (`paidAt`) và giảm công nợ của khách hàng (nếu là khách sỉ).
+- **Parameters**:
+  - `id`: ID của hóa đơn (có thể là `_id` hoặc `invoiceID`).
+- **Response**:
   ```json
   {
     "success": true,
-    "data": { 
-      "_id": "string",
-      "phone": "string",
-      "name": "Khách hàng mới", // Tên mặc định nếu là khách hàng mới được tạo
-      "type": "normal",     // Loại mặc định nếu là khách hàng mới được tạo (có thể cần điều chỉnh ở service/model)
-      "points": "number",
-      "totalSpent": "number"
-      // Các trường khác như "idCard" sẽ là null nếu không được xử lý trong service. 
+    "message": "Đánh dấu hóa đơn đã thanh toán thành công",
+    "data": {
+      "message": "Hóa đơn đã được đánh dấu là đã thanh toán và công nợ đã được cập nhật.",
+      "paidAt": "string" // ISO 8601 timestamp
     }
   }
   ```
 
-#### 6.2. Thêm khách hàng mới
-- **URL**: `/customers/add`
-- **Method**: `POST`
-- **Description**: Thêm một khách hàng mới vào hệ thống. Kiểm tra trùng lặp số điện thoại. 
-- **Body**: 
-  ```json
-  {
-    "phone": "string", // Số điện thoại (bắt buộc, 10 chữ số)
-    "name": "string",  // Tên khách hàng (bắt buộc)
-    "type": "string",  // "retail" hoặc "wholesale" (bắt buộc, mặc định ở service là "normal" nếu không truyền)
-    "idCard": "string" // CCCD (tùy chọn, hiện tại controller nhận nhưng service chưa lưu)
-  }
-  ```
-- **Response**: 
+#### 6.7. Đánh dấu hóa đơn quá hạn thành nợ xấu (Mark Overdue Invoices As Bad Debt)
+- **URL**: `/invoices/mark-overdue-as-bad-debt`
+- **Method**: `PATCH`
+- **Description**: Quét và cập nhật trạng thái của tất cả các hóa đơn công nợ đã quá hạn thành nợ xấu (`status: 'bad_debt'`).
+- **Response**:
   ```json
   {
     "success": true,
-    "message": "Thêm khách hàng thành công",
-    "data": { 
-      "_id": "string",
-      "phone": "string",
-      "name": "string",
-      "type": "string", // "retail" hoặc "wholesale" (hoặc "normal" nếu service không được truyền đúng)
-      "points": "number",
-      "totalSpent": "number"
-      // "idCard" sẽ không được lưu nếu service không được sửa để nhận nó.
+    "message": "Đã đánh dấu các hóa đơn quá hạn thành nợ xấu thành công",
+    "data": {
+      "updatedCount": "number" // Số lượng hóa đơn đã được cập nhật
     }
-  }
-  ```
-
-#### 6.3. Tìm kiếm khách hàng theo số điện thoại
-- **URL**: `/customers/phone/:phone`
-- **Method**: `GET`
-- **Description**: Lấy thông tin chi tiết của một khách hàng bằng số điện thoại.
-- **Parameters**: 
-  - `phone`: Số điện thoại của khách hàng (bắt buộc).
-- **Response**: 
-  ```json
-  {
-    "success": true,
-    "data": { /* ... customer object ... */ }
-  }
-  ```
-
-#### 6.4. Cập nhật điểm tích lũy và công nợ khách hàng
-- **URL**: `/customers/points`
-- **Method**: `POST`
-- **Description**: Cập nhật điểm tích lũy và tổng chi tiêu hiện tại cho một khách hàng đã tồn tại. Nếu khách hàng không tìm thấy, một bản ghi khách hàng mới sẽ được tạo chỉ với số điện thoại.
-- **Body**: 
-  ```json
-  {
-    "phone": "string",         // Số điện thoại khách hàng (bắt buộc)
-    "points": "number",        // Số điểm muốn cộng thêm (tùy chọn, mặc định 0)
-    "totalSpent": "number"     // Tổng chi tiêu muốn cộng thêm (tùy chọn, mặc định 0)
-  }
-  ```
-- **Response**: 
-  ```json
-  {
-    "success": true,
-    "message": "Cập nhật điểm và công nợ khách hàng thành công", // Message này có thể không phản ánh việc công nợ được cập nhật
-    "data": { /* ... updated customer object ... */ }
   }
   ```
 

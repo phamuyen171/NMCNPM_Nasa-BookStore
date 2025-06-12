@@ -121,6 +121,35 @@ class InvoiceController {
             });
         }
     }
+
+    // Đánh dấu hóa đơn là đã thanh toán
+    async markInvoiceAsPaid(req, res, next) {
+        try {
+            const { id } = req.params;
+            const updatedInvoice = await invoiceService.markInvoiceAsPaid(id);
+            res.status(200).json({
+                success: true,
+                message: 'Đánh dấu hóa đơn đã thanh toán thành công',
+                data: updatedInvoice
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    // Đánh dấu các hóa đơn quá hạn thành nợ xấu
+    async markOverdueInvoicesAsBadDebt(req, res, next) {
+        try {
+            const result = await invoiceService.markOverdueInvoicesAsBadDebt();
+            res.status(200).json({
+                success: true,
+                message: 'Đã đánh dấu các hóa đơn quá hạn thành nợ xấu thành công',
+                data: result
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 module.exports = new InvoiceController();
