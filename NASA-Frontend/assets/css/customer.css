@@ -1,0 +1,83 @@
+body {
+    font-family: Arial, sans-serif;
+}
+.filter-box {
+    border: 1px solid #1d2088;
+    border-radius: 10px;
+    padding: 10px 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.filter-label {
+    font-weight: bold;
+    color: #1d2088;
+}
+
+.filter-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.active {
+    background-color: #1d2088;
+    color: white;
+}
+
+.inactive {
+    background-color: #d5dcf7;
+    color: #000;
+}
+
+#customers-container {
+  flex-grow: 1; /* chiếm toàn bộ phần trống, đẩy pagination xuống dưới */
+  overflow-y: auto; /* cuộn nếu danh sách dài */
+}
+
+.col-md-10 {
+  display: flex;
+  flex-direction: column;
+}
+
+.table thead {
+  color: #fff;
+  font-weight: bold;
+}
+.table-primary {
+  --bs-table-bg: #1a3a9c !important;
+}
+
+.table td, .table th {
+  vertical-align: middle;
+}
+
+.badge.bg-danger {
+  background-color: #f8352762 !important;
+  color: red;
+}
+
+#staffs-container{
+  padding: 5px 20px 0 0 ;
+}
+
+tr.selected {
+  background-color: #dbe4fe !important;
+}
+
+#notice-text {
+    color: #0D47A1; /* Màu xanh dương đậm */
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 24px; /* Tùy chỉnh kích thước */
+    font-family: Arial, sans-serif;
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+}

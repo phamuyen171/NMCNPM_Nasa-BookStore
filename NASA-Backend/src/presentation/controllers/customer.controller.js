@@ -1,4 +1,5 @@
 const Customer = require('../../data/models/customer.model');
+const customerService = require('../../business/services/customer.service');
 
 // Tạo hoặc lấy thông tin khách hàng theo số điện thoại
 exports.createOrGetCustomer = async (req, res) => {
@@ -92,3 +93,32 @@ exports.getCompanyInfoByName = async (req, res) => {
         res.status(500).json({ success: false, message: 'Lỗi server khi lấy thông tin công ty' });
     }
 }; 
+
+exports.getRetailCustomer = async(req, res) => {
+    try{
+        const retailCustomer = await customerService.getRetailCustomer();
+        return res.status(200).json({ success: true, message: "Lấy danh sách khách hàng bán lẻ thành công", data: retailCustomer});
+
+    } catch (error){
+        res.status(400).json({ success: false, message: error.message });
+    }
+};
+
+exports.getWholestailCustomer = async(req, res) => {
+    try{
+        const wholesaleCustomer = await customerService.getWholestailCustomer();
+        return res.status(200).json({ success: true, message: "Lấy danh sách khách hàng bán sỉ thành công", data: wholesaleCustomer});
+
+    } catch (error){
+        res.status(400).json({ success: false, message: error.message });
+    }
+};
+
+exports.resetPoints = async(req, res) => {
+    try{
+        await customerService.resetPoints();
+        return res.status(200).json({ success: true, message: "Điểm tích lũy đã được reset thành công."});
+    } catch (error) {
+        res.status(400).json({ success: false, message: error.message});
+    }
+};
