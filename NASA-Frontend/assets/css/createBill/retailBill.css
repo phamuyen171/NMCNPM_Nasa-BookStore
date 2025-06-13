@@ -10,8 +10,9 @@
   border-radius: 12px;
   padding: 10px;
   background-color: #f5f8ff;
-  height: 120px;
+  height: 140px;
 }
+
 
 .product-box img {
   width: 80px;
@@ -21,8 +22,9 @@
 }
 
 .product-info {
-  font-size: 14px;
+  font-size: 13px;
 }
+
 
 .product-info strong {
   font-size: 15px;
@@ -33,6 +35,7 @@
 .product-price {
   color: #1a3a9c;
   font-weight: bold;
+  font-size: 14px;
 }
 
 .prev-page, .next-page{
