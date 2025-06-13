@@ -34,7 +34,7 @@ const bookController = {
                     success: false,
                     message: `Lỗi validation: ${firstErrorMessage}`,
                     invalidField: firstInvalidField, // Trường không hợp lệ
-                    errorType: error.errors[firstInvalidField].kind 
+                    errorType: error.errors[firstInvalidField].kind
                 });
             } else {
                 next(error);
@@ -71,6 +71,23 @@ const bookController = {
             next(error);
         }
     },
+
+    // Lấy danh sách sách phổ biến
+    async getPopularBooks(req, res, next) {
+            try {
+                console.log('Controller: Getting popular books...');
+                const limit = parseInt(req.query.limit) || 4;
+                const popularBooks = await bookService.getPopularBooks(limit);
+                console.log('Controller: Found popular books:', popularBooks);
+                res.status(200).json({
+                    success: true,
+                    data: popularBooks
+                });
+            } catch (error) {
+                console.error('Controller Error in getPopularBooks:', error.message); 
+                next(error); // Chuyển tiếp lỗi đến middleware xử lý lỗi
+            }
+        },
 
     // Lấy thông tin một cuốn sách
     async getBookById(req, res, next) {

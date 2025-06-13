@@ -430,7 +430,7 @@ Authorization: Bearer <your_jwt_token>
 ### 6. Quản lý Hóa Đơn (Invoice Management)
 
 #### 6.1. Lấy danh sách sách phổ biến (Get Popular Books)
-- **URL**: `/invoices/popular-books`
+- **URL**: `/books/popular-books`
 - **Method**: `GET`
 - **Description**: Lấy danh sách các cuốn sách được bán chạy nhất.
 - **Response**:
@@ -441,11 +441,12 @@ Authorization: Bearer <your_jwt_token>
       {
         "id": "string",
         "title": "string",
+        "author": "string", 
         "price": "number",
-        "salesCount": "number",
-        "quantity": "number",
+        "soldQuantity": "number", 
+        "quantity": "number", 
         "image": "string",
-        "description": "string"
+        "description": "string" 
       }
     ]
   }

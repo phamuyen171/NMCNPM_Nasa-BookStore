@@ -93,6 +93,19 @@ class BookService {
         }
     }
 
+    // Service: Lấy danh sách sách phổ biến 
+    async getPopularBooks(limit = 4) {
+            try {
+                const popularBooks = await Book.find({ isDeleted: false })
+                    .sort({ soldQuantity: -1 })
+                    .limit(limit)
+                    .select('_id title author price quantity image soldQuantity');
+                return popularBooks;
+            } catch (error) {
+                throw error;
+            }
+    }
+
     // Service: Lấy thông tin chi tiết của một cuốn sách theo ID
     async getBookById(id) {
         try {

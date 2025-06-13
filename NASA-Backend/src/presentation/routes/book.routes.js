@@ -6,6 +6,7 @@ const bookController = require('../controllers/book.controller');
 router.get('/', bookController.getAllBooks); // Lấy danh sách sách
 router.get('/search', bookController.searchBooks); // Tìm kiếm sách
 router.get('/lowstock', bookController.getLowStockBooks); // Lấy sách tồn kho thấp
+router.get('/popular-books', bookController.getPopularBooks); // Lấy sách phổ biến
 router.get('/available/:id', bookController.isBookAvailable); // Kiểm tra sách có sẵn
 router.get('/:id', bookController.getBookById); // Lấy chi tiết sách
 
