@@ -1,14 +1,75 @@
 .list-board,
 .detail-board {
-    background-color: #fff !important;
+  background-color: #fff !important;
 }
 
 /* ==============================Danh sách====================== */
-#books-container .card {
-  transition: transform 0.2s ease-in-out;
+.product-box {
+  display: flex;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 10px;
+  background-color: #f5f8ff;
+  height: 120px;
 }
 
-#books-container .card:hover {
-  transform: scale(1.02);
+.product-box img {
+  width: 80px;
+  height: 100px;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.product-info {
+  font-size: 14px;
+}
+
+.product-info strong {
+  font-size: 15px;
+  display: block;
+  color: #333;
+}
+
+.product-price {
+  color: #1a3a9c;
+  font-weight: bold;
+}
+
+.prev-page, .next-page{
+  color: #fff;
+  background-color: #3a85d6;
+}
+.prev-page:hover{
+  background-color: #85b1e1;
+}
+.next-page:hover{
+  background-color: #85b1e1;
+}
+
+/* ========================================== Chi tiết ================================ */
+.remove-item{
+  color: rgb(235, 10, 10);
+  background-color: #f1b6b6;
+}
+.remove-item:hover{
+  color: white;
+  background-color: #db1010;
+}
+
+#continue-btn{
+  padding: 8px;
+}
+.disabled-link {
+  background-color: gray !important;
+  color: white !important;
+  pointer-events: none;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+.valid-continue-btn {
+  background-color: #1a3a9c;
+  color: white;
+  pointer-events: auto;
   cursor: pointer;
+  text-decoration: none;
 }

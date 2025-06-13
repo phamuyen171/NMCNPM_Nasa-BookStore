@@ -51,13 +51,12 @@
 
             <!-- Chia 2 bảng -->
             <div class="split-board d-flex justify-content-center align-items-start">
-                <!-- Bảng 1 -->
-                
+                <!-- Bảng 1 -->  
                 <div class="container-fluid list-board d-flex flex-column">
-                    <p class="board-title text-center">DANH SÁCH SẢN PHẨM</p>
-                    <!-- Ô Tìm kiếm -->
-                    <div class="board-body d-flex justify-content-center align-items-start flex-grow-1">
-                      <div class="search-box position-relative me-md-4" style="min-width: 200px;">
+                  <p class="board-title text-center">DANH SÁCH SẢN PHẨM</p>
+                  <!-- Ô Tìm kiếm -->
+                  <div class="board-body d-flex justify-content-center align-items-start" style="flex-grow: 0;">
+                    <div class="search-box position-relative me-md-4" style="min-width: 200px;">
                         <i class="fa fa-search position-absolute" style="top: 50%; left: 10px; transform: translateY(-50%); color: #4365b4;"></i>
                         <input
                           type="search"
@@ -65,25 +64,39 @@
                           class="form-control"
                           id="search-input"
                           aria-label="Search"
-                          style="padding-left: 35px; border: none; border-bottom: 1px solid #ccc; outline: none; box-shadow: none;"
+                          style="padding-left: 35px; color:#1a3a9c; border: none; border-bottom: 1px solid #456de4; outline: none; box-shadow: none;"
                         />
-                      </div>
                     </div>
+                  </div>
 
-                    <!-- Danh sách sản phẩm-->
-                    <div id="books-container" class="row g-3 px-3"></div>    
-                    <div id="pagination-container" class="mt-3"></div>
+                  <!-- Danh sách sản phẩm-->
+                  <div id="product-wrapper" class="border rounded p-4 container" style="max-height: 500px; overflow-y: auto;">
+                    <div id="product-grid" class="gy-3"></div>
+                  </div>
+                  <div class="d-flex justify-content-between mt-2">
+                    <button class="btn prev-page" onclick="prevPage()">&larr;</button>
+                    <button class="btn next-page" onclick="nextPage()">&rarr;</button>
+                  </div>
                 </div>
                
-
-
                 <!-- Bảng 2 -->
-                <div class="container-fluid detail-board d-flex flex-column">
-                    <p class="board-title text-center">CHI TIẾT SẢN PHẨM</p>
-                    <div class="board-body d-flex justify-content-center align-items-center flex-grow-1">
-                      <p class="text-center">Vui lòng chọn loại hoá đơn</p>
-                    </div>
+              <div class="container-fluid detail-board d-flex flex-column">
+                <p class="board-title text-center fw-bold">CHI TIẾT HÓA ĐƠN</p>
+                <div id="invoice-items" class="board-body d-flex justify-content-start flex-column p-2" style="overflow-y: auto;">
+                  <!-- Các sản phẩm được chọn sẽ hiển thị tại đây -->
                 </div>
+
+                <hr style="margin: 5px 0;" />
+                <div class="px-3 pb-2">
+                  <div class="d-flex justify-content-between"><span>Tổng số sản phẩm:</span> <span id="total-quantity">0</span></div>
+                  <div class="d-flex justify-content-between"><span>Tạm tính:</span> <span id="subtotal">0</span></div>
+                </div>
+
+                <div class="px-3 pb-3 d-flex align-items-center gap-2">
+                  <input type="text" id="staff-code" class="form-control" placeholder="Nhập Mã nhân viên" style="flex: 1;" />
+                  <a href="./finishRetailBill.html" id="continue-btn" class="btn btn-secondary disabled-link">Tiếp tục</a>
+                </div>
+              </div>
             </div>
         </div>
       </div>
@@ -100,7 +113,8 @@
 
 
       <script type="module" src="../../assets/js/bill.js"></script>
-      <script type="module" src="../../assets/js/detailBooks.js"></script>
+      <script type="module" src="../../assets/js/createBill/retailBill.js"></script>
+    
       <!-- js bootstrap -->
       <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
@@ -113,7 +127,5 @@
     <script src="../../components/js/delete-confirm.js"></script>
     <script src="../../components/js/error-modal.js"></script>
     <script src="../../components/js/success-modal.js"></script>
-
-    <script src="../../assets/js/deleteBook.js"></script>
   </body>
 </html>

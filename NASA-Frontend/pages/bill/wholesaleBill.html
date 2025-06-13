@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="../../assets/css/login.css" />
     <link rel="stylesheet" href="../../assets/css/detailBooks.css" />
     <link rel="stylesheet" href="../../assets/css/bill.css" />
+    <link rel="stylesheet" href="../../assets/css/createBill/retailBill.css" />
     <link rel="stylesheet" href="../../assets/css/createBill/wholesaleBill.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 
@@ -49,22 +50,95 @@
               <a href="./wholesaleBill.html" class="wholesale-bill px-3 bill-active">HOÁ ĐƠN BÁN SỈ</a>
             </div>
 
+            <!-- TT Đơn vị mua hàng -->
+            <div class="container-fluid customer-board d-flex flex-column my-3">
+              <p class="board-title text-center">THÔNG TIN ĐƠN VỊ MUA HÀNG</p>
+             <div class="row">
+              <div class="col-md-2"></div>
+              <div class="col-md-8 mx-4">
+                  <div class="form-group row mb-1">
+                    <label class="col-sm-3 col-form-label">Tên đơn vị mua hàng:</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" placeholder="Công ty...." id="name">
+                    </div>
+                  </div>
+                  <div class="form-group row mb-1">
+                    <label class="col-sm-3 col-form-label">Mã số thuế:</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" placeholder="" id="code-tax" readonly>
+                    </div>
+                  </div>
+                  <div class="form-group row mb-1">
+                    <label class="col-sm-3 col-form-label">Địa chỉ:</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" placeholder="" id="address" readonly>
+                    </div>
+                  </div>
+                  <div class="form-group row mb-1">
+                    <label class="col-sm-3 col-form-label">Tên người mua:</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" placeholder="Nguyễn Văn A" id="name">
+                    </div>
+                  </div>
+                  <div class="form-group row mb-1">
+                    <label class="col-sm-3 col-form-label">Số điện thoại:</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" placeholder="097468438..." id="name">
+                    </div>
+                  </div>
+              </div>
+              <div class="col-md-2"></div>
+             </div>
+            </div>
+
             <!-- Chia 2 bảng -->
             <div class="split-board d-flex justify-content-center align-items-start">
-                <!-- Bảng 1 -->
+                <!-- Bảng 1 -->  
                 <div class="container-fluid list-board d-flex flex-column">
-                    <p class="board-title text-center">DANH SÁCH SẢN PHẨM</p>
-                    <div class="board-body d-flex justify-content-center align-items-center flex-grow-1">
-                    <p class="text-center">Vui lòng chọn loại hoá đơn</p>
+                  <p class="board-title text-center">DANH SÁCH SẢN PHẨM</p>
+                  <!-- Ô Tìm kiếm -->
+                  <div class="board-body d-flex justify-content-center align-items-start" style="flex-grow: 0;">
+                    <div class="search-box position-relative me-md-4" style="min-width: 200px;">
+                        <i class="fa fa-search position-absolute" style="top: 50%; left: 10px; transform: translateY(-50%); color: #4365b4;"></i>
+                        <input
+                          type="search"
+                          placeholder="Tìm kiếm..."
+                          class="form-control"
+                          id="search-input"
+                          aria-label="Search"
+                          style="padding-left: 35px; color:#1a3a9c; border: none; border-bottom: 1px solid #456de4; outline: none; box-shadow: none;"
+                        />
                     </div>
+                  </div>
+
+                  <!-- Danh sách sản phẩm-->
+                  <div id="product-wrapper" class="border rounded p-4 container" style="max-height: 500px; overflow-y: auto;">
+                    <div id="product-grid" class="gy-3"></div>
+                  </div>
+                  <div class="d-flex justify-content-between mt-2">
+                    <button class="btn prev-page" onclick="prevPage()">&larr;</button>
+                    <button class="btn next-page" onclick="nextPage()">&rarr;</button>
+                  </div>
                 </div>
+               
                 <!-- Bảng 2 -->
-                <div class="container-fluid detail-board d-flex flex-column">
-                    <p class="board-title text-center">CHI TIẾT SẢN PHẨM</p>
-                    <div class="board-body d-flex justify-content-center align-items-center flex-grow-1">
-                    <p class="text-center">Vui lòng chọn loại hoá đơn</p>
-                    </div>
+              <div class="container-fluid detail-board d-flex flex-column">
+                <p class="board-title text-center fw-bold">CHI TIẾT HÓA ĐƠN</p>
+                <div id="invoice-items" class="board-body d-flex justify-content-start flex-column p-2" style="overflow-y: auto;">
+                  <!-- Các sản phẩm được chọn sẽ hiển thị tại đây -->
                 </div>
+
+                <hr style="margin: 5px 0;" />
+                <div class="px-3 pb-2">
+                  <div class="d-flex justify-content-between"><span>Tổng số sản phẩm:</span> <span id="total-quantity">0</span></div>
+                  <div class="d-flex justify-content-between"><span>Tạm tính:</span> <span id="subtotal">0</span></div>
+                </div>
+
+                <div class="px-3 pb-3 d-flex align-items-center gap-2">
+                  <input type="text" id="staff-code" class="form-control" placeholder="Nhập Mã nhân viên" style="flex: 1;" />
+                  <a href="./finishRetailBill.html" id="continue-btn" class="btn btn-secondary disabled-link">Tiếp tục</a>
+                </div>
+              </div>
             </div>
         </div>
       </div>
@@ -81,6 +155,9 @@
 
 
       <script type="module" src="../../assets/js/bill.js"></script>
+      <script type="module" src="../../assets/js/createBill/retailBill.js"></script>
+      <script type="module" src="../../assets/js/createBill/wholesaleBill.js"></script>
+    
       <!-- js bootstrap -->
       <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
@@ -93,7 +170,5 @@
     <script src="../../components/js/delete-confirm.js"></script>
     <script src="../../components/js/error-modal.js"></script>
     <script src="../../components/js/success-modal.js"></script>
-
-    <script src="../../assets/js/deleteBook.js"></script>
   </body>
 </html>
