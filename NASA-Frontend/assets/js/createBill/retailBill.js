@@ -29,7 +29,7 @@ function renderPage() {
         const book = pageItems[0];
         col.innerHTML = `
         <div class="product-box mb-2 book-item"
-            data-id="${book.id}"
+            data-id="${book._id}"
             data-title="${book.title}"
             data-author="${book.author}"
             data-sales="${book.salesCount}"
@@ -61,20 +61,20 @@ function renderPage() {
 
         col.innerHTML = `
         <div class="product-box mb-2 book-item"
-            data-id="${book.id}"
+            data-id="${book._id}"
             data-title="${book.title}"
             data-author="${book.author}"
-            data-sales="${book.salesCount}"
+            data-soldQuantity = "${book.soldQuantity}"
             data-quantity="${book.quantity}"
             data-price="${book.price}"
             data-image="${book.image}"
           >
           <img src="${book.image}" alt="${book.title}">
           <div class="product-info">
-            <strong>${book.title}</strong>
+            <div class="book-title"><strong>${book.title}</strong></div>
             <div class="pb-1">(${book.author})</div>
-            <div>Đã bán: ${book.salesCount}</div>
             <div>Số lượng: ${book.quantity}</div>
+            <div>Đã bán: ${book.soldQuantity}</div>
             <div class="product-price">${Number(book.price).toLocaleString()} $</div>
           </div>
         </div>
@@ -89,7 +89,7 @@ function renderPage() {
   document.querySelectorAll('.book-item').forEach(item => {
     item.addEventListener('click', () => {
       const book = {
-        id: item.dataset.id,
+        _id: item.dataset.id,
         name: item.dataset.title,
         price: parseFloat(item.dataset.price),
         quantity: parseInt(item.dataset.quantity)
@@ -134,7 +134,7 @@ function handleSearch(event) {
 
 // Gọi API khi trang tải
 document.addEventListener("DOMContentLoaded", function () {
-  fetch('http://localhost:3000/api/invoices/popular-books')
+  fetch('http://localhost:3000/api/books/popular-books')
     .then(response => response.json())
     .then(result => {
       if (result.success) {
@@ -211,13 +211,14 @@ function formatCurrency(number) {
 }
 
 function addToInvoice(book) {
-  if (invoiceItems[book.id]) return; // tránh trùng sách
+  console.log("Thêm sách với ID:", book._id);
+  if (invoiceItems[book._id]) return; // tránh trùng sách
 
   const container = document.getElementById('invoice-items');
 
   const row = document.createElement('div');
   row.className = 'invoice-item w-100 mb-2';
-  row.dataset.bookId = book.id;
+  row.dataset.bookId = book._id;
 
   row.innerHTML = `
     <div class="invoice-row d-grid align-items-center w-100"
@@ -233,13 +234,13 @@ function addToInvoice(book) {
   `;
 
   container.appendChild(row);
-  invoiceItems[book.id] = { book, quantity: 1 };
+  invoiceItems[book._id] = { book, quantity: 1 };
 
   updateTotals();
 
   // Xử lý xóa
   row.querySelector('.remove-item').onclick = () => {
-    delete invoiceItems[book.id];
+    delete invoiceItems[book._id];
     row.remove();
     updateTotals();
   };
@@ -257,12 +258,11 @@ function addToInvoice(book) {
       errorMsg.style.display = 'block';
     } else {
       errorMsg.style.display = 'none';
-      invoiceItems[book.id].quantity = val;
+      invoiceItems[book._id].quantity = val;
       updateTotals();
     }
   });
 }
-
 
 function updateTotals() {
   let totalQty = 0, subtotal = 0;
