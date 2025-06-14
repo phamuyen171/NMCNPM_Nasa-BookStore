@@ -632,6 +632,65 @@ Authorization: Bearer <your_jwt_token>
   }
   ```
 
+  ### 7. Báo Cáo & Thống Kê
+
+#### 7.1. Thống kê nhập sách
+- **URL**: `/reports/book-imports`
+- **Method**: `GET`
+- **Description**: Lấy số liệu thống kê chi tiết các đơn nhập sách, bao gồm Tên sách, Nhà xuất bản, Ngày nhập, Đơn giá nhập, Số lượng nhập và Thành tiền. Hỗ trợ lọc theo thời gian.
+- **Query Parameters**:
+  - `day` (optional): Ngày cụ thể (số nguyên).
+  - `month` (optional): Tháng cụ thể (số nguyên, 1-12).
+  - `year` (optional): Năm cụ thể (số nguyên, bắt buộc nếu có `day` hoặc `month`).
+- **Response**:
+  ```json
+  {
+    "details": [
+      {
+        "Tên sách": "string",
+        "Nhà xuất bản": "string",
+        "Ngày nhập": "string (DD/MM/YYYY)",
+        "Đơn giá nhập": "number",
+        "Số lượng nhập": "number",
+        "Thành tiền": "number"
+      }
+    ],
+    "totalAmount": "number" // Tổng cộng thành tiền của tất cả các mục đã lọc
+  }
+  ```
+
+#### 7.2. Thống kê bán hàng
+- **URL**: `/reports/sales`
+- **Method**: `GET`
+- **Description**: Lấy số liệu thống kê chi tiết các hóa đơn bán hàng. Hỗ trợ lọc theo thời gian và tìm kiếm theo Mã hóa đơn, Nhân viên, SĐT Khách hàng.
+- **Query Parameters**:
+  - `day` (optional): Ngày cụ thể (số nguyên).
+  - `month` (optional): Tháng cụ thể (số nguyên, 1-12).
+  - `year` (optional): Năm cụ thể (số nguyên, bắt buộc nếu có `day` hoặc `month`).
+  - `searchField` (optional): Trường để tìm kiếm (`invoiceId`, `staffName`, `customerPhone`).
+  - `searchKeyword` (optional): Từ khóa tìm kiếm (bắt buộc nếu có `searchField`).
+- **Response**:
+  ```json
+  {
+    "details": [
+      {
+        "Tên sách": "string",
+        "Nhà xuất bản": "string",
+        "Tác giả": "string",
+        "Ngày bán": "string (DD/MM/YYYY)",
+        "Đơn giá bán": "number",
+        "Số lượng bán": "number",
+        "Thành tiền": "number",
+        "Mã hóa đơn": "string",
+        "Nhân viên": "string",
+        "SĐT Khách hàng": "string",
+        "GHI CHÚ": "string" // 'Đã thanh toán đủ', 'Đang chờ thanh toán', 'Thu hồi ghi nợ', hoặc rỗng
+      }
+    ],
+    "totalAmount": "number" // Tổng cộng thành tiền của tất cả các mục đã lọc
+  }
+  ```
+
 ## Error Responses
 
 Tất cả các API đều có thể trả về lỗi với format:
