@@ -8,6 +8,9 @@ router.get('/popular-books', invoiceController.getPopularBooks);
 // Tạo hóa đơn mới
 router.post('/', invoiceController.createInvoice);
 
+// Tạo mã hóa đơn: R0001 - cho KH mua lẻ, và W0001: cho KH mua sỉ
+router.post('/create-invoice-id/:type', invoiceController.createInvoiceId);
+
 // Lấy danh sách hóa đơn
 router.get('/', invoiceController.getInvoices);
 

@@ -86,6 +86,9 @@ const customerSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
+// Thêm compound index để phone chỉ cần unique trong cùng type
+customerSchema.index({ phone: 1, type: 1 }, { unique: true });
+
 const Customer = mongoose.model('Customer', customerSchema);
 
 module.exports = Customer; 

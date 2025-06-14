@@ -12,4 +12,6 @@ router.get('/filter-customer/retail', customerController.getRetailCustomer);
 router.get('/filter-customer/wholesale', customerController.getWholestailCustomer);
 router.put('/reset-points', customerController.resetPoints);
 
+router.post('/check-representative', customerController.checkRepresentative);
+
 module.exports = router;

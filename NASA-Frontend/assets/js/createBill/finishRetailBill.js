@@ -1,5 +1,5 @@
 // Xử lý dữ liệu phẩn hoá đơn
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
   // IN Thời gian hiện tại
   const now = new Date();
 
@@ -14,9 +14,15 @@ window.addEventListener('DOMContentLoaded', () => {
   const staffCode = localStorage.getItem('staffCode') || '';
   // Lấy mã hóa đơn
   try {
-    // const resInvoice = await fetch('/api/hoadon/mamoi'); // Gọi API tạo mã hoá đơn mới
-    // const invoiceData = await resInvoice.json();
-    document.getElementById('ma-hoa-don').innerText = invoiceData.maHoaDon || 'Không rõ';
+    const resInvoice = await fetch(`http://localhost:3000/api/invoices/create-invoice-id/retail`, {
+      method: "POST"
+    }); // Gọi API tạo mã hoá đơn mới
+    const invoiceData = await resInvoice.json();
+    if (!invoiceData.success){
+      console.error('Không thể tạo mã hóa đơn mới');
+      return;
+    }
+    document.getElementById('ma-hoa-don').innerText = invoiceData.invoiceID;
   } catch (error) {
     console.error('Lỗi khi lấy mã hoá đơn:', error);
     document.getElementById('ma-hoa-don').innerText = 'Lỗi tải mã';
@@ -25,9 +31,13 @@ window.addEventListener('DOMContentLoaded', () => {
   // Lấy thông tin nhân viên theo staffCode
   if (staffCode) {
     try {
-      // const resStaff = await fetch(`/api/nhanvien/${staffCode}`); // Gọi API lấy nhân viên
-      // const staffData = await resStaff.json();
-      document.getElementById('nhan-vien').innerText = `${staffData.tenNhanVien} - ${staffData.maNhanVien}`;
+      const resStaff = await fetch(`http://localhost:3000/api/staff/check-staff-exist/${staffCode}`); // Gọi API lấy nhân viên
+      const staffData = await resStaff.json();
+      if (!staffData){
+        console.error('Lỗi không tìm thấy nhân viên');
+        return;
+      }
+      document.getElementById('nhan-vien').innerText = `${staffData.data.fullName} - ${staffData.data.username}`;
     } catch (error) {
       console.error('Lỗi khi lấy nhân viên:', error);
       document.getElementById('nhan-vien').innerText = `Không xác định - ${staffCode}`;
@@ -55,7 +65,7 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('total-qty').innerText = totalQty;
-  document.getElementById('total-price').innerText = parseInt(totalPrice).toLocaleString() + '$';
+  document.getElementById('total-price').innerText = totalPrice.toLocaleString() + '$';
 
   //========================== Xử lý Tạo mới và Bỏ qua ===============================================
   const customerBox = document.getElementById('customer-info');
@@ -115,16 +125,17 @@ window.addEventListener('DOMContentLoaded', () => {
     timeout = setTimeout(async () => {
       if (phone.length == 10) { // Chỉ gọi nếu số điện thoại đủ độ dài
         try {
-          // const res = await fetch(`/api/khachhang/${phone}`); // Thay URL API thật
-          // if (!res.ok) throw new Error('Không tìm thấy khách hàng');
-          // const data = await res.json();
+          const res = await fetch(`http://localhost:3000/api/customers/phone/${phone}`); // Thay URL API thật
+          if (!res.ok) throw new Error('Không tìm thấy khách hàng');
+          const data = await res.json();
 
           // Gán dữ liệu vào ô nhập
-          nameInput.value = data.tenKhachHang || '';
-          pointsInput.value = data.diemTichLuy ?? 0;
+          nameInput.value = data.data.name || '';
+          pointsInput.value = data.data.points ?? 0;
 
         } catch (error) {
-          console.warn('Không tìm thấy khách hàng:', error);
+          // console.warn('Không tìm thấy khách hàng:', error);
+          showModalError("LỖI TẠO ĐƠN HÀNG", error.message);
           nameInput.value = '';
           pointsInput.value = '';
         }

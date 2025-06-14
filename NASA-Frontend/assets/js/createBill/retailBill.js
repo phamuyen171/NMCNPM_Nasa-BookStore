@@ -4,6 +4,10 @@ let booksData = [];         // Dữ liệu gốc từ API
 let filteredBooks = [];     // Dữ liệu sau khi tìm kiếm
 let currentPage = 0;
 const itemsPerPage = 4;
+const invoiceItems = {};
+
+let checkErrorQuantity = false;
+let checkStaffId = false;
 
 
 // Hàm render trang
@@ -32,7 +36,7 @@ function renderPage() {
             data-id="${book._id}"
             data-title="${book.title}"
             data-author="${book.author}"
-            data-sales="${book.salesCount}"
+            data-sales="${book.soldQuantity}"
             data-quantity="${book.quantity}"
             data-price="${book.price}"
             data-image="${book.image}"
@@ -41,7 +45,7 @@ function renderPage() {
           <div class="product-info">
             <strong>${book.title}</strong>
             <div class="pb-1">(${book.author})</div>
-            <div>Đã bán: ${book.salesCount}</div>
+            <div>Đã bán: ${book.soldQuantity}</div>
             <div>Số lượng: ${book.quantity}</div>
             <div class="product-price">${Number(book.price).toLocaleString()} $</div>
           </div>
@@ -133,36 +137,73 @@ function handleSearch(event) {
 }
 
 // Gọi API khi trang tải
-document.addEventListener("DOMContentLoaded", function () {
-  fetch('http://localhost:3000/api/books/popular-books')
-    .then(response => response.json())
-    .then(result => {
-      if (result.success) {
-        booksData = result.data;
-        filteredBooks = [...booksData];
-        renderPage();
+document.addEventListener("DOMContentLoaded", async function () {
+  let totalPages = 1;
+  let totalBooks = 0;
+  let limitbe = 0;
+
+  try {
+    const response = await fetch(`http://localhost:3000/api/books?page=1`);
+    const result = await response.json();
+
+    if (result.success) {
+      totalBooks = result.data.total;
+      limitbe = result.data.limit;
+      booksData.push(result.data.books);
+
+      totalPages = Math.ceil(totalBooks / limitbe);
+    } else {
+      console.error("Không lấy được dữ liệu trang 1");
+      return;
+    }
+
+    for (let i = 2; i <= totalPages; i++) {
+      const res = await fetch(`http://localhost:3000/api/books?page=${i}`);
+      const data = await res.json();
+
+      if (data.success) {
+        booksData.push(data.data.books);
+      } else {
+        console.warn(`Không lấy được trang ${i}`);
       }
-    })
-    .catch(error => {
-      console.error("Lỗi khi gọi API:", error);
-    });
+    }
+
+    booksData = booksData.flat();
+  } catch (error) {
+    console.error("Lỗi khi gọi API:", error);
+  }
+  
+  filteredBooks = booksData;
+  renderPage();
 
   // Bắt sự kiện gõ vào ô tìm kiếm
-  document.getElementById('search-input').addEventListener('input', handleSearch);
+  document.getElementById('search-input-books').addEventListener('input', handleSearch);
 
   //Thêm sự kiện cho staff-code ở đây
   const staffInput = document.getElementById('staff-code');
   const continueBtn = document.getElementById('continue-btn');
 
-  staffInput.addEventListener('input', () => {
-    const code = staffInput.value.trim();
+  staffInput.addEventListener('keydown', async (event) => {
+    let code;
+    if (event.key === 'Enter'){
+      code = staffInput.value.trim();
+      if (code === ''){
+        continueBtn.classList.remove('valid-continue-btn');
+        continueBtn.classList.add('disabled-link');
+        return;
+      }
+      try{
+        const response = await fetch(`http://localhost:3000/api/staff/check-staff-exist/${code}`);
+        if (!response.ok){
+          throw new Error("Sai mã nhân viên");
+        }
+        checkStaffId = true;
+      } catch (error){
+        showModalError("LỖI TẠO HÓA ĐƠN", 'Mã nhân viên không tồn tại. Hãy nhập đúng mã nhân viên của bạn!');
+        checkStaffId = false;
+      }
 
-    if (code !== '') {
-      continueBtn.classList.remove('disabled-link');
-      continueBtn.classList.add('valid-continue-btn');
-    } else {
-      continueBtn.classList.remove('valid-continue-btn');
-      continueBtn.classList.add('disabled-link');
+      canDisabledButton(invoiceItems, checkStaffId);
     }
   });
 
@@ -203,16 +244,18 @@ document.addEventListener("DOMContentLoaded", function () {
 window.nextPage = nextPage;
 window.prevPage = prevPage;
 
-// ==========================================BẢNG 2: CHI TIẾT===============================================
-const invoiceItems = {};
+// ==========================================BẢNG 2: CHI TIẾT==============================================
   
 function formatCurrency(number) {
   return Number(number).toLocaleString('vi-VN');
 }
 
 function addToInvoice(book) {
-  console.log("Thêm sách với ID:", book._id);
-  if (invoiceItems[book._id]) return; // tránh trùng sách
+  // console.log("Thêm sách với ID:", book);
+  if (invoiceItems[book._id]) {
+    showModalError("LỖI TẠO HÓA ĐƠN", `Sách <b>${book.name}</b> đã được chọn.`);
+    return; // tránh trùng sách
+  }
 
   const container = document.getElementById('invoice-items');
 
@@ -243,6 +286,7 @@ function addToInvoice(book) {
     delete invoiceItems[book._id];
     row.remove();
     updateTotals();
+    canDisabledButton(invoiceItems, checkStaffId);
   };
 
   // Xử lý nhập số lượng
@@ -256,11 +300,14 @@ function addToInvoice(book) {
       errorMsg.style.display = 'none';
     } else if (val > book.quantity) {
       errorMsg.style.display = 'block';
+      invoiceItems[book._id].quantity = val
     } else {
       errorMsg.style.display = 'none';
       invoiceItems[book._id].quantity = val;
       updateTotals();
     }
+
+    canDisabledButton(invoiceItems, checkStaffId);
   });
 }
 
@@ -275,3 +322,22 @@ function updateTotals() {
   document.getElementById('subtotal').innerText = formatCurrency(subtotal);
 }
 
+function canDisabledButton(invoiceItems, checkStaffId){
+  const continueBtn = document.getElementById('continue-btn');
+  if (Object.keys(invoiceItems).length === 0 || !checkStaffId){
+    continueBtn.classList.remove('valid-continue-btn');
+    continueBtn.classList.add('disabled-link');
+    return;
+  }
+  checkErrorQuantity = Object.values(invoiceItems).some(book => {
+    return book.quantity > book.book.quantity;
+  });
+  // const continueBtn = document.getElementById('continue-btn');
+  if (checkErrorQuantity) {
+    continueBtn.classList.remove('valid-continue-btn');
+    continueBtn.classList.add('disabled-link');
+  } else {
+    continueBtn.classList.remove('disabled-link');
+    continueBtn.classList.add('valid-continue-btn');
+  }
+}

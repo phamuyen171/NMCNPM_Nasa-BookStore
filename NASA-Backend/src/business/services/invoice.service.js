@@ -16,14 +16,14 @@ class InvoiceService {
         try {
             // Lấy tất cả sách chưa bị xóa mềm và sắp xếp theo số lượng bán
             const books = await Book.find({ isDeleted: { $ne: true } })
-                .sort({ salesCount: -1 }) // Sắp xếp giảm dần theo số lượng bán
+                .sort({ soldQuantity: -1 }) // Sắp xếp giảm dần theo số lượng bán
                 .select('title author category price salesCount quantity image description'); // Chỉ lấy các trường cần thiết
 
             return books.map(book => ({
                 id: book._id,
                 title: book.title,
                 price: book.price,
-                salesCount: book.salesCount || 0,
+                salesCount: book.soldQuantity || 0,
                 quantity: book.quantity
             }));
         } catch (error) {

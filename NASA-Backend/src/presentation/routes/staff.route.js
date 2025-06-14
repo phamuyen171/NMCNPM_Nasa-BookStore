@@ -14,4 +14,6 @@ router.put('/change-status/:id', staffController.changeStatus);
 
 router.delete('/delete-staff/:id', staffController.deleteStaff);
 
+router.get('/check-staff-exist/:staffId', staffController.checkStaffExist);
+
 module.exports = router;
