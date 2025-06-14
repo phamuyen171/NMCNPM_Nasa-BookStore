@@ -7,6 +7,7 @@ const itemsPerPage = 4;
 const invoiceItems = {};
 
 let checkErrorQuantity = false;
+let checkStaffId = false;
 
 
 // Hàm render trang
@@ -196,18 +197,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (!response.ok){
           throw new Error("Sai mã nhân viên");
         }
+        checkStaffId = true;
       } catch (error){
         showModalError("LỖI TẠO HÓA ĐƠN", 'Mã nhân viên không tồn tại. Hãy nhập đúng mã nhân viên của bạn!');
-        checkErrorQuantity = true;
+        checkStaffId = false;
       }
 
-      if (code !== '' && checkErrorQuantity === false && Object.keys(invoiceItems).length !== 0) {
-        continueBtn.classList.remove('disabled-link');
-        continueBtn.classList.add('valid-continue-btn');
-      } else {
-        continueBtn.classList.remove('valid-continue-btn');
-        continueBtn.classList.add('disabled-link');
-      }
+      canDisabledButton(invoiceItems, checkStaffId);
     }
   });
 
@@ -290,23 +286,11 @@ function addToInvoice(book) {
     delete invoiceItems[book._id];
     row.remove();
     updateTotals();
-    
-    if (Object.keys(invoiceItems).length === 0){
-      const continueBtn = document.getElementById('continue-btn');
-      continueBtn.classList.remove('valid-continue-btn');
-      continueBtn.classList.add('disabled-link');
-      checkErrorQuantity = false;
-    }
+    canDisabledButton(invoiceItems, checkStaffId);
   };
 
   // Xử lý nhập số lượng
   const qtyInput = row.querySelector('.quantity');
-  const staffInput = document.getElementById('staff-code');
-  const continueBtn = document.getElementById('continue-btn');
-  if (qtyInput && !checkErrorQuantity && staffInput.value.trim() !== ''){
-    continueBtn.classList.remove('disabled-link');
-    continueBtn.classList.add('valid-continue-btn');
-  }
   const errorMsg = row.querySelector('.error-msg');
 
   qtyInput.addEventListener('input', () => {
@@ -314,28 +298,16 @@ function addToInvoice(book) {
     if (isNaN(val) || val < 1) {
       qtyInput.value = 1;
       errorMsg.style.display = 'none';
-      checkErrorQuantity = false;
     } else if (val > book.quantity) {
       errorMsg.style.display = 'block';
-      checkErrorQuantity = true;
+      invoiceItems[book._id].quantity = val
     } else {
       errorMsg.style.display = 'none';
       invoiceItems[book._id].quantity = val;
       updateTotals();
-      checkErrorQuantity = false;
     }
-      const staffInput = document.getElementById('staff-code');
-      const continueBtn = document.getElementById('continue-btn');
-      if (staffInput.value.trim() !== ''){
-        if (!checkErrorQuantity){
-          continueBtn.classList.remove('disabled-link');
-          continueBtn.classList.add('valid-continue-btn');
-        }
-      }
-      else{
-        continueBtn.classList.remove('valid-continue-btn');
-        continueBtn.classList.add('disabled-link');
-      }
+
+    canDisabledButton(invoiceItems, checkStaffId);
   });
 }
 
@@ -350,3 +322,22 @@ function updateTotals() {
   document.getElementById('subtotal').innerText = formatCurrency(subtotal);
 }
 
+function canDisabledButton(invoiceItems, checkStaffId){
+  const continueBtn = document.getElementById('continue-btn');
+  if (Object.keys(invoiceItems).length === 0 || !checkStaffId){
+    continueBtn.classList.remove('valid-continue-btn');
+    continueBtn.classList.add('disabled-link');
+    return;
+  }
+  checkErrorQuantity = Object.values(invoiceItems).some(book => {
+    return book.quantity > book.book.quantity;
+  });
+  // const continueBtn = document.getElementById('continue-btn');
+  if (checkErrorQuantity) {
+    continueBtn.classList.remove('valid-continue-btn');
+    continueBtn.classList.add('disabled-link');
+  } else {
+    continueBtn.classList.remove('disabled-link');
+    continueBtn.classList.add('valid-continue-btn');
+  }
+}

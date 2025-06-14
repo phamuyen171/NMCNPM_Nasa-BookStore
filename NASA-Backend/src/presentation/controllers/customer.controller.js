@@ -122,3 +122,16 @@ exports.resetPoints = async(req, res) => {
         res.status(400).json({ success: false, message: error.message});
     }
 };
+
+exports.checkRepresentative = async(req, res) =>{
+    try{
+        const {companyName, taxId, name, phone} = req.body;
+        const customer = await Customer.findOne({ companyName, taxId, name, phone, isDeleted: false});
+        if (!customer){
+            throw new Error("Người đại diện không đúng với công ty.");
+        }
+        res.status(200).json({ success: true, message: "Người đại diện phù hợp với công ty."});
+    } catch (error){
+        res.status(500).json({ success: false, message: error.message});
+    }
+}
