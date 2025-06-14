@@ -77,7 +77,7 @@ class BookService {
 
             // Thực hiện query với lọc, phân trang, và sắp xếp
             const books = await Book.find(filter)
-                .select('title author price quantity description category publisher priceImport status image') // Đã sửa coverImage thành image
+                .select('title author price quantity description category publisher priceImport status image soldQuantity') // Đã sửa coverImage thành image
                 .sort({ [sortBy]: order })
                 .skip(skip)
                 .limit(limit);

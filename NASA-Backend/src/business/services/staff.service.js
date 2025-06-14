@@ -188,6 +188,19 @@ class StaffService {
             throw error;
         }
     }
+
+    async checkStaffExist(staffId){
+        try{
+            const staff = await Staff.findOne({ username: staffId, isDeleted: false});
+            if (!staff) {
+                throw new Error(`Không tồn tại nhân viên có mã nhân viên ${staffId}`)
+            }
+            return staff;
+        } catch (error){
+            throw error;
+        }
+
+    }
 }
 
 module.exports = new StaffService();

@@ -115,6 +115,16 @@ class staffController {
     }
   }
 
+  async checkStaffExist(req, res){
+    try{
+        const staff = await staffService.checkStaffExist(req.params.staffId);
+        return res.status(200).json({ success: true, message: "Lấy thông tin nhân viên thành công", data: staff});
+    }
+    catch (error){
+        return res.status(500).json({ success: false, message: error.message});
+    }
+  }
+
 }
 
 

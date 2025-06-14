@@ -150,6 +150,30 @@ class InvoiceController {
             next(error);
         }
     }
+
+    async createInvoiceId(res, req){
+        try{
+            const invoiceCounts = await Invoice.countDocuments({customerType: res.params.type});
+            let invoiceId;
+            if (res.params.type === "retail") invoiceId = 'R';
+            else if (res.params.type === "wholesale") invoiceId = 'W';
+            else throw new Error("Sai loại khách hàng");
+            const paddedNumber = String(invoiceCounts + 1).padStart(4, '0'); 
+            invoiceId += paddedNumber;
+            return req.status(200).json({
+                success: true,
+                message: 'Tạo mã hóa đơn thành công',
+                invoiceID: invoiceId
+            });
+        }
+        catch (error){
+            // next(error);
+            return req.status(400).json({
+                success: false,
+                message: 'Tạo mã hóa đơn thất bại',
+            });
+        }
+    }
 }
 
 module.exports = new InvoiceController();

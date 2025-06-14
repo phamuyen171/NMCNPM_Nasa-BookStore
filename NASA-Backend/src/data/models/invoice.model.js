@@ -45,7 +45,7 @@ const invoiceSchema = new mongoose.Schema({
     status: {
         type: String,
         enum: ['paid', 'debt', 'bad_debt'],
-        required: true
+        required: true,
     },
     customerPhone: {
         type: String,
