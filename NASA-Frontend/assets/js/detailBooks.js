@@ -1,5 +1,7 @@
 // books.js
 import { renderPagination } from "../../components/js/pagination.js";
+import { showEditOverlay, setupEditOverlayEvents } from "../../components/js/edit-book-overlay.js";
+
 
 export async function getBooksByPage(apiUrl) {
   const response = await fetch(apiUrl, {
@@ -50,7 +52,7 @@ export function renderBooks(bookList, importMode=false) {
             <div class="dropdown ms-2">
               <button class="btn bg-white btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"></button>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item update-btn" href="#">Cập nhật</a></li>
+                <li><a class="dropdown-item update-btn" href="#" data-id="${book._id}">Cập nhật</a></li>
                 <li><a class="dropdown-item delete-btn" data-id="${book._id}" data-title="${book.title}">Xoá</a></li>
               </ul>
             </div>
@@ -91,6 +93,24 @@ export function renderBooks(bookList, importMode=false) {
       `;
     }
     container.appendChild(bookCard);
+    document.querySelectorAll(".update-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const card = btn.closest(".card");
+        const book = {
+          _id: btn.dataset.id,
+          title: card.querySelector("h5").textContent,
+          author: card.querySelector(".book-author").textContent.replace("Tác giả: ", ""),
+          category: card.querySelector(".book-cate").textContent.replace("Thể loại: ", ""),
+          publisher: card.querySelector(".book-publisher").textContent.replace("Nhà xuất bản: ", ""),
+          price: card.querySelector(".book-price").textContent.replace("Giá: ", "").replace(" đ", ""),
+          quantity: card.querySelector(".book-quan").textContent.replace("Số lượng: ", ""),
+          description: card.querySelector(".book-des").textContent.replace("Mô tả: ", ""),
+          image: card.querySelector("img").src,
+        };
+        showEditOverlay(book);
+      });
+    });
   });
 }
 
@@ -154,5 +174,17 @@ async function initBooks(page = 1) {
 if (window.location.pathname.includes("detailBooks.html")) {
   initBooks();
 }
+// Load HTML overlay component trước khi setup
+window.addEventListener("DOMContentLoaded", () => {
+  const container = document.getElementById("edit-overlay-container");
+  const url = container.dataset.url;
+  fetch(url)
+    .then(res => res.text())
+    .then(html => {
+      container.innerHTML = html;
+      setupEditOverlayEvents(); // sau khi HTML đã gắn vào DOM
+    });
+});
+
 
 

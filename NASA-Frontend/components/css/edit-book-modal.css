@@ -1,0 +1,20 @@
+.modal-overlay.delete {
+  background: rgba(0, 0, 0, 0.4);
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-box.delete {
+  background: #fff;
+  max-width: 500px;
+  width: 90%;
+  border: 2px solid #123eb6;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
