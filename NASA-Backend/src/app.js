@@ -9,7 +9,8 @@ const staffRoutes = require('./presentation/routes/staff.route'); // Đường d
 const importOrderRoutes = require('./presentation/routes/import-order.routes'); // Thêm routes cho đơn nhập sách
 const invoiceRoutes = require('./presentation/routes/invoice.routes'); // Đường dẫn đến invoice routes
 const customerRoutes = require('./presentation/routes/customer.routes');
-const imageRoutes = require('./presentation/routes/image.routes')
+const imageRoutes = require('./presentation/routes/image.routes');
+const ruleRoutes = require('./presentation/routes/rule.routes');
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use('/api/books', importOrderRoutes); // Thêm routes cho đơn nhập sách
 app.use('/api/invoices', invoiceRoutes); // Thêm routes cho hóa đơn
 app.use('/api/customers', customerRoutes); // Thêm routes cho khách hàng
 app.use('api/image', imageRoutes);
+app.use('/api/rules', ruleRoutes);
 
 // Middleware xử lý lỗi TẬP TRUNG
 // Bắt các lỗi được ném ra (thrown) từ controllers hoặc service
