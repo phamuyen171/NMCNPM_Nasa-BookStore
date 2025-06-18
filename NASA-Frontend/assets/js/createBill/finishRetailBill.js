@@ -235,7 +235,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   // Sử dụng điểm
   document.getElementById('btn-use-points').addEventListener('click', () => {
-    isDiscount = true;
     const continueBtn = document.querySelector('.btn-continue');
 
     const rawTotal = parseFloat(totalPrice);
