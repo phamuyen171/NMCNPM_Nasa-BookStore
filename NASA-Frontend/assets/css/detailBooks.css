@@ -1,7 +1,8 @@
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
-} 
+}
 
 body {
   display: flex;
@@ -11,7 +12,8 @@ body {
 
 /* header và footer có chiều cao cố định */
 #header {
-  height: 70px; /* thay bằng đúng chiều cao header bạn load */
+  height: 70px;
+  /* thay bằng đúng chiều cao header bạn load */
   /* margin-bottom: 25px; */
 }
 
@@ -22,15 +24,19 @@ body {
   overflow: hidden;
 }
 
-a{
-    text-decoration: none;
+a {
+  text-decoration: none;
 }
+
 .row {
   flex-grow: 1;
 }
-.col-md-2, .col-md-10 {
+
+.col-md-2,
+.col-md-10 {
   height: 100%;
 }
+
 .sidebar {
   width: 250px;
   background-color: #c1cef4;
@@ -39,6 +45,7 @@ a{
   flex-direction: column;
   overflow-y: auto;
 }
+
 .nav-item {
   padding: 12px;
   text-decoration: none;
@@ -47,12 +54,13 @@ a{
   text-align: center;
   transition: background-color 0.3s;
 }
+
 .nav-item:hover {
-  background-color: #a6bdf7; 
+  background-color: #a6bdf7;
 }
 
 .nav-item.active {
-  background-color: #94ACF1; 
+  background-color: #94ACF1;
 }
 
 .card {
@@ -60,16 +68,49 @@ a{
   min-height: 280px;
   max-height: 280px;
 }
-.book-des{
-  max-height: 9.0em;           /* ~2 dòng nếu font-size là 1.2em */
+
+.book-des {
+  max-height: 9.0em;
+  /* ~2 dòng nếu font-size là 1.2em */
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 2;       /* số dòng hiển thị tối đa */
+  display: box;
+  /* Added for better compatibility */
+  -webkit-line-clamp: 2;
+  /* số dòng hiển thị tối đa */
+  line-clamp: 2;
+  /* Added for better compatibility */
   -webkit-box-orient: vertical;
-  line-height: 1.5em;          
+  line-height: 1.5em;
 }
 
 .mt-3 {
   margin-bottom: 15px;
+}
+
+.edit-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.edit-box {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 70%;
+  max-width: 800px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.edit-overlay.active {
+  display: flex;
 }
