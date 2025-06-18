@@ -1,3 +1,4 @@
+/* Xử lý bảng 1 */
 .box-bordered {
   border: 1px solid #1a3a9c;
   border-radius: 10px;
@@ -9,9 +10,15 @@
 }
 
 .board-title{
-    color: #0f107c;
+  color: #0f107c;
 }
 
+#final-price{
+  color:#1a3a9c;
+}
+
+
+/* Xử lý bảng 2 */
 .btn-skip{
   color: black;
   background-color: #d9d9d9;
@@ -34,4 +41,31 @@
 }
 .btn-continue{
   font-weight: bold;
+}
+
+.btn-disabled {
+  pointer-events: none;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Xử lý nút Sử dụng và không sử dụng cho giảm giá */
+.customer-use-point{
+  color:#1a3a9c;
+  font-size: 14px;
+}
+#btn-use-points{
+  background-color: #101289;
+  color: white;
+}
+#btn-use-points:hover{
+  background-color: #5f61d7;
+}
+
+#btn-not-use-points{
+  background-color: #ba1b1b;
+  color: white;
+}
+#btn-not-use-points:hover{
+  background-color: #d26666;
 }
