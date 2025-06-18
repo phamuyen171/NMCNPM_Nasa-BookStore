@@ -1,6 +1,5 @@
 // Xử lý dữ liệu phẩn hoá đơn
 window.addEventListener('DOMContentLoaded', async () => {
-  let isDiscount = false;
   // IN Thời gian hiện tại
   const now = new Date();
 
