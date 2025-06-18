@@ -157,6 +157,7 @@ document.getElementById("create-account").addEventListener("click", function () 
       const data_res = await res.json();
       console.log(data_res);
       if (!res.ok) throw new Error(data_res.message);
+      const tenNhanVien = document.getElementById("name").value.trim();
       
       showSuccessModal(
         "THÊM NHÂN VIÊN",

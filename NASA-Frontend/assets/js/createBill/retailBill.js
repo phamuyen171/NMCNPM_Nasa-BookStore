@@ -8,6 +8,7 @@ const invoiceItems = {};
 
 let checkErrorQuantity = false;
 let checkStaffId = false;
+let isCheckingStaff = false;
 
 
 // Hàm render trang
@@ -192,6 +193,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         continueBtn.classList.add('disabled-link');
         return;
       }
+
+      if (isCheckingStaff) return;
+      isCheckingStaff=true;
+
       try{
         const response = await fetch(`http://localhost:3000/api/staff/check-staff-exist/${code}`);
         if (!response.ok){
@@ -202,10 +207,36 @@ document.addEventListener("DOMContentLoaded", async function () {
         showModalError("LỖI TẠO HÓA ĐƠN", 'Mã nhân viên không tồn tại. Hãy nhập đúng mã nhân viên của bạn!');
         checkStaffId = false;
       }
-
+      isCheckingStaff=false
       canDisabledButton(invoiceItems, checkStaffId);
     }
   });
+  // Kiểm tra lại khi người dùng rời khỏi ô nhập
+  staffInput.addEventListener('blur', async () => {
+    const code = staffInput.value.trim();
+    if (code === '') {
+      checkStaffId = false;
+      canDisabledButton(invoiceItems, checkStaffId);
+      return;
+    }
+
+    if (isCheckingStaff) return;
+    isCheckingStaff = true;
+
+    try {
+      const response = await fetch(`http://localhost:3000/api/staff/check-staff-exist/${code}`);
+      if (!response.ok) {
+        throw new Error("Sai mã nhân viên");
+      }
+      checkStaffId = true;
+    } catch (error) {
+      showModalError("LỖI TẠO HÓA ĐƠN", 'Mã nhân viên không tồn tại. Hãy nhập đúng mã nhân viên của bạn!');
+      checkStaffId = false;
+    }
+    isCheckingStaff = false;
+    canDisabledButton(invoiceItems, checkStaffId);
+  });
+
 
   // Ngăn chặn chuyển trang nếu chưa nhập mã
   continueBtn.addEventListener('click', (e) => {

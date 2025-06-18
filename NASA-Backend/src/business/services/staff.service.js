@@ -191,7 +191,13 @@ class StaffService {
 
     async checkStaffExist(staffId){
         try{
-            const staff = await Staff.findOne({ username: staffId, isDeleted: false});
+            const staff = await Staff.findOne({
+                username: staffId,
+                $or: [
+                    { isDeleted: false },
+                    { isDeleted: { $exists: false } }
+                ]
+            });
             if (!staff) {
                 throw new Error(`Không tồn tại nhân viên có mã nhân viên ${staffId}`)
             }

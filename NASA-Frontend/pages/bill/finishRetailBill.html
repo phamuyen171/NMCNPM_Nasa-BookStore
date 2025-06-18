@@ -94,9 +94,36 @@
                                 <label for="points" class="col-sm-3 col-form-label info-customer">Điểm tích lũy:</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" id="points" placeholder="Điểm được nhập tự động sau khi nhập SDT" disabled>
+                                    
+
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <!-- Nút SỬ DỤNG và Modal -->
+                    <div id="loyalty-wrapper" class="d-flex justify-content-between align-items-center mt-2">
+                        <small id="loyalty-used-msg" class="text-danger fst-italic d-none mb-0">
+                            Đã sử dụng điểm tích lũy cho hóa đơn này
+                        </small>
+                        <div id="loyalty-section" class="w-100 d-flex justify-content-end"></div>
+                    </div>
+                    <div class="modal fade" id="pointModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Sử dụng điểm tích lũy</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="number" id="pointsToUse" class="form-control mb-2" placeholder="Nhập điểm muốn sử dụng">
+                            <div class="text-muted">1 điểm = 1,000₫</div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button class="btn btn-primary" id="confirmUsePoints">Xác nhận</button>
+                        </div>
+                        </div>
+                    </div>
                     </div>
 
                     <div id="skip-message" class="text-center text-muted fst-italic mt-2 d-none">

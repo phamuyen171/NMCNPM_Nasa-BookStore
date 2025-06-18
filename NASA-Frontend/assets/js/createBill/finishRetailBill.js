@@ -104,6 +104,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (skipMsg) skipMsg.classList.remove('d-none');
     customerBox.style.backgroundColor = '#d9d9d9';
     if (continueBtn) continueBtn.innerText = 'TẠO HÓA ĐƠN';
+    document.getElementById('loyalty-used-msg').style.display = 'none';
+
   });
 
   //============================== API TT khách hàng ====================================
@@ -132,6 +134,18 @@ window.addEventListener('DOMContentLoaded', async () => {
           // Gán dữ liệu vào ô nhập
           nameInput.value = data.data.name || '';
           pointsInput.value = data.data.points ?? 0;
+          // Nếu đủ điểm thì hiện nút "SỬ DỤNG"
+          const loyaltySection = document.getElementById('loyalty-section');
+          loyaltySection.innerHTML = ''; // reset
+          if ((data.data.points ?? 0) >= 30) {
+            loyaltySection.innerHTML = `
+              <button class="btn btn-primary fw-bold btn-sm en" data-bs-toggle="modal" data-bs-target="#pointModal">
+                SỬ DỤNG
+              </button>
+            `;
+            window.maxPoints = data.data.points; // lưu vào biến toàn cục
+          }
+
 
         } catch (error) {
           // console.warn('Không tìm thấy khách hàng:', error);
@@ -147,6 +161,55 @@ window.addEventListener('DOMContentLoaded', async () => {
     }, 500);
   });
 });
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('confirmUsePoints')?.addEventListener('click', () => {
+    const input = document.getElementById('pointsToUse');
+    const points = parseInt(input.value);
+
+    if (isNaN(points) || points < 1 || points > (window.maxPoints || 0)) {
+      alert(`Vui lòng nhập số điểm từ 1 đến ${window.maxPoints}`);
+      return;
+    }
+
+    const discount = points * 1000;
+    const rawTotal = parseInt(localStorage.getItem('totalPrice')) || 0;
+    const finalTotal = Math.max(0, rawTotal - discount);
+
+    localStorage.setItem('usedPoints', points);
+    localStorage.setItem('finalPriceAfterPoints', finalTotal);
+
+    document.getElementById('total-price').innerText = `${finalTotal.toLocaleString()}₫`;
+    const loyaltyMsg = document.getElementById('loyalty-used-msg');
+    loyaltyMsg.classList.remove('d-none');
+    loyaltyMsg.textContent = 'Đã sử dụng điểm tích lũy cho hóa đơn này';
+    loyaltyMsg.style.color = 'red';
+// Ngắt sự kiện sử dụng điểm  
+    const useBtn = document.querySelector('#loyalty-section button');
+    if (useBtn)
+      useBtn.disabled = true;
+      useBtn.classList.add('btn-secondary');
+      useBtn.classList.remove('btn-primary');
+    const skipSection = document.getElementById('skip-section');
+    if (skipSection) skipSection.classList.add('d-none');
+    const modal = bootstrap.Modal.getInstance(document.getElementById('pointModal'));
+    modal.hide();
+  });
+});
+document.querySelector('.btn-continue')?.addEventListener('click', () => {
+  const usedPoints = localStorage.getItem('usedPoints');
+  const loyaltySection = document.getElementById('loyalty-section');
+  const loyaltyMsg = document.getElementById('loyalty-used-msg');
+
+  if (!usedPoints && loyaltySection.innerHTML.includes('SỬ DỤNG')) {
+    loyaltyMsg.textContent = 'Khách hàng không sử dụng điểm tích lũy';
+    loyaltyMsg.style.color = 'gray';
+    loyaltyMsg.style.display = 'block';
+  }
+
+  document.querySelector('.btn-continue').innerText = 'TẠO HÓA ĐƠN';
+});
+
+
 
 
 
