@@ -1,0 +1,65 @@
+<div class="edit-overlay">
+  <div class="edit-box p-4 bg-white rounded shadow" style="max-width: 960px; width: 95%;">
+    <h5 class="mb-4 text-center text-primary">Cập nhật sách</h5>
+    <form id="edit-book-form">
+      <div class="row g-4">
+
+        <!-- Cột trái: thông tin sách -->
+        <div class="col-md-8">
+          <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Tên sách:</label>
+              <input type="text" class="form-control" id="edit-title" placeholder="Tên sách">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Tác giả:</label>
+              <input type="text" class="form-control" id="edit-author" placeholder="Tác giả">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Thể loại:</label>
+              <input type="text" class="form-control" id="edit-category" placeholder="Thể loại">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Nhà xuất bản:</label>
+              <input type="text" class="form-control" id="edit-publisher" placeholder="Nhà xuất bản">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Số lượng:</label>
+              <input type="number" class="form-control" id="edit-quantity" placeholder="Số lượng">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Giá:</label>
+              <input type="number" class="form-control" id="edit-price" placeholder="Giá" step="1.00">
+            </div>
+          </div>
+        </div>
+
+        <!-- Cột phải: ảnh -->
+        <div class="col-md-4 d-flex flex-column">
+          <label for="edit-image" class="form-label fw-bold">Dán link ảnh:</label>
+          <div class="border border-2 rounded text-center p-3 h-100 d-flex flex-column justify-content-center">
+            <div id="edit-image-placeholder" class="mb-2">
+              <i class="fa-solid fa-camera fa-2x mb-2 text-secondary"></i>
+              <p class="mb-2 fw-bold">Dán link hình ảnh</p>
+            </div>
+            <input type="text" class="form-control" placeholder="https://example.com/image.jpg" id="edit-image">
+          </div>
+        </div>
+        
+
+      </div>
+      <div class="mb-4 mt-3">
+        <label class="form-label">Mô tả:</label>
+        <textarea class="form-control" rows="3" placeholder="Nhập mô tả sách" id="edit-description"></textarea>
+      </div>
+
+      <!-- Nút -->
+      <div class="mt-4 text-end">
+        <button type="button" class="btn btn-secondary me-2" id="cancelEditBtn">Hủy</button>
+        <button type="button" class="btn btn-primary" id="saveEditBtn">Lưu</button>
+      </div>
+    </form>
+    
+  </div>
+</div>
+

@@ -10,6 +10,7 @@ const importOrderRoutes = require('./presentation/routes/import-order.routes'); 
 const invoiceRoutes = require('./presentation/routes/invoice.routes'); // Đường dẫn đến invoice routes
 const customerRoutes = require('./presentation/routes/customer.routes');
 const imageRoutes = require('./presentation/routes/image.routes');
+const reportRoutes = require('./presentation/routes/report.routes');
 const ruleRoutes = require('./presentation/routes/rule.routes');
 
 const app = express();
@@ -29,6 +30,7 @@ app.use('/api/books', importOrderRoutes); // Thêm routes cho đơn nhập sách
 app.use('/api/invoices', invoiceRoutes); // Thêm routes cho hóa đơn
 app.use('/api/customers', customerRoutes); // Thêm routes cho khách hàng
 app.use('api/image', imageRoutes);
+app.use('/api/reports', reportRoutes); // Thêm routes cho báo cáo
 app.use('/api/rules', ruleRoutes);
 
 // Middleware xử lý lỗi TẬP TRUNG
