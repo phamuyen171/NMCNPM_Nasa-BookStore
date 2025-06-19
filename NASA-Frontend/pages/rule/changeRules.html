@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- css bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="../../assets/css/login.css" />
+    <link rel="stylesheet" href="../../assets/css/mainSidebar.css" />
+    <link rel="stylesheet" href="../../assets/css/changeRules.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../../components/css/error-modal.css" />
+    <link rel="stylesheet" href="../../components/css/success-modal.css" />
+    <link rel="stylesheet" href="../../components/css/confirm-modal.css" />
+
+    <title>Nhà Sách NASA</title>
+
+  </head>
+  <body data-modal-error-src="../../components/html/error-modal.html" data-modal-success-src="../../components/html/success-modal.html" 
+  data-modal-confirm-src="../../components/html/confirm-modal.html">
+    <div class="container-fluid layout-root min-vh-100 d-flex flex-column justify-content-between">
+      <!-- Header -->
+      <div id="header" data-url="../../layouts/html/header.html"></div>
+      
+
+      <!-- Content -->
+      <div class="row">
+        <!-- LEFT -->
+        <div class="col-auto main-layout left">
+          <div class="sidebar">
+            <ul class="nav flex-column text-white">
+                <li class="nav-item">
+                    <a class="nav-link main" href="../dashboard/dashboard.html"><i class="fas fa-home me-2"></i> TRANG CHỦ</a>
+                </li>
+                <hr class="text-white">
+                <li class="nav-item">
+                    <a class="nav-link" href="../book/detailBooks.html"><i class="fa-solid fa-book me-2"></i> Sách</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../bill/bill.html"><i class="fa-solid fa-money-bills me-2"></i> Hoá Đơn</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../customer/customer.html"><i class="fa-solid fa-user me-2"></i> Khách Hàng</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../staff/staff.html"><i class="fa-solid fa-clipboard-user me-2"></i> Nhân Viên</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="../rule/changeRules.html"><i class="fas fa-sliders-h me-2"></i> Thay đổi quy định</a>
+                </li>
+            </ul>
+           </div>
+
+        </div>
+
+        <!-- RIGHT -->
+        <div class="col-md-9 p-4">
+            <h2 class="text-center fw-bold mb-4" style="font-weight: bold;color: #1d2088;">
+                THAY ĐỔI QUY ĐỊNH
+            </h2>
+
+            <div class="row mb-4">
+                <!-- Sách -->
+                <div class="col-auto" style="width: 45%;">
+                    <div class="box custom-border p-4 h-100">
+                        <h4 class="fw-bold">SÁCH</h4>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3" style="margin-top: 10px;">
+                            <label class="mb-0">Số lượng nhập tối thiểu:</label>
+                            <input class="form-control text-center input-fixed" type="number" placeholder="50" id="minImportBook">
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <label class="mb-0">Số lượng nhập tối đa:</label>
+                            <input class="form-control text-center input-fixed" type="number" placeholder="100" id="maxImportBook">
+                        </div>
+                        
+                        <div  class="d-flex justify-content-between align-items-center mb-3">
+                            <label class="mb-0">Số lượng tồn tối đa cho phép nhập thêm:</label>
+                            <input class="form-control text-center input-fixed" type="number" placeholder="20" id="maxImportableBook">
+                        </div>
+                    </div>
+                </div>
+                <!-- Ghi nợ -->
+                <div class="col-auto" style="width: 55%;">
+                    <div class="box custom-border p-4 h-100">
+                        <h4 class="fw-bold">GHI NỢ</h4>
+                        <div class="d-flex align-items-center mb-2">
+                            <div style="width: 50%; margin-right: 10px; margin-top: 10px;">
+                                <label>Đối với khoản nợ nhỏ dưới:</label>
+                                <input class="form-control mb-2" type="text" placeholder="1.000.000" id="maxLowDebt">
+                            </div>
+                            <div class="mb-2" style="width: 50%; margin-left: 30px; margin-top: 10px;">
+                                <label>Thời gian cho phép hoàn nợ:</label>
+                                <div class="d-flex align-items-center">
+                                    <input class="form-control me-2 input-small" type="number" placeholder="60" id="timeLowDebt">
+                                    <span>ngày</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center mb-2">
+                            <div style="width: 50%; margin-right: 10px;">
+                                <label>Đối với khoản nợ lớn dưới:</label>
+                                <input class="form-control mb-2" type="text" placeholder="10.000.000" id="maxHighDebt">
+                            </div>
+                            <div class="mb-2" style="width: 50%; margin-left: 30px;">
+                                <label>Thời gian cho phép hoàn nợ:</label>
+                                <div class="d-flex align-items-center">
+                                    <input class="form-control me-2 input-small" type="number" placeholder="180" id="timeHighDebt">
+                                    <span>ngày</span>
+                                </div>
+                            </div>
+                        </div>                    
+                    </div>
+                </div>
+            </div>
+
+            <!-- Điểm tích lũy -->
+            <div class="box custom-border p-4" style="margin-bottom: 10px;">
+                <h4 class="fw-bold">ĐIỂM TÍCH LŨY</h4>
+
+                <div class="d-flex align-items-center mb-2">
+                    <div style="width: 50%; margin-right: 10px; margin-top: 10px;">
+                        <label>Giá trị hóa đơn tối thiểu được sử dụng điểm:</label>
+                        <input class="form-control mb-2" type="text" placeholder="200.000" id="minBillValue">
+                    </div>
+                    <div class="mb-2" style="width: 50%; margin-left: 30px;  margin-top: 10px;">
+                        <label>Số điểm tích lũy tối thiểu để được sử dụng:</label>
+                        <input class="form-control me-2" type="text" placeholder="1000" id="minPointToUse">
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center mb-2">
+                    <div style="width: 50%; margin-right: 10px; margin-top: 10px;">
+                        <label>Giá trị tiền mặt có thể quy đổi được 1 điểm:</label>
+                        <input class="form-control mb-2" type="text" placeholder="1.000" id="cashToPoint">
+                    </div>
+                    <div class="mb-2" style="width: 50%; margin-left: 30px;  margin-top: 10px;">
+                        <label>1 điểm tích lũy có thể giảm được:</label>
+                        <input class="form-control me-2" type="text" placeholder="50" id="pointToCash">
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center mb-2">
+                    <div style="width: 50%; margin-right: 10px; margin-top: 10px;">
+                        <label>Số điểm tối thiểu được sử dụng trong một hóa đơn:</label>
+                        <input class="form-control mb-2" type="text" placeholder="1000" id="minUsedLevel">
+                    </div>                    
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button class="btn btn-primary px-4 fw-bold" id="update-btn" disabled>CẬP NHẬT</button>
+            </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div id="footer" data-url="../../layouts/html/footer.html"></div>
+
+      <script type="module" src="../../assets/js/changeRules.js"></script>
+      <!-- js bootstrap -->
+      <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"
+      ></script>
+    </div>
+    <script src="../../layouts/js/layout-loader.js"></script>
+    
+    <script src="../../components/js/error-modal.js"></script>
+    <script src="../../components/js/success-modal.js"></script>
+    <script src="../../components/js/confirm-modal.js"></script>
+
+  </body>
+</html>

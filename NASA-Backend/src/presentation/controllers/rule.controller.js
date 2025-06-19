@@ -32,7 +32,6 @@ class ruleController {
     try{
         const rules = await Rule.findOne();
         if (!rules) return res.status(404).json({success: false, message: "Không tìm thấy quy định."});
-
         for (const groupKey of ['book', 'point', 'debt']){
             if(req.body[groupKey]){
                 if (!rules[groupKey]) rules[groupKey] = {};
