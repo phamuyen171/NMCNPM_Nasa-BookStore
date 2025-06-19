@@ -77,6 +77,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   let nameInput = document.getElementById('name');
   let pointsInput = document.getElementById('points');
   const continueBtn = document.querySelector('.btn-continue');
+  continueBtn.classList.add('btn-disabled');
+  continueBtn.classList.remove('btn-primary');
+
   
   // Hàm kiểm tra và bật/tắt nút "TẠO HÓA ĐƠN"
   function updateContinueButtonState() {
@@ -91,6 +94,18 @@ window.addEventListener('DOMContentLoaded', async () => {
       continueBtn.classList.remove('btn-primary');
     }
   }
+  function updateContinueBtnStateForExistingCustomer() {
+    const isPhoneValid = /^\d{10}$/.test(phoneInput.value.trim());
+    const isNameFilled = nameInput.value.trim() !== '';
+    if (isPhoneValid && isNameFilled) {
+      continueBtn.classList.remove('btn-disabled');
+      continueBtn.classList.add('btn-primary');
+    } else {
+      continueBtn.classList.add('btn-disabled');
+      continueBtn.classList.remove('btn-primary');
+    }
+  }
+
 
   // Lắng nghe sự kiện nhập liệu
   phoneInput.addEventListener('input', updateContinueButtonState);
@@ -159,6 +174,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   // const continueBtn = document.querySelector('.btn-continue');
 
   let timeout = null;
+  let hasChosenRewardOption = false;
+
 
   phoneInput.addEventListener('input', () => {
     if (isCreatingNewCustomer) return;
@@ -179,6 +196,8 @@ window.addEventListener('DOMContentLoaded', async () => {
           // Gán dữ liệu vào ô nhập
           nameInput.value = data.data.name || '';
           pointsInput.value = data.data.points ?? 0;
+          updateContinueBtnStateForExistingCustomer();
+
 
           const points = parseInt(pointsInput.value);
 
@@ -221,25 +240,44 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         } catch (error) {
           // console.warn('Không tìm thấy khách hàng:', error);
-          showModalError("LỖI TẠO ĐƠN HÀNG", error.message);
+          showModalError("Lỗi", "Số điện thoại không tồn tại!");
           nameInput.value = '';
           pointsInput.value = '';
+          updateContinueBtnStateForExistingCustomer();
         }
       } else {
         // Nếu xoá hết hoặc nhập quá ngắn, reset
         nameInput.value = '';
         pointsInput.value = '';
+        updateContinueBtnStateForExistingCustomer();
       }
     }, 500);
   });
 
   // Sử dụng điểm
   document.getElementById('btn-use-points').addEventListener('click', () => {
-    const continueBtn = document.querySelector('.btn-continue');
+    // Mở modal nhập điểm
+    hasChosenRewardOption = true;
+    const usePointsModal = new bootstrap.Modal(document.getElementById('usePointsModal'));
+    document.getElementById('points-to-use').value = ''; // reset input
+    document.getElementById('points-error').classList.add('d-none'); // reset lỗi
+    usePointsModal.show();
+  });
+  document.getElementById('confirm-use-points').addEventListener('click', () => {
+    const input = document.getElementById('points-to-use');
+    const error = document.getElementById('points-error');
+    const pointsToUse = parseInt(input.value);
+    const availablePoints = parseInt(pointsInput.value);
+    const total = parseFloat(totalPrice);
 
-    const rawTotal = parseFloat(totalPrice);
-    const discount = 25;
-    const final = Math.max(0, rawTotal - discount);
+    if (isNaN(pointsToUse) || pointsToUse <= 0 || pointsToUse > availablePoints || pointsToUse > total) {
+      error.classList.remove('d-none');
+      return;
+    }
+
+    error.classList.add('d-none');
+    const discount = pointsToUse*0.01; // 1 điểm = 0.01$
+    const final = Math.max(0, total - discount);
 
     discountAmount.innerText = discount + '$';
     finalPrice.innerText = final.toLocaleString() + '$';
@@ -251,11 +289,29 @@ window.addEventListener('DOMContentLoaded', async () => {
     rewardMessage.classList.add('d-none');
     notUsingReward.classList.add('d-none');
 
-    if (continueBtn) continueBtn.innerText = 'TẠO HÓA ĐƠN';
+    // Trừ điểm đã dùng khỏi tổng điểm hiện tại
+    const remainingPoints = availablePoints - pointsToUse;
+    pointsInput.value = remainingPoints;
+
+    // Hiển thị dòng "Đã sử dụng X điểm"
+    const usedPointsMsg = document.getElementById('used-points-message');
+    if (usedPointsMsg) {
+      usedPointsMsg.innerText = `Khách hàng đã sử dụng ${pointsToUse} điểm`;
+      usedPointsMsg.classList.remove('d-none');
+    }
+
+    continueBtn.innerText = 'TẠO HÓA ĐƠN';
+
+
+    // Đóng modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('usePointsModal'));
+    modal.hide();
   });
+
 
   // Khong sử dụng điểm
   document.getElementById('btn-not-use-points').addEventListener('click', () => {
+    hasChosenRewardOption = true;
     const continueBtn = document.querySelector('.btn-continue');
 
     const rawTotal = parseFloat(totalPrice);
@@ -276,47 +332,69 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   // Đem DL qua createRetailBill
   continueBtn.addEventListener('click', () => {
+    // Nếu người dùng chưa chọn "SỬ DỤNG" hoặc "KHÔNG SỬ DỤNG", giả định là KHÔNG dùng
+    if (!hasChosenRewardOption && !isCreatingNewCustomer) {
+      hasChosenRewardOption = true;
+
+      const rawTotal = parseFloat(totalPrice);
+      rewardMessage.classList.add('d-none');
+      notUsingReward.classList.remove('d-none');
+
+      // Ẩn phần giảm giá nhưng vẫn hiện "Thành tiền"
+      discountRow.classList.add('d-none');          // Ẩn dòng "Giảm giá"
+      finalPriceRow.classList.remove('d-none');     // ✨ HIỆN "Thành tiền"
+
+      // ✨ Gán lại giá trị "Thành tiền" bằng "Tạm tính"
+      discountSeparator.classList.remove('d-none');
+      const final = rawTotal;
+      finalPrice.innerText = final.toLocaleString() + '$';
+
+      continueBtn.innerText = 'TẠO HÓA ĐƠN';
+      return;
+    }
+
     if (continueBtn.innerText !== 'TẠO HÓA ĐƠN') return;
+    showModalConfirm("TẠO HÓA ĐƠN", "tạo hóa đơn", "", () => {
+      // Thu thập dữ liệu
+      const invoiceID = document.getElementById('ma-hoa-don').innerText;
+      const createdAt = document.getElementById('ngay-tao').innerText;
+      const staff = document.getElementById('nhan-vien').innerText;
+      const customerPhone = phoneInput.value.trim();
+      const customerName = nameInput.value.trim();
+      const productList = JSON.parse(localStorage.getItem('invoiceData')) || [];
+      const totalQty = localStorage.getItem('totalQty') || 0;
+      const subTotal = localStorage.getItem('totalPrice') || 0;
 
-    // Thu thập dữ liệu
-    const invoiceID = document.getElementById('ma-hoa-don').innerText;
-    const createdAt = document.getElementById('ngay-tao').innerText;
-    const staff = document.getElementById('nhan-vien').innerText;
-    const customerPhone = phoneInput.value.trim();
-    const customerName = nameInput.value.trim();
-    const productList = JSON.parse(localStorage.getItem('invoiceData')) || [];
-    const totalQty = localStorage.getItem('totalQty') || 0;
-    const subTotal = localStorage.getItem('totalPrice') || 0;
+      const discount = document.getElementById('discount-amount')?.innerText?.replace('$', '') || 0;
 
-    const discount = document.getElementById('discount-amount')?.innerText?.replace('$', '') || 0;
+      const finalTotal = document.getElementById('final-price')?.innerText?.replace('$', '') || subTotal;
 
-    const finalTotal = document.getElementById('final-price')?.innerText?.replace('$', '') || subTotal;
+      const earnedPoints = Math.floor(parseFloat(finalTotal));
 
-    const earnedPoints = Math.floor(parseFloat(finalTotal));
+      // Lưu dữ liệu hóa đơn
+      const finalBill = {
+        invoiceID,
+        createdAt,
+        staff,
+        customerPhone,
+        customerName,
+        productList,
+        totalQty,
+        subTotal,
+        discount,
+        finalTotal,
+        earnedPoints
+      };
 
-    // Lưu dữ liệu hóa đơn
-    const finalBill = {
-      invoiceID,
-      createdAt,
-      staff,
-      customerPhone,
-      customerName,
-      productList,
-      totalQty,
-      subTotal,
-      discount,
-      finalTotal,
-      earnedPoints
-    };
+      localStorage.setItem('finalInvoice', JSON.stringify(finalBill));
 
-    localStorage.setItem('finalInvoice', JSON.stringify(finalBill));
+      // (Tuỳ chọn) Lưu tổng điểm tích lũy hiện tại
+      const previous = parseInt(pointsInput.value) || 0;
+      localStorage.setItem('previousPoints', previous);
 
-    // (Tuỳ chọn) Lưu tổng điểm tích lũy hiện tại
-    const previous = parseInt(pointsInput.value) || 0;
-    localStorage.setItem('previousPoints', previous);
-
-    // Chuyển sang trang hiển thị hóa đơn
-    window.location.href = 'createRetailBill.html';
+      // Chuyển sang trang hiển thị hóa đơn
+      window.location.href = 'createRetailBill.html';
+    });
   });
 
 });

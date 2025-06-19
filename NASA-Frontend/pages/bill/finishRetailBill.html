@@ -23,7 +23,7 @@
     <title>Nhà Sách NASA</title>
 
   </head>
-  <body data-modal-error-src="../../components/html/error-modal.html" data-modal-success-src="../../components/html/success-modal.html" data-modal-delete-src="../../components/html/delete-modal.html">
+  <body data-modal-error-src="../../components/html/error-modal.html" data-modal-success-src="../../components/html/success-modal.html" data-modal-delete-src="../../components/html/delete-modal.html" data-modal-confirm-src="../../components/html/confirm-modal.html">
     <div class="container-fluid layout-root min-vh-100 d-flex flex-column justify-content-between">
       <!-- Header -->
       <div id="header" data-url="../../layouts/html/header.html"></div>
@@ -110,6 +110,8 @@
                                 </div>
                             </div>
                         </div>
+                        <p id="used-points-message" class="text-success fst-italic d-none mt-2"></p>
+
                         <div id="not-enough-point-message" class="d-none">
                             <span class="me-2 customer-cannot-use-point text-danger">Khách hàng không đủ điểm tích luỹ để sử dụng.</span>
                         </div>
@@ -130,7 +132,7 @@
                 </div>
 
                 <div class="d-flex justify-content-between mt-3">
-                    <a href="./createRetailBill.html" class="btn btn-primary btn-continue">TIẾP TỤC</a>
+                    <button class="btn btn-primary btn-continue">TIẾP TỤC</button>
                     <a href="./retailBill.html" class="btn btn-light border btn-return">QUAY LẠI</a>
                 </div>
             </div>
@@ -155,6 +157,8 @@
 
       <script type="module" src="../../assets/js/bill.js"></script>
       <script type="module" src="../../assets/js/createBill/finishRetailBill.js"></script>
+     
+
     
       <!-- js bootstrap -->
       <script
@@ -168,5 +172,28 @@
     <script src="../../components/js/delete-confirm.js"></script>
     <script src="../../components/js/error-modal.js"></script>
     <script src="../../components/js/success-modal.js"></script>
+    <script src="../../components/js/confirm-modal.js"></script>
+    <!-- Modal nhập điểm tích lũy -->
+    <div class="modal fade" id="usePointsModal" tabindex="-1" aria-labelledby="usePointsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="usePointsModalLabel">Sử dụng điểm tích lũy</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+        </div>
+        <div class="modal-body">
+            <label for="points-to-use" class="form-label">Nhập số điểm muốn sử dụng:</label>
+            <div class="text-muted mb-2" style="font-size: 0.9rem;">1 điểm = 0.01 $</div>
+            <input type="number" class="form-control" id="points-to-use" min="0" step="1" />
+            <div id="points-error" class="text-danger mt-2 d-none">Số điểm không hợp lệ.</div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            <button type="button" class="btn btn-primary" id="confirm-use-points">Xác nhận</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
   </body>
 </html>
