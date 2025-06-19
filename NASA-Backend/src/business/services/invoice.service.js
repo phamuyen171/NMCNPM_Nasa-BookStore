@@ -6,6 +6,7 @@ const Promotion = require('../../data/models/promotion.model');
 const mongoose = require('mongoose');
 const promotionService = require('./promotion.service');
 const Customer = require('../../data/models/customer.model');
+const bookService = require('./book.service');
 
 // const promotionService = new PromotionService();
 // const customerService = new CustomerService();
@@ -515,6 +516,34 @@ class InvoiceService {
         } catch (error) {
             console.error('Lỗi khi đánh dấu hóa đơn quá hạn thành nợ xấu:', error);
             throw new Error('Không thể đánh dấu hóa đơn quá hạn thành nợ xấu: ' + error.message);
+        }
+    }
+
+    async addDetailedInvoice(invoiceID, book){
+        try{
+            const checkInvoiceID = await Invoice.findOne({invoiceID});
+            if (!checkInvoiceID){
+                throw new Error("Không tìm thấy hóa đơn.");
+            }
+
+            const detailedInvoice = {
+                "bookId": book.id,
+                "bookTitle": book.title,
+                "quantity": book.quantity,
+                "pricePerUnit": book.price,
+                "subtotal": book.total,
+                "invoice": checkInvoiceID._id
+            };
+            // cập nhập số lượng sách trong kho
+            bookService.sellBook(book.id, book.quantity);
+            // thêm chi tiết hóa đơn
+            const detail = new InvoiceDetail(detailedInvoice);
+            const save = await detail.save();
+            if (!save){
+                throw new Error("Không thể thêm chi tiết hóa đơn.");
+            }
+        } catch (error){
+            throw error;
         }
     }
 }

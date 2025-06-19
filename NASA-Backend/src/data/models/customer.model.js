@@ -82,7 +82,10 @@ const customerSchema = new mongoose.Schema({
     },
     resetAt:{
         type: Date, 
-        default: new Date(new Date().getFullYear + 1, 0, 1)
+        default: () => {
+            const now = new Date();
+            return new Date(now.getFullYear() + 1, 0, 1); // 1/1 của năm sau
+        }
     }
 }, { timestamps: true });
 
