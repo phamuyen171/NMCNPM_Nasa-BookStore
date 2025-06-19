@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="../../assets/images/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- css bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="../../assets/css/login.css" />
+    <link rel="stylesheet" href="../../assets/css/detailBooks.css" />
+    <link rel="stylesheet" href="../../assets/css/addStaff.css" />
+    <link rel="stylesheet" href="../../assets/css/addBook.css" />
+    <link rel="stylesheet" href="../../assets/css/detailUpdateStaff.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../../components/css/confirm-modal.css" />
+    <link rel="stylesheet" href="../../components/css/error-modal.css" />
+    <link rel="stylesheet" href="../../components/css/success-modal.css" />
+    <title>Nhà Sách NASA</title>
+
+  </head>
+  <body data-modal-error-src="../../components/html/error-modal.html" data-modal-success-src="../../components/html/success-modal.html" data-modal-confirm-src="../../components/html/confirm-modal.html">
+    <div class="container-fluid layout-root min-vh-100 d-flex flex-column">
+      <!-- Header -->
+      <div id="header" data-url="../../layouts/html/header.html"></div>
+      
+
+      <!-- Content -->
+      <div class="row flex-grow-1">
+        <!-- LEFT -->
+        <div class="col-md-2 main-layout">
+          <div class="sidebar w-100">
+            <a href="./staff.html" class="nav-item">Xem Danh Sách Nhân Viên</a>
+            <a href="./addStaff.html" class="nav-item">Thêm Nhân Viên</a>
+            <!-- <a href="./deleteStaff.html" class="nav-item">Xoá Nhân Viên</a> -->
+            <a href="./updateStaff.html" class="nav-item active">Cập Nhật Thông Tin</a>
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="col-md-10">
+          <div class="container-fluid px-4" style="max-width: 100%;">
+            <!-- row TT cá nhân & ảnh -->
+            <div class="row gx-3 gy-3">
+              <!-- TT cá nhân -->
+              <div class="col-md-7">
+                <div class="card custom-card-height">
+                  <h5 class="card-header">THÔNG TIN CÁ NHÂN</h5>
+                    <div class="card-body">
+                      <div class="form-group row mb-1">
+                        <label class="col-sm-3 col-form-label">Họ và tên:</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" placeholder="Nguyễn Văn A" id="name">
+                        </div>
+                      </div>
+                      <div class="form-group row mb-1">
+                        <label class="col-sm-3 col-form-label">Địa chỉ:</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" placeholder="Dịa chỉ tạm trú hoặc thường trú" id="address">
+                        </div>
+                      </div>
+                      <div class="form-group row mb-1">
+                        <label class="col-sm-3 col-form-label">Số điện thoại:</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" placeholder="Di động hoặc cố định" id="phone">
+                        </div>
+                      </div>
+                      <div class="form-group row mb-1">
+                        <label class="col-sm-3 col-form-label">CCCD:</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" placeholder="Số căn cước công dân" id="cccd">
+                        </div>
+                      </div>
+                      <div class="form-group row mb-1">
+                          <label class="col-sm-3 col-form-label">Ngày sinh:</label>
+                          <div class="col-sm-9">
+                            <input type="text" class="form-control" placeholder="dd/mm/yyyy" id="birth">
+                          </div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Ảnh -->
+              <div class="col-md-5">
+                <div class="card">
+                  <h5 class="card-header">ẢNH NHÂN VIÊN</h5>
+                  <div class="card-body text-center">
+                    <div class="text-center" id="placeholder">
+                      <i class="fa-solid fa-camera fa-2x mb-2"></i>
+                      <p class="mb-2 fw-bold">Chọn ảnh từ máy</p>
+                    </div>
+
+                    <!-- Hiển thị ảnh -->
+                    <img id="preview-image" src="" alt="" class="img-fluid mb-2 mx-auto d-block" style="display: none; max-height: 150px;" />
+
+                    <!-- Chọn ảnh từ máy -->
+                    <input type="file" class="form-control mb-2" id="image-file" accept="image/*">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- row TT công việc và account -->
+            <div class="row gx-3 gy-3">
+              <!-- TT công việc -->
+              <div class="col-md-7">
+                <div class="card" >
+                  <h5 class="card-header">THÔNG TIN CÔNG VIỆC</h5>
+                  <div class="card-body">
+                    <div class="info-work-detail ">
+                      <div class="form-group row mb-1">
+                        <label class="col-sm-3 col-form-label">Chức vụ:</label>
+                        <div class="col-sm-9">
+                          <select id="chucvu-select" class="form-control">
+                            <option value="">-- Chọn chức vụ --</option>
+                            <option value="manager">Quản lý</option>
+                            <option value="staff">Nhân viên bán hàng</option>
+                            <option value="accountant">Kế toán</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="form-group row mb-1">
+                        <label class="col-sm-3 col-form-label">Mã nhân viên:</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" placeholder="" id="manv" readonly>
+                        </div>
+                      </div>
+                      <div class="form-group row mb-1">
+                        <label class="col-sm-3 col-form-label">Email:</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" placeholder="" id="email" readonly>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Ngày vào làm:</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" placeholder="dd/mm/yyyy" id="start-work-day" readonly>
+                        </div>
+                    </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TT account -->
+              <div class="col-md-5">
+                <div class="card">
+                  <h5 class="card-header">THÔNG TIN TÀI KHOẢN</h5>
+                  <div class="card-body">
+                    <div class="form-group row mb-1">
+                        <label class="col-sm-4 col-form-label">Tên tài khoản:</label>
+                        <div class="col-sm-8">
+                          <input type="text" class="form-control" placeholder="" id="username" readonly>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Mật khẩu mặc định:</label>
+                        <div class="col-sm-8">
+                          <input type="text" class="form-control" placeholder="" id="password" readonly>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- button thêm -->
+            <div class="d-flex justify-content-end py-1">
+              <button class="btn floating btn-add-staff" id="update-account">Cập Nhật</button>
+            </div>
+          </div>
+        </div>    
+      </div>
+
+
+      <!-- Footer -->
+      <div id="footer" data-url="../../layouts/html/footer.html"></div>
+      </div>
+
+      <script type="module" src="../../assets/js/detailUpdateStaff.js"></script>
+      <!-- js bootstrap -->
+      <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"
+      ></script>
+    </div>
+    <script src="../../layouts/js/layout-loader.js"></script>
+    <script src="../../components/js/confirm-modal.js"></script>
+    <script src="../../components/js/error-modal.js"></script>
+    <script src="../../components/js/success-modal.js"></script>
+
+    <!-- Modal không có cập nhật -->
+    <div class="modal fade" id="noChangeModal" tabindex="-1" aria-labelledby="noChangeModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-danger" id="noChangeModalLabel">Không có thay đổi</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+          </div>
+          <div class="modal-body">
+            Bạn chưa thay đổi thông tin nào. Bạn muốn tiếp tục cập nhật hay huỷ cập nhật?
+          </div>
+          <div class="modal-footer">
+            <a href="./updateStaff.html" class="btn btn-secondary" id="cancelUpdate">Huỷ cập nhật</a>
+            <a href="./detailUpdateStaff.html" class="btn btn-primary" data-bs-dismiss="modal">Tiếp tục</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal thoát mà chưa lưu -->
+    <div class="modal fade" id="unsavedModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-danger">Thông tin chưa được lưu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            Bạn đã thay đổi thông tin nhưng chưa bấm Cập nhật. Bạn muốn tiếp tục cập nhật hay huỷ cập nhật?
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" id="discardChanges">Huỷ cập nhật</button>
+            <button class="btn btn-primary" id="stayOnPage" data-bs-dismiss="modal">Tiếp tục</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </body>
+</html>

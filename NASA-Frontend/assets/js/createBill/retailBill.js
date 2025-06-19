@@ -1,5 +1,4 @@
 // ===================================BẢNG 1: DANH SÁCH===========================================
-
 let booksData = [];         // Dữ liệu gốc từ API
 let filteredBooks = [];     // Dữ liệu sau khi tìm kiếm
 let currentPage = 0;
@@ -366,6 +365,11 @@ function addToInvoice(book) {
   // Xử lý nhập số lượng
   const qtyInput = row.querySelector('.quantity');
   const errorMsg = row.querySelector('.error-msg');
+
+  // Khi người dùng nhấn vào input, tự động chọn toàn bộ để dễ xoá/chỉnh
+  qtyInput.addEventListener('focus', () => {
+    qtyInput.select();
+  });
 
   qtyInput.addEventListener('input', () => {
     const val = parseInt(qtyInput.value);
