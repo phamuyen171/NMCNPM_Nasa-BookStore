@@ -26,7 +26,7 @@ class authController {
       res.status(201).json({
         success: true,
         message: 'Tạo tài khoản thành công',
-        data: newUser
+        data: { ...newUser, "fullName":req.body.fullName}
       });
     } catch (error) {
       // res.status(500).json({success: false, message: err.message });

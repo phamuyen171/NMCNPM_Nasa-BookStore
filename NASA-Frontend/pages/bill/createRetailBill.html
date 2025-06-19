@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="../../assets/images/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- css bootstrap -->
     <link
@@ -71,8 +71,8 @@
                     <p id="discount-row" class="d-none"><strong>Giảm giá:</strong> <span class="fw-bold" id="discount-amount">25$</span></p>
                     <hr class="d-none" id="discount-separator">
                     <p id="final-price-row" class="d-none"><strong>Thành tiền:</strong> <span class="fw-bold" id="final-price">0$</span></p>
-                    <p><strong>Điểm tích luỹ thêm:</strong> <span class="text-success fw-bold" id="earned-points">+0 điểm</span></p>
-                    <p><strong>Tổng điểm tích lũy:</strong> <span class="fw-bold" id="total-points">0 điểm</span></p>
+                    <p id="diem-tich-luy"><strong>Điểm tích luỹ thêm:</strong> <span class="text-success fw-bold" id="earned-points">+0 điểm</span></p>
+                    <p id="tong-tich-luy"><strong>Tổng điểm tích lũy:</strong> <span class="fw-bold" id="total-points">0 điểm</span></p>
                   </div>
                 </div>
               </div>
@@ -81,7 +81,7 @@
 
            <!-- Khung thông báo Thành công -->
             <div class="col-md-5">
-                <div class="box-bordered p-4 d-flex flex-column align-items-center justify-content-start text-center">
+                <div class="box-bordered p-4 d-none flex-column align-items-center justify-content-start text-center" id="success">
                     <div class="d-flex justify-content-center align-items-center">
                         <i class="fa-solid fa-circle-check p-1" style="font-size: 30px; color: #1a3a9c;"></i>
                         <h5 class="success-message fw-bold">THÀNH CÔNG</h5>

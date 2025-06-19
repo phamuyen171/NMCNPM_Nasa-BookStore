@@ -25,14 +25,13 @@ function showModalConfirm(title = "THÊM SÁCH", message = "thêm sách", link_i
   if (modal) modal.style.display = "flex";
   if (titleEl) titleEl.textContent = `XÁC NHẬN ${title}`;
 
-  if (link_icon !== "") {
-    const iconEl = document.getElementById("linkIcon");
-    if (iconEl) {
-      iconEl.src = link_icon + 'components/images/confirm-icon.svg';
-      iconEl.style.display = "block"; // Hiển thị icon nếu có
-    }
-  }
-
+  // if (link_icon !== "") {
+  //   const iconEl = document.getElementById("linkIcon");
+  //   if (iconEl) {
+  //     iconEl.src = link_icon + 'components/images/confirm-icon.svg';
+  //     iconEl.style.display = "block"; // Hiển thị icon nếu có
+  //   }
+  // }
     
   const confirmBtn = document.getElementById('confirmActionBtn');
   const cancelBtn = document.getElementById('cancelActionBtn');

@@ -289,6 +289,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     for (const id in invoiceItems) {
       const item = invoiceItems[id];
       invoiceData.push({
+        id: item.book._id,
         title: item.book.name,
         price: item.book.price,
         quantity: item.quantity,

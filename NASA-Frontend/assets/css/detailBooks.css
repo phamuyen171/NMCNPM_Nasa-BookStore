@@ -57,10 +57,12 @@ a {
 
 .nav-item:hover {
   background-color: #a6bdf7;
+  font-weight: bold;
 }
 
 .nav-item.active {
   background-color: #94ACF1;
+  font-weight: bold;
 }
 
 .card {

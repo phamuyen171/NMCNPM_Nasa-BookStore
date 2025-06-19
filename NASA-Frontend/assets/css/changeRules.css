@@ -1,0 +1,35 @@
+h4 {
+    display: flex;
+    justify-content: center;
+    color:  #1d2088;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.box {
+    border: 2px solid #1d2088;
+    border-radius: 10px;
+    background-color: white;
+}
+
+.input-fixed {
+  width: 100px;
+  margin-right: 10px;
+}
+
+.custom-border {
+  border: 0.5px solid #1d2088;
+  border-radius: 16px;
+  box-shadow: 0 0 0 1px #1d2088; /* thêm viền nổi bật */
+}
+
+.input-small {
+  width: 180px; /* hoặc 60px, tuỳ theo mong muốn */
+}
+
+.p {
+    margin-left: 30px;
+}

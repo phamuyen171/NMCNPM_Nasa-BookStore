@@ -1,10 +1,14 @@
 // books.js
 import { renderPagination } from "../../components/js/pagination.js";
 import { getBooksByPage, renderBooks, setupSearchEvent, getAllBooks } from "./detailBooks.js";
+import {getRule} from './createBill/finishRetailBill.js';
 
-const min_quantity = 100;
-const max_import = 300;
-const min_import = 100;
+const rules = await getRule();
+console.log(rules);
+
+const min_quantity = rules.book.maxImportableBook;
+const max_import = rules.book.maxImportBook;
+const min_import = rules.book.minImportBook;
 
 
 // =======================Xử lý việc in ra danh sách các sách cần nhập========================

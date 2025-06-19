@@ -23,13 +23,13 @@ function showModalError(title = "Lỗi", message = "Đã xảy ra lỗi!", link_
   if (modal) modal.style.display = "flex";
   if (titleEl) titleEl.textContent = title;
 
-  if (link_icon !== "") {
-    const iconEl = document.getElementById("linkIcon");
-    if (iconEl) {
-      iconEl.src = link_icon + 'components/images/warning-icon.svg';
-      iconEl.style.display = "block"; // Hiển thị icon nếu có
-    }
-  }
+  // if (link_icon !== "") {
+  //   const iconEl = document.getElementById("linkIcon");
+  //   if (iconEl) {
+  //     iconEl.src = link_icon + 'components/images/warning-icon.svg';
+  //     iconEl.style.display = "block"; // Hiển thị icon nếu có
+  //   }
+  // }
 }
 
 function closeModal() {

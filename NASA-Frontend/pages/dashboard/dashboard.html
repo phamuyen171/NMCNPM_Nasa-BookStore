@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="../../assets/images/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- css bootstrap -->
     <link
@@ -13,6 +13,9 @@
     />
     <link rel="stylesheet" href="../../assets/css/login.css" />
     <link rel="stylesheet" href="../../assets/css/dashboard.css" />
+    <link rel="stylesheet" href="../../assets/css/mainSidebar.css"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
     <title>Nhà Sách NASA</title>
 
   </head>
@@ -27,8 +30,38 @@
 
       <!-- Content -->
       <div class="row">
-        <div class="col-md-3"></div>
-        <div class="col-md-9"></div>
+        <!-- LEFT -->
+        <div class="col-auto main-layout left">
+          <div class="sidebar">
+            <ul class="nav flex-column text-white">
+                <li class="nav-item">
+                    <a class="nav-link active main" href="../dashboard/dashboard.html"><i class="fas fa-home me-2"></i> TRANG CHỦ</a>
+                </li>
+                <hr class="text-white">
+                <li class="nav-item">
+                    <a class="nav-link" href="../book/detailBooks.html"><i class="fa-solid fa-book me-2"></i> Sách</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../bill/bill.html"><i class="fa-solid fa-money-bills me-2"></i> Hoá Đơn</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../customer/customer.html"><i class="fa-solid fa-user me-2"></i> Khách Hàng</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../staff/staff.html"><i class="fa-solid fa-clipboard-user me-2"></i> Nhân Viên</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../rule/changeRules.html"><i class="fas fa-sliders-h me-2"></i> Thay đổi quy định</a>
+                </li>
+            </ul>
+           </div>
+
+        </div>
+
+        <!-- RIGHT -->
+        <div class="col-auto">
+            
+        </div>
       </div>
 
       <!-- Footer -->

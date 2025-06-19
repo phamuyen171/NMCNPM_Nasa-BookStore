@@ -28,7 +28,7 @@ class StaffService {
         let find = {
             status: 'active'
         }
-        const count = await Staff.countDocuments({ role, ...find });
+        const count = await Staff.countDocuments({ role});
         const role_dict = {
             'manager': 'M',
             'staff': 'S',

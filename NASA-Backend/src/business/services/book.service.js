@@ -757,6 +757,32 @@ class BookService {
         await importOrder.save();
         return importOrder;
     }
+
+    async sellBook(bookId, quantity) {
+        try {
+            const book = await Book.findOne({ _id: bookId, isDeleted: false });
+            if (!book) {
+                throw new Error('Không tìm thấy sách để nhập thêm');
+            }
+
+            if (quantity <= 0) {
+                throw new Error('Số lượng nhập thêm phải lớn hơn 0');
+            }
+
+            // TODO: Áp dụng BookImportRule nếu cần (min/max quantity)
+
+            book.quantity -= quantity;
+            book.soldQuantity += quantity;
+            // Nếu sách đang hết hàng và được nhập thêm, có thể cập nhật lại status
+            if (book.status === 'Out of Stock' && book.quantity > 0) {
+                book.status = 'Available';
+            }
+
+            return await book.save();
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 // Export instance của BookService để sử dụng ở Controller

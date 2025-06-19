@@ -5,6 +5,16 @@ class CustomerService {
         return Customer.findOne({ phone, isDeleted: false });
     }
 
+    async updatePointsRetail(phone, updatePoints){
+        const customer = await this.findCustomerByPhone(phone);
+        if (customer) {
+            const resetDate = customer.resetAt;
+            customer.points += updatePoints;
+            customer.resetAt = resetDate;
+            await customer.save();
+        }
+    }
+
     async createCustomer(phone, name = 'Khách hàng mới', type = 'normal') {
         const customer = new Customer({
             phone,

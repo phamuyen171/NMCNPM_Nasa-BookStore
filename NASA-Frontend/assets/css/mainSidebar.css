@@ -1,0 +1,46 @@
+.sidebar {
+  width: 100%;
+  background-color: #c6d4f9;
+  height: 100%;
+  padding: 20px 10px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.col-auto.left {
+  width: 22%;
+}
+
+.sidebar .nav-link {
+  color: #0b2d89;
+  margin-bottom: 10px;
+  transition: all 0.2s ease;
+  margin-left: 18px;
+  margin-top: 5px;
+}
+
+.sidebar .nav-link i {
+  width: 20px;
+}
+
+.sidebar .nav-link.active {
+  font-weight: bold;
+}
+
+.sidebar .nav-link.main {
+  font-size: 28px;
+  margin-left: 8px;
+}
+
+.sidebar .nav-link:hover {
+  background-color: #b0c7f0;
+  border-radius: 5px;
+  padding-left: 10px;
+  font-weight: bold;
+}
+
+.sidebar hr {
+  border: 0;
+  border-top: 3px solid #0b2d89; /* Màu xanh đậm cho đường kẻ */
+  margin: 10px 0; /* Điều chỉnh khoảng cách trên dưới */
+}
