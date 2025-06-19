@@ -11,6 +11,105 @@ let checkStaffId = false;
 
 
 // Hàm render trang
+// function renderPage() {
+//   const grid = document.getElementById('product-grid');
+//   grid.innerHTML = '';
+
+//   const start = currentPage * itemsPerPage;
+//   const end = Math.min(start + itemsPerPage, filteredBooks.length);
+//   const pageItems = filteredBooks.slice(start, end);
+
+//   for (let i = 0; i < pageItems.length; i += 2) {
+//     const row = document.createElement('div');
+
+//     // Nếu chỉ còn 1 sách, căn giữa theo chiều ngang
+//     if (pageItems.length === 1) {
+//         const row = document.createElement('div');
+//         row.className = 'row justify-content-center mt-0'; // loại bỏ margin top dư thừa
+//         const col = document.createElement('div');
+//         col.className = 'col-md-6 d-flex justify-content-center';
+
+//         const book = pageItems[0];
+//         col.innerHTML = `
+//         <div class="product-box mb-2 book-item"
+//             data-id="${book._id}"
+//             data-title="${book.title}"
+//             data-author="${book.author}"
+//             data-sales="${book.soldQuantity}"
+//             data-quantity="${book.quantity}"
+//             data-price="${book.price}"
+//             data-image="${book.image}"
+//           >
+//           <img src="${book.image}" alt="${book.title}">
+//           <div class="product-info">
+//             <strong>${book.title}</strong>
+//             <div class="pb-1">(${book.author})</div>
+//             <div>Đã bán: ${book.soldQuantity}</div>
+//             <div>Số lượng: ${book.quantity}</div>
+//             <div class="product-price">${Number(book.price).toLocaleString()}</div>
+//           </div>
+//         </div>
+//         `;
+
+//         row.appendChild(col);
+//         grid.appendChild(row);
+    
+//     } else {
+//         row.className = 'row gy-3 justify-content-center';
+
+//         for (let j = 0; j < 2; j++) {
+//         const book = pageItems[i + j];
+//         if (!book) continue; //bỏ qua nếu book không tồn tại
+
+//         const col = document.createElement('div');
+//         col.className = 'col-md-6';
+
+//         col.innerHTML = `
+//         <div class="product-box mb-2 book-item"
+//             data-id="${book._id}"
+//             data-title="${book.title}"
+//             data-author="${book.author}"
+//             data-soldQuantity = "${book.soldQuantity}"
+//             data-quantity="${book.quantity}"
+//             data-price="${book.price}"
+//             data-image="${book.image}"
+//           >
+//           <img src="${book.image}" alt="${book.title}">
+//           <div class="product-info">
+//             <div class="book-title"><strong>${book.title}</strong></div>
+//             <div class="pb-1">(${book.author})</div>
+//             <div>Số lượng: ${book.quantity}</div>
+//             <div>Đã bán: ${book.soldQuantity}</div>
+//             <div class="product-price">${Number(book.price).toLocaleString()} $</div>
+//           </div>
+//         </div>
+//         `;
+//         row.appendChild(col);
+//         }
+//     }
+//       grid.appendChild(row);
+//     }
+
+//   // GẮN SỰ KIỆN CLICK SAU KHI RENDER
+//   document.querySelectorAll('.book-item').forEach(item => {
+//     item.addEventListener('click', () => {
+//       const book = {
+//         _id: item.dataset.id,
+//         name: item.dataset.title,
+//         price: parseFloat(item.dataset.price),
+//         quantity: parseInt(item.dataset.quantity)
+//       };
+//       addToInvoice(book);
+//     });
+//   });
+  
+//   // Ẩn/hiện nút mũi tên
+//   const prevBtn = document.querySelector('button[onclick="prevPage()"]');
+//   const nextBtn = document.querySelector('button[onclick="nextPage()"]');
+
+//   prevBtn.style.visibility = currentPage === 0 ? 'hidden' : 'visible';
+//   nextBtn.style.visibility = (currentPage + 1) * itemsPerPage >= filteredBooks.length ? 'hidden' : 'visible';
+// }
 function renderPage() {
   const grid = document.getElementById('product-grid');
   grid.innerHTML = '';
@@ -21,17 +120,16 @@ function renderPage() {
 
   for (let i = 0; i < pageItems.length; i += 2) {
     const row = document.createElement('div');
+    row.className = 'row gy-3';
 
-    // Nếu chỉ còn 1 sách, căn giữa theo chiều ngang
-    if (pageItems.length === 1) {
-        const row = document.createElement('div');
-        row.className = 'row justify-content-center mt-0'; // loại bỏ margin top dư thừa
+    for (let j = 0; j < 2; j++) {
+      const book = pageItems[i + j];
+      if (!book) continue;
 
-        const col = document.createElement('div');
-        col.className = 'col-md-6 d-flex justify-content-center';
+      const col = document.createElement('div');
+      col.className = 'col-md-6';
 
-        const book = pageItems[0];
-        col.innerHTML = `
+      col.innerHTML = `
         <div class="product-box mb-2 book-item"
             data-id="${book._id}"
             data-title="${book.title}"
@@ -39,40 +137,7 @@ function renderPage() {
             data-sales="${book.soldQuantity}"
             data-quantity="${book.quantity}"
             data-price="${book.price}"
-            data-image="${book.image}"
-          >
-          <img src="${book.image}" alt="${book.title}">
-          <div class="product-info">
-            <strong>${book.title}</strong>
-            <div class="pb-1">(${book.author})</div>
-            <div>Đã bán: ${book.soldQuantity}</div>
-            <div>Số lượng: ${book.quantity}</div>
-            <div class="product-price">${Number(book.price).toLocaleString()} $</div>
-          </div>
-        </div>
-        `;
-
-        row.appendChild(col);
-        grid.appendChild(row);
-    
-    } else {
-        row.className = 'row gy-3 justify-content-center';
-
-        for (let j = 0; j < 2; j++) {
-        const book = pageItems[i + j];
-        const col = document.createElement('div');
-        col.className = 'col-md-6';
-
-        col.innerHTML = `
-        <div class="product-box mb-2 book-item"
-            data-id="${book._id}"
-            data-title="${book.title}"
-            data-author="${book.author}"
-            data-soldQuantity = "${book.soldQuantity}"
-            data-quantity="${book.quantity}"
-            data-price="${book.price}"
-            data-image="${book.image}"
-          >
+            data-image="${book.image}">
           <img src="${book.image}" alt="${book.title}">
           <div class="product-info">
             <div class="book-title"><strong>${book.title}</strong></div>
@@ -82,12 +147,13 @@ function renderPage() {
             <div class="product-price">${Number(book.price).toLocaleString()} $</div>
           </div>
         </div>
-        `;
-        row.appendChild(col);
-        }
+      `;
+
+      row.appendChild(col);
     }
-      grid.appendChild(row);
-    }
+
+    grid.appendChild(row);
+  }
 
   // GẮN SỰ KIỆN CLICK SAU KHI RENDER
   document.querySelectorAll('.book-item').forEach(item => {
@@ -101,7 +167,7 @@ function renderPage() {
       addToInvoice(book);
     });
   });
-  
+
   // Ẩn/hiện nút mũi tên
   const prevBtn = document.querySelector('button[onclick="prevPage()"]');
   const nextBtn = document.querySelector('button[onclick="nextPage()"]');
@@ -109,6 +175,7 @@ function renderPage() {
   prevBtn.style.visibility = currentPage === 0 ? 'hidden' : 'visible';
   nextBtn.style.visibility = (currentPage + 1) * itemsPerPage >= filteredBooks.length ? 'hidden' : 'visible';
 }
+
 
 // Mũi tên bên phải
 function nextPage() {
@@ -255,6 +322,13 @@ function addToInvoice(book) {
   if (invoiceItems[book._id]) {
     showModalError("LỖI TẠO HÓA ĐƠN", `Sách <b>${book.name}</b> đã được chọn.`);
     return; // tránh trùng sách
+  }
+
+  console.log("boOKId:", book._id);
+
+  if (book.quantity === 0) {
+    showModalError("LỖI", `Sách "${book.name}" đã hết hàng`);
+    return;
   }
 
   const container = document.getElementById('invoice-items');

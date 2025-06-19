@@ -1,0 +1,12 @@
+.success-message{
+    color: #1a3a9c;
+    margin: 0;
+}
+
+.btn-create-new-bill, .btn-show-list-bill{
+    background-color: #c1cef4;
+    color: black;
+    font-weight: bold;
+    margin: auto;
+    width: 70%;
+}

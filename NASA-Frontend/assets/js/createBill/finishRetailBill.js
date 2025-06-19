@@ -68,29 +68,61 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('total-price').innerText = totalPrice.toLocaleString() + '$';
 
   //========================== Xử lý Tạo mới và Bỏ qua ===============================================
+  let isCreatingNewCustomer = false;
+
   const customerBox = document.getElementById('customer-info');
   const skipMsg = document.getElementById('skip-message');
   const infoFields = document.getElementById('info-fields');
   let phoneInput = document.getElementById('phone-number');
   let nameInput = document.getElementById('name');
   let pointsInput = document.getElementById('points');
+  const continueBtn = document.querySelector('.btn-continue');
+  
+  // Hàm kiểm tra và bật/tắt nút "TẠO HÓA ĐƠN"
+  function updateContinueButtonState() {
+    if (!isCreatingNewCustomer) return;
+    const phoneFilled = phoneInput.value.trim() !== '';
+    const nameFilled = nameInput.value.trim() !== '';
+    if (phoneFilled && nameFilled) {
+      continueBtn.classList.remove('btn-disabled');
+      continueBtn.classList.add('btn-primary');
+    } else {
+      continueBtn.classList.add('btn-disabled');
+      continueBtn.classList.remove('btn-primary');
+    }
+  }
 
+  // Lắng nghe sự kiện nhập liệu
+  phoneInput.addEventListener('input', updateContinueButtonState);
+  nameInput.addEventListener('input', updateContinueButtonState);
+
+  // Xử lý khi nhấn nút "TẠO MỚI"
   document.getElementById('btn-tao-moi').addEventListener('click', () => {
-    // Reset giao diện về trạng thái nhập tay
+    isCreatingNewCustomer = true;
     customerBox.style.backgroundColor = '';
     skipMsg.style.display = 'none';
     infoFields.style.display = 'block';
 
-    // Cho phép người dùng nhập tên & SĐT
     phoneInput.disabled = false;
     nameInput.disabled = false;
-    pointsInput.disabled = true; // vẫn để điểm là 0 mặc định
+    pointsInput.disabled = true;
 
-    // Reset nội dung các ô
     phoneInput.value = '';
     nameInput.value = '';
     pointsInput.value = 0;
+
+    continueBtn.innerText = 'TẠO HÓA ĐƠN';
+    continueBtn.classList.add('btn-disabled');
+    continueBtn.classList.remove('btn-primary');
+
+    const finalPrice = document.getElementById('final-price');
+    const finalPriceRow = document.getElementById('final-price-row');
+    const discountSeparator = document.getElementById('discount-separator');
+    finalPrice.innerText = totalPrice + '$'; 
+    finalPriceRow.classList.remove('d-none');
+    discountSeparator.classList.remove('d-none');
   });
+
 
   document.getElementById('btn-bo-qua').addEventListener('click', () => {
     const infoFields = document.getElementById('info-fields');
@@ -104,18 +136,33 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (skipMsg) skipMsg.classList.remove('d-none');
     customerBox.style.backgroundColor = '#d9d9d9';
     if (continueBtn) continueBtn.innerText = 'TẠO HÓA ĐƠN';
+
+    const finalPrice = document.getElementById('final-price');
+    const finalPriceRow = document.getElementById('final-price-row');
+    const discountSeparator = document.getElementById('discount-separator');
+    finalPrice.innerText = totalPrice + '$'; 
+    finalPriceRow.classList.remove('d-none');
+    discountSeparator.classList.remove('d-none');
+
   });
 
   //============================== API TT khách hàng ====================================
-  const data = {
-    "tenKhachHang": "Nguyễn Văn A",
-    "diemTichLuy": 123
-  }
+  const discountRow = document.getElementById('discount-row');
+  const finalPriceRow = document.getElementById('final-price-row');
+  const discountSeparator = document.getElementById('discount-separator');
+  const discountAmount = document.getElementById('discount-amount');
+  const finalPrice = document.getElementById('final-price');
+  const rewardMessage = document.getElementById('reward-message');
+  const cannotRewardMessage = document.getElementById('not-enough-point-message');
+  const notUsingReward = document.getElementById('not-using-reward');
+  const orderNotEnoughTotal = document.getElementById('order-not-enough-total');
+  // const continueBtn = document.querySelector('.btn-continue');
 
-  
   let timeout = null;
 
   phoneInput.addEventListener('input', () => {
+    if (isCreatingNewCustomer) return;
+    const final = parseFloat(totalPrice);
     const phone = phoneInput.value.trim();
 
     // Xoá delay cũ (nếu có)
@@ -133,6 +180,45 @@ window.addEventListener('DOMContentLoaded', async () => {
           nameInput.value = data.data.name || '';
           pointsInput.value = data.data.points ?? 0;
 
+          const points = parseInt(pointsInput.value);
+
+          if (!isNaN(points) && points >= 200 && final >= 100) {
+            rewardMessage.classList.remove('d-none');
+            notUsingReward.classList.add('d-none');
+            cannotRewardMessage.classList.add('d-none');
+            orderNotEnoughTotal.classList.add('d-none');
+          } else if (!isNaN(points)) {
+            rewardMessage.classList.add('d-none');
+            cannotRewardMessage.classList.remove('d-none');
+            notUsingReward.classList.add('d-none');
+
+             // Hiển thị dòng tương ứng
+            if (points < 200) {
+              cannotRewardMessage.classList.remove('d-none');
+              orderNotEnoughTotal.classList.add('d-none');
+            } else if (final < 200) {
+              cannotRewardMessage.classList.add('d-none');
+              orderNotEnoughTotal.classList.remove('d-none');
+            }
+
+            // Không giảm giá, nhưng vẫn hiển thị Thành tiền = Tạm tính
+            discountRow.classList.add('d-none');
+            discountSeparator.classList.remove('d-none');
+            finalPriceRow.classList.remove('d-none');
+            finalPrice.innerText = final.toLocaleString() + '$';
+            if (continueBtn) continueBtn.innerText = 'TẠO HÓA ĐƠN';
+            
+          } else {
+            // Nếu người dùng xoá hết thì ẩn hết
+            rewardMessage.classList.add('d-none');
+            cannotRewardMessage.classList.add('d-none');
+            notUsingReward.classList.add('d-none');
+
+            discountRow.classList.add('d-none');
+            discountSeparator.classList.add('d-none');
+            finalPriceRow.classList.add('d-none');
+          }
+
         } catch (error) {
           // console.warn('Không tìm thấy khách hàng:', error);
           showModalError("LỖI TẠO ĐƠN HÀNG", error.message);
@@ -146,6 +232,93 @@ window.addEventListener('DOMContentLoaded', async () => {
       }
     }, 500);
   });
+
+  // Sử dụng điểm
+  document.getElementById('btn-use-points').addEventListener('click', () => {
+    const continueBtn = document.querySelector('.btn-continue');
+
+    const rawTotal = parseFloat(totalPrice);
+    const discount = 25;
+    const final = Math.max(0, rawTotal - discount);
+
+    discountAmount.innerText = discount + '$';
+    finalPrice.innerText = final.toLocaleString() + '$';
+
+    discountRow.classList.remove('d-none');
+    finalPriceRow.classList.remove('d-none');
+    discountSeparator.classList.remove('d-none');
+
+    rewardMessage.classList.add('d-none');
+    notUsingReward.classList.add('d-none');
+
+    if (continueBtn) continueBtn.innerText = 'TẠO HÓA ĐƠN';
+  });
+
+  // Khong sử dụng điểm
+  document.getElementById('btn-not-use-points').addEventListener('click', () => {
+    const continueBtn = document.querySelector('.btn-continue');
+
+    const rawTotal = parseFloat(totalPrice);
+    rewardMessage.classList.add('d-none');
+    notUsingReward.classList.remove('d-none');
+
+    // Ẩn phần giảm giá nhưng vẫn hiện "Thành tiền"
+    discountRow.classList.add('d-none');          // Ẩn dòng "Giảm giá"
+    finalPriceRow.classList.remove('d-none');     // ✨ HIỆN "Thành tiền"
+
+    // ✨ Gán lại giá trị "Thành tiền" bằng "Tạm tính"
+    discountSeparator.classList.remove('d-none');
+    const final = rawTotal;
+    finalPrice.innerText = final.toLocaleString() + '$';
+
+    if (continueBtn) continueBtn.innerText = 'TẠO HÓA ĐƠN';
+  });
+
+  // Đem DL qua createRetailBill
+  continueBtn.addEventListener('click', () => {
+    if (continueBtn.innerText !== 'TẠO HÓA ĐƠN') return;
+
+    // Thu thập dữ liệu
+    const invoiceID = document.getElementById('ma-hoa-don').innerText;
+    const createdAt = document.getElementById('ngay-tao').innerText;
+    const staff = document.getElementById('nhan-vien').innerText;
+    const customerPhone = phoneInput.value.trim();
+    const customerName = nameInput.value.trim();
+    const productList = JSON.parse(localStorage.getItem('invoiceData')) || [];
+    const totalQty = localStorage.getItem('totalQty') || 0;
+    const subTotal = localStorage.getItem('totalPrice') || 0;
+
+    const discount = document.getElementById('discount-amount')?.innerText?.replace('$', '') || 0;
+
+    const finalTotal = document.getElementById('final-price')?.innerText?.replace('$', '') || subTotal;
+
+    const earnedPoints = Math.floor(parseFloat(finalTotal));
+
+    // Lưu dữ liệu hóa đơn
+    const finalBill = {
+      invoiceID,
+      createdAt,
+      staff,
+      customerPhone,
+      customerName,
+      productList,
+      totalQty,
+      subTotal,
+      discount,
+      finalTotal,
+      earnedPoints
+    };
+
+    localStorage.setItem('finalInvoice', JSON.stringify(finalBill));
+
+    // (Tuỳ chọn) Lưu tổng điểm tích lũy hiện tại
+    const previous = parseInt(pointsInput.value) || 0;
+    localStorage.setItem('previousPoints', previous);
+
+    // Chuyển sang trang hiển thị hóa đơn
+    window.location.href = 'createRetailBill.html';
+  });
+
 });
 
 
