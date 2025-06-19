@@ -427,6 +427,112 @@ Authorization: Bearer <your_jwt_token>
   }
   ```
 
+#### 5.6. Lọc danh sách khách hàng bán lẻ (Get Retail Customers)
+- **URL**: `/customers/filter-customer/retail`
+- **Method**: `GET`
+- **Description**: Lấy danh sách tất cả khách hàng bán lẻ.
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "Lấy danh sách khách hàng bán lẻ thành công",
+    "data": [ /* ... danh sách customer object ... */ ]
+  }
+  ```
+
+#### 5.7. Lọc danh sách khách hàng bán sỉ (Get Wholesale Customers)
+- **URL**: `/customers/filter-customer/wholesale`
+- **Method**: `GET`
+- **Description**: Lấy danh sách tất cả khách hàng bán sỉ.
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "Lấy danh sách khách hàng bán sỉ thành công",
+    "data": [ /* ... danh sách customer object ... */ ]
+  }
+  ```
+
+#### 5.8. Cập nhật thông tin khách hàng theo số điện thoại (Update Customer by Phone)
+- **URL**: `/customers/phone/:phone`
+- **Method**: `PUT`
+- **Description**: Cập nhật thông tin khách hàng dựa trên số điện thoại.
+- **Parameters**:
+  - `phone`: Số điện thoại khách hàng (bắt buộc)
+- **Body**: Các trường cần cập nhật (ví dụ: name, address, ...)
+  ```json
+  {
+    "name": "string",
+    "address": "string",
+    "companyName": "string",
+    "taxId": "string",
+    "discountPercentage": "number"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "Cập nhật thông tin khách hàng thành công",
+    "data": { /* ... customer object ... */ }
+  }
+  ```
+
+#### 5.9. Xóa mềm khách hàng theo số điện thoại (Soft Delete Customer by Phone)
+- **URL**: `/customers/phone/:phone`
+- **Method**: `DELETE`
+- **Description**: Xóa mềm (isDeleted=true) một khách hàng dựa trên số điện thoại.
+- **Parameters**:
+  - `phone`: Số điện thoại khách hàng (bắt buộc)
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "Xóa mềm tài khoản khách hàng thành công",
+    "data": { /* ... customer object ... */ }
+  }
+  ```
+
+#### 5.10. Reset điểm tích lũy cho toàn bộ khách hàng (Reset All Customer Points)
+- **URL**: `/customers/reset-points`
+- **Method**: `PUT`
+- **Description**: Reset điểm tích lũy về 0 cho tất cả khách hàng.
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "message": "Điểm tích lũy đã được reset thành công."
+  }
+  ```
+
+#### 5.11. Kiểm tra người đại diện công ty (Check Company Representative)
+- **URL**: `/customers/check-representative`
+- **Method**: `POST`
+- **Description**: Kiểm tra thông tin người đại diện có khớp với công ty khách sỉ không.
+- **Body**:
+  ```json
+  {
+    "companyName": "string",
+    "taxId": "string",
+    "name": "string",
+    "phone": "string"
+  }
+  ```
+- **Response** (thành công):
+  ```json
+  {
+    "success": true,
+    "message": "Người đại diện phù hợp với công ty."
+  }
+  ```
+- **Response** (thất bại):
+  ```json
+  {
+    "success": false,
+    "message": "Người đại diện không đúng với công ty."
+  }
+  ```
+
 ### 6. Quản lý Hóa Đơn (Invoice Management)
 
 #### 6.1. Lấy danh sách sách phổ biến (Get Popular Books)

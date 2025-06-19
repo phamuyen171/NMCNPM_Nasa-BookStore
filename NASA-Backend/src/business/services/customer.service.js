@@ -70,6 +70,48 @@ class CustomerService {
             throw error;
         }
     }
+
+    async updateCustomer(phone, updateData) {
+        try {
+            // Loại bỏ các trường không nên cập nhật trực tiếp hoặc không cần thiết
+            delete updateData.phone; // Không cho phép cập nhật phone qua hàm này để tránh phức tạp
+            delete updateData.points; // Điểm sẽ được cập nhật riêng
+            delete updateData.totalSpent; // Tổng chi tiêu sẽ được cập nhật riêng
+            delete updateData.createdAt;
+            delete updateData.updatedAt;
+            delete updateData.isDeleted; // Có thể có hàm riêng để xóa mềm
+
+            const updatedCustomer = await Customer.findOneAndUpdate(
+                { phone: phone, isDeleted: false },
+                { $set: updateData },
+                { new: true, runValidators: true } // `new: true` trả về tài liệu đã cập nhật, `runValidators: true` chạy các validation trong Schema
+            );
+
+            if (!updatedCustomer) {
+                throw new Error("Không tìm thấy khách hàng để cập nhật.");
+            }
+            return updatedCustomer;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async deleteCustomer(phone) {
+        try {
+            const customer = await Customer.findOneAndUpdate(
+                { phone: phone, isDeleted: false },
+                { $set: { isDeleted: true } },
+                { new: true } // Trả về tài liệu đã cập nhật
+            );
+
+            if (!customer) {
+                throw new Error("Không tìm thấy khách hàng để xóa.");
+            }
+            return customer;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 module.exports = new CustomerService(); 
