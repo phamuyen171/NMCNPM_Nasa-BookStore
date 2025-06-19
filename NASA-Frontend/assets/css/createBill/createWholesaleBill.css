@@ -1,0 +1,36 @@
+.invoice-box, .payment-method{
+    border: 1px solid #0f107c;
+    border-radius: 10px;
+}
+
+.separate-line{
+    background-color: #0f107c;
+}
+
+.logo-nasa{
+    width: 100px;
+    height: 127px;
+    margin-right: 10px;
+}
+
+.nasa-info{
+    margin: 0;
+}
+
+.select-pay-method{
+    font-weight: bold;
+    color: #1a3a9c;
+    padding-right: 10px;
+    margin-right: 50px;
+}
+
+.select-btn{
+    margin: 0 20px;
+}
+
+.btn-thanh-toan-ngay, .btn-ghi-no{
+    background-color: #c1cef4;
+}
+.btn-thanh-toan-ngay:hover,.btn-ghi-no:hover{
+    background-color: #8485cd;
+}

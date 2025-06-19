@@ -1,0 +1,24 @@
+.success-message{
+    color: #1a3a9c;
+}
+
+
+.btn-tao-bill-moi, .btn-xem-ds-bill{
+    color: black;
+    font-weight: bold;
+    margin-right: 40px;
+}
+
+.btn-tao-bill-moi{
+    background-color: #c1cef4;
+}
+.btn-tao-bill-moi:hover{
+    background-color: #8485cd;
+}
+
+.btn-xem-ds-bill{
+    background-color: #d9d9d9;
+}
+.btn-xem-ds-bill:hover{
+    background-color: #7f7b7b;
+}
