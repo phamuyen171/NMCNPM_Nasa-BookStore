@@ -14,7 +14,9 @@
     <link rel="stylesheet" href="../../assets/css/login.css" />
     <link rel="stylesheet" href="../../assets/css/dashboard.css" />
     <link rel="stylesheet" href="../../assets/css/mainSidebar.css"/>
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    
 
     <title>Nhà Sách NASA</title>
 
@@ -23,7 +25,6 @@
     <div class="container-fluid min-vh-100 d-flex flex-column justify-content-between">
       <!-- Header -->
        <div class="banner-header">
-        <div id="banner" data-url="../../layouts/html/banner.html"></div>
         <div id="header" data-url="../../layouts/html/header.html"></div>
        </div>
       
@@ -31,7 +32,7 @@
       <!-- Content -->
       <div class="row">
         <!-- LEFT -->
-        <div class="col-auto main-layout left">
+        <div class="col-md-3 main-layout left">
           <div class="sidebar">
             <ul class="nav flex-column text-white">
                 <li class="nav-item">
@@ -51,6 +52,9 @@
                     <a class="nav-link" href="../staff/staff.html"><i class="fa-solid fa-clipboard-user me-2"></i> Nhân Viên</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="../staff/staff.html"><i class="fa-solid fa-file me-2"></i>Báo cáo</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="../rule/changeRules.html"><i class="fas fa-sliders-h me-2"></i> Thay đổi quy định</a>
                 </li>
             </ul>
@@ -59,8 +63,117 @@
         </div>
 
         <!-- RIGHT -->
-        <div class="col-auto">
-            
+        <div class="col-md-9">
+          <!-- Dòng poster -->
+          <div class="d-flex justify-content-start align-items-center mb-4 gap-3" style="flex-wrap: wrap;  width: 100%;">
+            <!-- Poster nhỏ - Carousel -->
+            <div class="poster-carousel" style="flex: 0 0 auto; min-width: 300px;">
+              <div id="dashboardCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000" data-bs-touch="true">
+                <div class="carousel-inner">
+                  <div class="carousel-item active">
+                    <img src="../../public/images/dashboard-images/poster.png" class="d-block w-100" alt="...">
+                  </div>
+                  <div class="carousel-item">
+                    <img src="../../public/images/dashboard-images/poster1.png" class="d-block w-100" alt="...">
+                  </div>
+                  <div class="carousel-item">
+                    <img src="../../public/images/dashboard-images/poster2.png" class="d-block w-100" alt="...">
+                  </div>
+                  <div class="carousel-item">
+                    <img src="../../public/images/dashboard-images/poster3.png" class="d-block w-100" alt="...">
+                  </div>
+                  <div class="carousel-item">
+                    <img src="../../public/images/dashboard-images/poster4.png" class="d-block w-100" alt="...">
+                  </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#dashboardCarousel" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#dashboardCarousel" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Poster lớn -->
+            <div class="poster-big" style="flex: 1; ">
+              <img src="../../public/images/dashboard-images/poster-big.png" class="img-fluid big-poster m-0" alt="">
+            </div>
+          </div>
+
+
+
+          <!-- Dòng Thống kê -->
+          <div class="row row-thong-ke mb-4" style="border: 1px solid #1a3a9c; border-radius:10px;">
+            <div class="col-md-12 d-flex align-items-center justify-content-start">
+              <img src="../../public/images/dashboard-images/HOT.png" alt="" class="img-hot-new mr-2">
+              <p class="fw-bold" style="color:#1a3a9c;">Thống kê</p>
+            </div>
+            <hr class="separate-line" style="color: #1a3a9c;"/>
+            <!-- 3 ô -->
+            <div class="row row-3-cell d-flex justify-content-center align-items-center mb-4">
+              <!--ô 1-->
+              <div class="col-md-4 cell-san-pham text-center">
+                <p id="so-san-pham" style="font-size: 50px; color: #1a3a9c;"><strong></strong></p>
+                <p style="font-size: 17px; color: #1a3a9c;">SẢN PHẨM</p>
+              </div>
+              <!--ô 2-->
+              <div class="col-md-4 cell-hoa-don text-center border-start">
+                <p id="so-hoa-don" style="font-size: 50px; color: #1a3a9c;"><strong></strong></p>
+                <p style="font-size: 17px; color: #1a3a9c;">HOÁ ĐƠN TRONG THÁNG</p>
+              </div>
+              <!--ô 3-->
+              <div class="col-md-4 cell-khach-hang text-center border-start">
+                <p id="so-khach-hang" style="font-size: 50px; color: #1a3a9c;"><strong></strong></p>
+                <p style="font-size: 17px; color: #1a3a9c;">KHÁCH HÀNG THÂN THIẾT</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dòng Hàng mới về -->
+           <div class="row row-thong-ke mb-4" style="border: 1px solid #1a3a9c; border-radius:10px;">
+            <div class="col-md-12 d-flex align-items-center justify-content-start">
+              <img src="../../public/images/dashboard-images/new.png" alt="" class="img-hot-new mr-2">
+              <p class="fw-bold" style="color:#1a3a9c;">Hàng mới về</p>
+            </div>
+            <hr class="separate-line" style="color: #1a3a9c;"/>
+            <!-- in sách ở đây -->
+            <div class="row row-san-pham-moi d-flex justify-content-center align-items-center mb-4">
+              <div class="col-12 d-flex justify-content-between align-items-center">
+                <button id="btn-prev-new" class="btn text-white" style="display:none;"><</button>
+
+                <div id="new-book-container" class="d-flex justify-content-center flex-wrap gap-3 w-100 px-3">
+                  <!-- Sách sẽ được chèn vào đây -->
+                </div>
+
+                <button id="btn-next-new" class="btn text-white">></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dòng Sách bán chạy -->
+          <div class="row row-thong-ke mb-4" style="border: 1px solid #1a3a9c; border-radius:10px;">
+            <div class="col-md-12 d-flex align-items-center justify-content-start">
+              <img src="../../public/images/dashboard-images/hot.png" alt="" class="img-hot-new mr-2">
+              <p class="fw-bold" style="color:#1a3a9c;">Top bán chạy</p>
+            </div>
+            <hr class="separate-line" style="color: #1a3a9c;"/>
+            <!-- in sách ở đây -->
+            <div class="row row-top-ban-chay d-flex justify-content-center align-items-center mb-4">
+              <div class="col-12 d-flex justify-content-between align-items-center">
+                <button id="btn-prev-hot" class="btn text-white" style="display:none;"><</button>
+
+                <div id="hot-book-container" class="d-flex justify-content-center flex-wrap gap-3 w-100 px-3">
+                  <!-- Sách sẽ được chèn vào đây -->
+                </div>
+
+                <button id="btn-next-hot" class="btn text-white">></button>
+              </div>
+            </div>
+          </div>
+
+
+
         </div>
       </div>
 
@@ -68,14 +181,13 @@
       <div id="footer" data-url="../../layouts/html/footer.html"></div>
 
       <script type="module" src="../../assets/js/dashboard.js"></script>
-
-      <!-- js bootstrap -->
+    </div>
+    <!-- js bootstrap -->
       <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"
       ></script>
-    </div>
     <script src="../../layouts/js/layout-loader.js"></script>
     <!-- <script src="../../components/js/error-modal.js"></script> -->
   </body>
