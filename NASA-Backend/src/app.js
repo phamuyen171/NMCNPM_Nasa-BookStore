@@ -29,7 +29,7 @@ app.use('/api/staff', staffRoutes);
 app.use('/api/books', importOrderRoutes); // Thêm routes cho đơn nhập sách (sử dụng chung prefix /api/books)
 app.use('/api/invoices', invoiceRoutes); // Thêm routes cho hóa đơn
 app.use('/api/customers', customerRoutes); // Thêm routes cho khách hàng
-app.use('api/image', imageRoutes);
+app.use('/api/image', imageRoutes);
 app.use('/api/reports', reportRoutes); // Thêm routes cho báo cáo
 app.use('/api/rules', ruleRoutes);
 

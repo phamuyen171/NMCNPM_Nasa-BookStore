@@ -20,8 +20,13 @@ async function getFilteredCustomer(type="retail"){
 }
 
 function formatDate(dateStr) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("vi-VN");
+    const date = new Date(dateStr);
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng tính từ 0
+    const year = String(date.getFullYear()); // Lấy 2 số cuối
+
+    return `${day}/${month}/${year}`;
 }
 
 let htmlByType = {

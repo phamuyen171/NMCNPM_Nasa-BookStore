@@ -238,6 +238,10 @@ window.addEventListener('DOMContentLoaded', async () => {
             if (points < rules.point.minPointToUse) {
               cannotRewardMessage.classList.remove('d-none');
               orderNotEnoughTotal.classList.add('d-none');
+
+              continueBtn.classList.remove('btn-disabled');
+              continueBtn.classList.add('btn-primary');
+
             } else if (final < rules.point.minBillValue) {
               document.getElementById("minValue").innerText = rules.point.minBillValue + "$";
               cannotRewardMessage.classList.add('d-none');
