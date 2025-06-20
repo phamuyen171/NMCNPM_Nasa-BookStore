@@ -1,0 +1,51 @@
+.carousel-item-next,
+.carousel-item-prev,
+.carousel-item.active {
+  display: block;
+  transition: transform 0.6s ease-in-out;
+}
+
+/* Đặt chiều cao cố định cho carousel */
+#dashboardCarousel {
+  height: 300px;
+  width: 300px;
+  overflow: hidden;
+}
+
+/* Các phần con phải đầy đủ chiều cao 100% */
+#dashboardCarousel .carousel-inner,
+#dashboardCarousel .carousel-item {
+  height: 100%;
+}
+
+/* Ảnh fill toàn bộ khung, không bị méo */
+#dashboardCarousel img {
+  width: 100%;
+  object-fit: cover;
+}
+
+.big-poster {
+  height: 300px;
+  width: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* dòng 2 */
+.img-hot-new {
+  width: 30px;
+  height: 30px;
+}
+
+.row-thong-ke {
+  margin-right: 5px;
+}
+
+.separate-line {
+  margin-left: 10px;
+  width: 90%;
+}
+
+.border-start {
+  border-left: 1px solid #042484 !important;
+}
