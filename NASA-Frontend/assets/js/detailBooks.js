@@ -39,15 +39,17 @@ export function renderBooks(bookList, importMode=false) {
         bookCard.className = "col-md-6";
         bookCard.innerHTML = `
           <div class="card shadow-sm d-flex flex-row p-2">
-            <img src="${book.image}" alt="cover" class="img-fluid rounded me-3" style="width: 100px; height: 130px; object-fit: cover;" />
-            <div class="flex-grow-1">
-              <h5 class="mb-1">${book.title}</h5>
-              <p class="mb-1 book-author"><strong>Tác giả:</strong> ${book.author}</p>
-              <p class="mb-1 book-cate"><strong>Thể loại:</strong> ${book.category}</p>
-              <p class="mb-1 book-publisher"><strong>Nhà xuất bản:</strong> ${book.publisher}</p>
-              <p class="mb-1 book-price"><strong>Giá:</strong> ${book.price} đ</p>
-              <p class="mb-1 book-quan"><strong>Số lượng:</strong> ${book.quantity}</p>
-              <p class="mb-1 book-des"><strong>Mô tả:</strong> ${book.description}</p>
+            <div id="show-detail-info" class="d-flex align-items-start gap-3">
+              <img src="${book.image}" alt="cover" class="img-fluid rounded" style="width: 100px; height: 130px; object-fit: cover;" />
+              <div class="flex-grow-1">
+                <h5 class="mb-1">${book.title}</h5>
+                <p class="mb-1 book-author"><strong>Tác giả:</strong> ${book.author}</p>
+                <p class="mb-1 book-cate"><strong>Thể loại:</strong> ${book.category}</p>
+                <p class="mb-1 book-publisher"><strong>Nhà xuất bản:</strong> ${book.publisher}</p>
+                <p class="mb-1 book-price"><strong>Giá:</strong> ${book.price} đ</p>
+                <p class="mb-1 book-quan"><strong>Số lượng:</strong> ${book.quantity}</p>
+                <p class="mb-1 book-des"><strong>Mô tả:</strong> ${book.description}</p>
+              </div>
             </div>
             <div class="dropdown ms-2">
               <button class="btn bg-white btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"></button>
@@ -58,6 +60,16 @@ export function renderBooks(bookList, importMode=false) {
             </div>
           </div>
         `;
+        bookCard.querySelector("#show-detail-info").addEventListener("click", (e) => {
+          if (e.target.classList.contains("update-btn") || e.target.classList.contains("delete-btn")) {
+            e.stopPropagation(); // Ngăn chặn sự kiện click lan truyền
+          } else {
+            // Chuyển hướng đến trang chi tiết sách
+            console.log(book);
+            localStorage.setItem("bookDetail", JSON.stringify(book));
+            window.location.href = `./bookInfo.html`;
+          } 
+        });
     } else {
       bookCard.className = 'mb-3 d-flex align-items-center justify-content-between';
 

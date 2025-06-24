@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- css bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="../../assets/css/login.css" />
+    <link rel="stylesheet" href="../../assets/css/detailBooks.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../../components/css/delete-modal.css" />
+    <link rel="stylesheet" href="../../components/css/error-modal.css" />
+    <link rel="stylesheet" href="../../components/css/success-modal.css" />
+
+    <title>Nhà Sách NASA</title>
+
+  </head>
+  <body data-modal-error-src="../../components/html/error-modal.html" data-modal-success-src="../../components/html/success-modal.html" data-modal-delete-src="../../components/html/delete-modal.html">
+    <div class="container-fluid layout-root min-vh-100 d-flex flex-column justify-content-between">
+      <!-- Header -->
+      <div id="header" data-url="../../layouts/html/header.html"></div>
+      
+
+      <!-- Content -->
+      <div class="row">
+        <!-- LEFT -->
+        <div class="col-md-2 main-layout">
+          <div class="sidebar">
+            <a href="./detailBooks.html" class="nav-item">Xem danh sách</a>
+            <a href="./addBook.html" class="nav-item">Thêm Sách</a>
+            <a href="./importBook.html" class="nav-item">Nhập Sách</a>
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="col-md-10">
+            <div class="row p-4">
+                <!-- Cột trái: Ảnh và thông tin cơ bản -->
+                <div class="col-md-4 text-center">
+                    <img src="../../public/images/book-cover/sample.png" alt="Bìa sách" class="img-fluid mb-3" style="max-height: 350px;" id="bookImage"/>
+                    <p class="fs-3 fw-bold text-dark" id="soldPrice">206.000 VND</p>
+                    <p class="text-muted">(Giá nhập: <b id="importPrice">150.000</b> VND)</p>
+                    <p><strong>Tình trạng:</strong> <span class="text-primary" id="status">Còn hàng</span></p>
+                    <p><strong>Số lượng còn:</strong> <span id="stock">200</span></p>
+                </div>
+
+                <!-- Cột phải: Thông tin mô tả -->
+                <div class="col-md-8">
+                    <h4 class="fw-bold text-uppercase mb-3" id="book-title">Dịu Dàng Tận Xương</h4>
+                    <!-- <p><strong>Mã sản phẩm:</strong> <span id="book-id">0000001</span></p> -->
+                    <p><strong>Thể loại:</strong> <span id="book-category">Tiểu thuyết tình cảm</span></p>
+                    <p><strong>Tác giả:</strong> <span  id="book-author">Tây Phương Kinh Tế Học</span></p>
+                    <p><strong>NXB:</strong> <span id="book-publisher">Nhà xuất bản Thanh Niên</span></p>
+
+                    <hr />
+                    <h5 class="fw-bold">Mô tả nội dung sản phẩm</h5>
+                    <p style="max-height: 200px; overflow-y: auto;" id="book-description">
+                    Khương Cách dáng vẻ cao sang, tính cách lạnh nhạt, nổi tiếng là người đẹp lạnh lùng trong giới giải trí. Năm đó cô ra mắt nhờ một tấm ảnh chụp cùng với báo đốm.
+                    <br /><br />
+                    Trong cảnh cát bay ngợp trời, bên cạnh một gốc cây khô, cô gái mặc váy lụa đỏ đứng dường đầu với một con báo đốm toàn thân rắn rỏi. Ánh mắt cô gái hờ hững xa cách, ánh mắt báo đốm cảnh giác nguy hiểm.
+                    <br /><br />
+                    Lúc chụp tấm ảnh này, Khương Cách vừa tròn mười tám tuổi. Năm ấy, cô gặp Quý Tranh.
+                    </p>
+
+                    <button id="updateBookBtn" class="btn btn-primary mt-3">
+                        <i class="fa fa-edit me-1"></i> Cập nhật
+                    </button>
+                </div>
+            </div>
+
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div id="footer" data-url="../../layouts/html/footer.html"></div>
+
+
+      <script type="module" src="../../assets/js/bookInfo.js"></script>
+      <!-- js bootstrap -->
+      <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"
+      ></script>
+    </div>
+    <script src="../../layouts/js/layout-loader.js"></script>
+
+    <script src="../../components/js/delete-confirm.js"></script>
+    <script src="../../components/js/error-modal.js"></script>
+    <script src="../../components/js/success-modal.js"></script>
+
+    <script src="../../assets/js/utils.js"></script>
+    <div id="edit-overlay-container" data-url="../../components/html/edit-book-overlay.html"></div>
+  </body>
+</html>
