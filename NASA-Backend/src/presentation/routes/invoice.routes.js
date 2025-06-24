@@ -5,6 +5,8 @@ const invoiceController = require('../controllers/invoice.controller');
 // Lấy danh sách sách phổ biến
 router.get('/popular-books', invoiceController.getPopularBooks);
 
+router.get('/count-invoices', invoiceController.countInvoices);
+
 // Tạo hóa đơn mới
 // router.post('/', invoiceController.createInvoice);
 router.post('/', invoiceController.createInvoice);

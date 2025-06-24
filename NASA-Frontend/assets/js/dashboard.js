@@ -11,7 +11,7 @@ if (carouselEl) {
 }
 
 // =======================================Dòng 2==============================================
-const thongKeData = {
+let thongKeData = {
   sanPham: 4821,
   hoaDon: 789,
   khachHang: 123
@@ -19,21 +19,69 @@ const thongKeData = {
 
 // Đảm bảo chạy sau khi DOM đã load
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('so-san-pham').innerHTML = `<strong>${thongKeData.sanPham}</strong>`;
-  document.getElementById('so-hoa-don').innerHTML = `<strong>${thongKeData.hoaDon}</strong>`;
-  document.getElementById('so-khach-hang').innerHTML = `<strong>${thongKeData.khachHang}</strong>`;
+  fetch("http://localhost:3000/api/books/count-books")
+  .then(async response => {
+    const data = await response.json();
+
+    if (!data.success) {  
+      throw new Error(data.message);
+    }
+    return data;
+  })
+  .then(data => {
+    if (!data || !data.data) {
+      throw new Error("Không có dữ liệu thống kê số lượng sách.");
+    }
+    thongKeData.sanPham = data.data.totalBooks;
+    document.getElementById('so-san-pham').innerHTML = `<strong>${thongKeData.sanPham}</strong>`;
+  })
+  .catch(error => { 
+    console.error("Lỗi khi lấy dữ liệu thống kê sách:", error);
+  });
+
+  fetch("http://localhost:3000/api/invoices/count-invoices")
+  .then(async response => {
+    const data = await response.json();
+
+    if (!data.success) {  
+      throw new Error(data.message);
+    }
+    return data;
+  })
+  .then(data => {
+    if (!data || !data.data) {
+      throw new Error("Không có dữ liệu thống kê số lượng hóa đơn.");
+    }
+    thongKeData.hoaDon = data.data.count;
+    document.getElementById('so-hoa-don').innerHTML = `<strong>${thongKeData.hoaDon}</strong>`;
+  })
+  .catch(error => { 
+    console.error("Lỗi khi lấy dữ liệu thống kê hóa đơn:", error);
+  });
+
+  fetch("http://localhost:3000/api/customers/count-customers")
+  .then(async response => {
+    const data = await response.json();
+
+    if (!data.success) {  
+      throw new Error(data.message);
+    }
+    return data;
+  })
+  .then(data => {
+    if (!data || !data.data) {
+      throw new Error("Không có dữ liệu thống kê số lượng khách hàng.");
+    }
+    thongKeData.khachHang = data.data.count;
+    document.getElementById('so-khach-hang').innerHTML = `<strong>${thongKeData.khachHang}</strong>`;
+  })
+  .catch(error => { 
+    console.error("Lỗi khi lấy dữ liệu thống kê khách hàng:", error);
+  });
 });
 
 // ========================================Dòng 3===========================================
-const sachMoiData = [
-  { ten: "Sách 1", anh: "https://cdn1.fahasa.com/media/catalog/product/n/x/nxbtrestoryfull_25502016_015023.jpg" },
-  { ten: "Sách 2", anh: "https://cdn1.fahasa.com/media/catalog/product/n/x/nxbtrestoryfull_25502016_015023.jpg" },
-  { ten: "Sách 3", anh: "https://cdn1.fahasa.com/media/catalog/product/n/x/nxbtrestoryfull_25502016_015023.jpg" },
-  { ten: "Sách 4", anh: "https://cdn1.fahasa.com/media/catalog/product/n/x/nxbtrestoryfull_25502016_015023.jpg" },
-  { ten: "Sách 5", anh: "https://cdn1.fahasa.com/media/catalog/product/n/x/nxbtrestoryfull_25502016_015023.jpg" },
-  { ten: "Sách 6", anh: "https://cdn1.fahasa.com/media/catalog/product/n/x/nxbtrestoryfull_25502016_015023.jpg" },
-  { ten: "Sách 7", anh: "https://cdn1.fahasa.com/media/catalog/product/n/x/nxbtrestoryfull_25502016_015023.jpg" }
-];
+let sachMoiData = [];
 
 function renderBooks(container, data, currentPage, btnPrev, btnNext) {
   container.innerHTML = "";
@@ -82,15 +130,7 @@ btnNextNew.addEventListener("click", () => {
 
 
 // ==============================================Dòng 4===========================================
-const sachHotData = [
-  { ten: "Sách 1", anh: "https://cdn1.fahasa.com/media/catalog/product/8/9/8934974179375.jpg" },
-  { ten: "Sách 2", anh: "https://cdn1.fahasa.com/media/catalog/product/8/9/8934974179375.jpg" },
-  { ten: "Sách 3", anh: "https://cdn1.fahasa.com/media/catalog/product/8/9/8934974179375.jpg" },
-  { ten: "Sách 4", anh: "https://cdn1.fahasa.com/media/catalog/product/8/9/8934974179375.jpg" },
-  { ten: "Sách 5", anh: "https://cdn1.fahasa.com/media/catalog/product/8/9/8934974179375.jpg" },
-  { ten: "Sách 6", anh: "https://cdn1.fahasa.com/media/catalog/product/8/9/8934974179375.jpg" },
-  { ten: "Sách 7", anh: "https://cdn1.fahasa.com/media/catalog/product/8/9/8934974179375.jpg" }
-];
+let sachHotData = [];
 
 const currentPageHot = { value: 0 };
 const containerHot = document.getElementById("hot-book-container");
@@ -113,6 +153,54 @@ btnNextHot.addEventListener("click", () => {
 
 // Gọi lần đầu
 document.addEventListener("DOMContentLoaded", () => {
-  renderBooks(containerNew, sachMoiData, currentPageNew, btnPrevNew, btnNextNew);
-  renderBooks(containerHot, sachHotData, currentPageHot, btnPrevHot, btnNextHot);
+  fetch("http://localhost:3000/api/books/get-newest-books?limit=10")
+  .then(async response => {
+    const data = await response.json();
+
+    if (!data.success) {  
+      throw new Error("Lỗi khi lấy dữ liệu sách mới nhất.");
+    }
+    return data;
+  })
+  .then(data => {
+    if (!data || !data.data) {
+      throw new Error("Không có dữ liệu sách mới nhất.");
+    }
+    data.data.forEach(book => {
+      sachMoiData.push({
+        ten: book.title,
+        anh: book.image || "https://via.placeholder.com/120" // Sử dụng ảnh mặc định nếu không có})
+      });
+    });
+    renderBooks(containerNew, sachMoiData, currentPageNew, btnPrevNew, btnNextNew);
+  })
+  .catch(error => { 
+    console.error("Lỗi khi lấy dữ liệu sách mới nhấ:", error);
+  });
+
+  fetch("http://localhost:3000/api/books/popular-books?limit=10")
+  .then(async response => {
+    const data = await response.json();
+
+    if (!data.success) {  
+      throw new Error("Lỗi khi lấy dữ liệu sách phổ biến: ");
+    }
+    return data;
+  })
+  .then(data => {
+    if (!data || !data.data) {
+      throw new Error("Không có dữ liệu sách phổ biến.");
+    }
+    data.data.forEach(book => {
+      sachHotData.push({
+        ten: book.title,
+        anh: book.image || "https://via.placeholder.com/120" // Sử dụng ảnh mặc định nếu không có})
+      });
+    });
+    renderBooks(containerHot, sachHotData, currentPageHot, btnPrevHot, btnNextHot);
+
+  })
+  .catch(error => { 
+    console.error("Lỗi khi lấy dữ liệu sách phổ biến:", error);
+  });
 });

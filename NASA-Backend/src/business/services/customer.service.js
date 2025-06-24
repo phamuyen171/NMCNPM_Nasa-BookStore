@@ -172,6 +172,15 @@ class CustomerService {
             throw error;
         }
     }
+
+    async countCustomers() {
+        try {
+            const totalCustomers = await Customer.countDocuments({ isDeleted: false });
+            return totalCustomers;
+        } catch (error) {
+            throw new Error("Lỗi khi đếm số lượng khách hàng: " + error.message);
+        }
+    }
 }
 
 module.exports = new CustomerService(); 

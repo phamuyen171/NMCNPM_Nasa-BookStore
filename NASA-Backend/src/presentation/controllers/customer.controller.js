@@ -166,4 +166,14 @@ exports.deleteCustomer = async (req, res) => {
         }
         res.status(500).json({ success: false, message: 'Lỗi server khi xóa tài khoản khách hàng' });
     }
+};
+
+exports.countCustomers = async (req, res) => {
+    try {
+        const count = await customerService.countCustomers();
+        res.status(200).json({ success: true, message: 'Đếm số lượng khách hàng thành công', data: { count } });
+    } catch (error) {
+        console.error("Lỗi khi đếm số lượng khách hàng: ", error);
+        res.status(500).json({ success: false, message: 'Lỗi server khi đếm số lượng khách hàng' });
+    }
 }

@@ -783,6 +783,27 @@ class BookService {
             throw error;
         }
     }
+
+    async getBookCount() {
+        try {
+            const count = await Book.countDocuments({ isDeleted: false });
+            return count;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getNewestBooks(limit = 4) {
+        try {
+            const newestBooks = await Book.find({ isDeleted: false })
+                .sort({ createdAt: -1 }) // Sắp xếp theo ngày tạo mới nhất
+                .limit(limit)
+                .select('_id title author price quantity image soldQuantity createdAt');
+            return newestBooks;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 // Export instance của BookService để sử dụng ở Controller
