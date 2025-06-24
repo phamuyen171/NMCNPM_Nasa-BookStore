@@ -546,6 +546,16 @@ class InvoiceService {
             throw error;
         }
     }
+
+    async countInvoices() {
+        try {
+            const count = await Invoice.countDocuments({ isDeleted: false });
+            return { success: true, count };
+        } catch (error) {
+            console.error('Lỗi khi đếm hóa đơn:', error);
+            throw new Error('Không thể đếm hóa đơn: ' + error.message);
+        }
+    }
 }
 
 module.exports = new InvoiceService();

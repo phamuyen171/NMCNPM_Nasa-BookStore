@@ -5,13 +5,63 @@ class CustomerService {
         return Customer.findOne({ phone, isDeleted: false });
     }
 
-    async updatePointsRetail(phone, updatePoints){
-        const customer = await this.findCustomerByPhone(phone);
-        if (customer) {
-            const resetDate = customer.resetAt;
-            customer.points += updatePoints;
-            customer.resetAt = resetDate;
-            await customer.save();
+    async getCompanyInfoByName(companyName) {
+        try{
+            if (!companyName) {
+                throw new Error("Tên công ty không được để trống.");
+            }
+            const customer = await Customer.findOne({
+                companyName: new RegExp(companyName, 'i'), // Tìm kiếm không phân biệt hoa thường
+                type: 'wholesale',
+                isDeleted: false
+            });
+            if (!customer) {
+                throw new Error("Không tìm thấy công ty khách sỉ với tên này.");
+            }
+
+            return customer;
+        } catch (error) {
+            throw new Error("Lỗi khi tìm kiếm công ty: " + error.message);
+        }
+    }
+
+    async updateCustomerRetail(phone, updatePoints, spent){
+        try {
+            const customer = await this.findCustomerByPhone(phone);
+            if (customer) {
+                const resetDate = customer.resetAt;
+                customer.points += updatePoints;
+                customer.totalSpent += spent;
+                customer.resetAt = resetDate;
+                await customer.save();
+                return customer;
+            }
+            else {
+                throw new Error("Không tìm thấy khách hàng bán lẻ với số điện thoại này.");
+            }
+        } catch (error) {
+            throw new Error("Lỗi khi cập nhật khách hàng bán lẻ: " + error.message);
+        }
+        
+    }
+
+    async updateCustomerWholesale(invoiceDate){
+        try{
+            const customer = await this.getCompanyInfoByName(invoiceDate.companyName);
+            if (customer) {
+                if (invoiceDate.paymentMethod === 'paid') {
+                    customer.totalSpent += invoiceDate.total;
+                } else if (invoiceDate.status === 'debt') {
+                    customer.currentDebt += invoiceDate.total;
+                }
+                await customer.save();
+                return customer;
+            } else {
+                throw new Error("Không tìm thấy khách hàng bán sỉ với tên công ty này.");
+            }
+        }
+        catch (error) {
+            throw new Error("Lỗi khi cập nhật khách hàng bán sỉ: " + error.message);
         }
     }
 
@@ -120,6 +170,15 @@ class CustomerService {
             return customer;
         } catch (error) {
             throw error;
+        }
+    }
+
+    async countCustomers() {
+        try {
+            const totalCustomers = await Customer.countDocuments({ isDeleted: false });
+            return totalCustomers;
+        } catch (error) {
+            throw new Error("Lỗi khi đếm số lượng khách hàng: " + error.message);
         }
     }
 }

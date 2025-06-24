@@ -87,6 +87,19 @@ class UserService {
     }
   }
 
+  async updateUsername(oldUsername, newUsername) {
+    const user = await User.findOne({ username: oldUsername, status: 'active' });
+    if (!user) throw new Error('Không tìm thấy tài khoản với username đã cho'); 
+    user.username = newUsername;
+    return await user.save({ runValidators: true });
+  }
+
+  async updateImage(username, imageId) {
+    const user = await User.findOne({ username, status: 'active' });
+    if (!user) throw new Error('Không tìm thấy tài khoản với username đã cho'); 
+    user.image = imageId;
+    return await user.save({ runValidators: true });
+  }
 }
 
 module.exports = new UserService();

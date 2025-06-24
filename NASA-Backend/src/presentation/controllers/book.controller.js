@@ -4,6 +4,34 @@ const { STOCK_THRESHOLD } = require('../../business/services/book.service');
 const path = require('path');
 
 const bookController = {
+
+    async getNewestBooks(req, res, next) {
+        try {
+            const limit = parseInt(req.query.limit) || 10; // Số lượng sách mới nhất cần lấy
+            const newestBooks = await bookService.getNewestBooks(limit);
+            res.status(200).json({
+                success: true,
+                data: newestBooks
+            });
+        }
+        catch (error) {
+            next(error);
+        }
+    },
+
+    async getBookCount(req, res, next) {
+        try {   
+            const count = await bookService.getBookCount();
+            res.status(200).json({
+                success: true,
+                message: 'Đã lấy số lượng sách thành công',
+                data: { totalBooks: count }
+            });
+        }
+        catch (error) {
+            next(error);
+        }
+    },
     // Thêm sách mới
     async createBook(req, res, next) {
         try {

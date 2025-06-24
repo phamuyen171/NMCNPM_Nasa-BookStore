@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const bookController = require('../controllers/book.controller');
 
+router.get('/count-books', bookController.getBookCount); // Lấy tổng số sách
+router.get('/get-newest-books', bookController.getNewestBooks); // Lấy sách mới nhất
+
 // Các route chỉ cần đăng nhập (protect)
 router.get('/', bookController.getAllBooks); // Lấy danh sách sách
 router.get('/search', bookController.searchBooks); // Tìm kiếm sách

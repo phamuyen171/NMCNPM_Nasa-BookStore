@@ -27,9 +27,19 @@ async function getAllStaffs(){
   return data.data;
 }
 
+// function formatDate(dateStr) {
+//   const d = new Date(dateStr);
+//   return d.toLocaleDateString("vi-VN");
+// }
+
 function formatDate(dateStr) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("vi-VN");
+    const date = new Date(dateStr);
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng tính từ 0
+    const year = String(date.getFullYear()); // Lấy 2 số cuối
+
+    return `${day}/${month}/${year}`;
 }
 
 function createTable(staffs) {
@@ -70,10 +80,10 @@ function createTable(staffs) {
         <tr>
             <td>${staff.username}</td>
             <td>${staff.fullName}</td>
-            <td></td>
+            <td>${formatDate(staff.DoB)}</td>
             <td>${role}</td>
             <td>${staff.email}</td>
-            <td></td>
+            <td>${staff.phone}</td>
             <td>${staff.CCCD}</td>
             <td>
             <a href="./detailUpdateStaff.html" class="update-staff" data-staff="${staffEncoded}" style="text-decoration: underline;">Cập nhật</a>
@@ -109,6 +119,9 @@ const pageSize = 8;
 document.addEventListener("DOMContentLoaded", async function () {
   try{
     let allStaffs = await getAllStaffs();
+
+    // chỉ cập nhập nhân viên chưa bị sa thải
+    allStaffs = allStaffs.filter(staff => staff.status === 'active');
 
     renderTableByPage(allStaffs, currentPage);
 

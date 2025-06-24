@@ -83,16 +83,8 @@ exports.updatePoints = async (req, res) => {
 exports.getCompanyInfoByName = async (req, res) => {
     try {
         const { companyName } = req.params; // Lấy tên công ty từ URL params
-        const customer = await Customer.findOne({
-            companyName: new RegExp(companyName, 'i'), // Tìm kiếm không phân biệt hoa thường
-            type: 'wholesale',
-            isDeleted: false
-        });
-
-        if (!customer) {
-            return res.status(404).json({ success: false, message: 'Không tìm thấy công ty khách sỉ này' });
-        }
-
+        const customer = await customerService.getCompanyInfoByName(companyName);
+        
         res.json({ success: true, data: { taxId: customer.taxId, address: customer.address } });
     } catch (error) {
         console.error("Lỗi khi lấy thông tin công ty: ", error);
@@ -136,7 +128,7 @@ exports.checkRepresentative = async (req, res) => {
         if (!customer) {
             throw new Error("Người đại diện không đúng với công ty.");
         }
-        res.status(200).json({ success: true, message: "Người đại diện phù hợp với công ty." });
+        res.status(200).json({ success: true, message: "Người đại diện phù hợp với công ty.", data: customer });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -173,5 +165,15 @@ exports.deleteCustomer = async (req, res) => {
             return res.status(404).json({ success: false, message: error.message });
         }
         res.status(500).json({ success: false, message: 'Lỗi server khi xóa tài khoản khách hàng' });
+    }
+};
+
+exports.countCustomers = async (req, res) => {
+    try {
+        const count = await customerService.countCustomers();
+        res.status(200).json({ success: true, message: 'Đếm số lượng khách hàng thành công', data: { count } });
+    } catch (error) {
+        console.error("Lỗi khi đếm số lượng khách hàng: ", error);
+        res.status(500).json({ success: false, message: 'Lỗi server khi đếm số lượng khách hàng' });
     }
 }

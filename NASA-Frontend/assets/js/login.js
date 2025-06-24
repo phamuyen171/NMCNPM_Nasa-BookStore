@@ -60,7 +60,7 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
     localStorage.setItem('user', JSON.stringify(data.user));
 
     // Chuyển hướng đến trang dashboard sau khi đăng nhập thành công
-    window.location.href = './pages/book/detailBooks.html';
+    window.location.href = './pages/dashboard/dashboard.html';
   }
   catch (error) {
     console.error('Lỗi khi đăng nhập:', error);

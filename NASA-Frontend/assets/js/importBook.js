@@ -1,10 +1,9 @@
 // books.js
 import { renderPagination } from "../../components/js/pagination.js";
 import { getBooksByPage, renderBooks, setupSearchEvent, getAllBooks } from "./detailBooks.js";
-import {getRule} from './createBill/finishRetailBill.js';
 
 const rules = await getRule();
-console.log(rules);
+// console.log(rules);
 
 const min_quantity = rules.book.maxImportableBook;
 const max_import = rules.book.maxImportBook;

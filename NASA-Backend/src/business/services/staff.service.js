@@ -1,4 +1,5 @@
 const Staff = require('../../data/models/staff.model');
+const authService = require('./auth.service');
 
 class StaffService {
     async checkExistingStaff(CCCD, phone) {
@@ -96,7 +97,7 @@ class StaffService {
             thumbnail: staffData.thumbnail,
             role: staffData.role,
             email: staffData.email,
-            startdate: new Date(),
+            startDate: staffData.startDate,
             image: image
         });
 
@@ -200,6 +201,66 @@ class StaffService {
             throw error;
         }
 
+    }
+
+    async updateStaff(staffId, updateData) {   
+        if (!staffId || !updateData) {
+            throw new Error('Vui lòng cung cấp mã nhân viên và dữ liệu cập nhật');
+        }
+
+        const staff = await Staff.findOne({ _id: staffId, isDeleted: false });
+        if (!staff) {
+            throw new Error(`Không tìm thấy nhân viên với mã nhân viên: ${staffId}`);
+        }
+
+        const dob_split = updateData.current.DoB ? updateData.current.DoB.split('/') : [];
+
+        // Cập nhật các trường cần thiết
+        staff.fullName = updateData.current.fullName? updateData.current.fullName : staff.fullName;
+        staff.address = updateData.current.address? updateData.current.address : staff.address;
+        staff.CCCD = updateData.current.CCCD? updateData.current.CCCD : staff.CCCD;
+        staff.email = updateData.current.email? updateData.current.email : staff.email;
+        staff.role = updateData.current.role? updateData.current.role : staff.role;
+        staff.phone = updateData.current.phone? updateData.current.phone : staff.phone;
+        staff.DoB = dob_split.length === 3 ? new Date(parseInt(dob_split[2]), parseInt(dob_split[1]) - 1, parseInt(dob_split[0])) : staff.DoB;
+        staff.username = updateData.current.username ? updateData.current.username : staff.username;
+
+        const saveStaff = await staff.save();
+
+        if (!saveStaff) {
+            throw new Error('Không thể cập nhật thông tin nhân viên');
+        }
+        // cập nhập account
+        if (updateData.current.username) {
+            const updatedUser = await authService.updateUsername(staff.username, updateData.current.username);
+            if (!updatedUser) {
+                throw new Error('Không thể cập nhật tài khoản người dùng');
+            }
+        }
+
+        return await staff.save();
+    }
+
+    async updateImage(staffId, image) {
+        if (!staffId || !image) {
+            throw new Error('Vui lòng cung cấp mã nhân viên và hình ảnh');
+        }
+
+        const staff = await Staff.findOne({ _id: staffId, isDeleted: false });
+        if (!staff) {       
+            throw new Error(`Không tìm thấy nhân viên với mã nhân viên: ${staffId}`);
+        }   
+        staff.image = image;
+        const updatedStaff = await staff.save();
+        if (!updatedStaff) {
+            throw new Error('Không thể cập nhật hình ảnh nhân viên');
+        }
+
+        // Cập nhật hình ảnh trong tài khoản người dùng
+        const updatedUser = await authService.updateImage(staff.username, image);
+        if (!updatedUser) { 
+            throw new Error('Không thể cập nhật hình ảnh người dùng');
+        }
     }
 }
 

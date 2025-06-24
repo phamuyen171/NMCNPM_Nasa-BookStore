@@ -18,19 +18,19 @@ class InvoiceController {
     }
 
     // Tạo hóa đơn mới
-    async createInvoice(req, res, next) {
-        try {
-            const invoiceData = req.body;
-            const newInvoice = await invoiceService.createInvoice(invoiceData);
-            res.status(201).json({
-                success: true,
-                message: 'Tạo hóa đơn thành công',
-                data: newInvoice
-            });
-        } catch (error) {
-            next(error);
-        }
-    }
+    // async createInvoice(req, res, next) {
+    //     try {
+    //         const invoiceData = req.body;
+    //         const newInvoice = await invoiceService.createInvoice(invoiceData);
+    //         res.status(201).json({
+    //             success: true,
+    //             message: 'Tạo hóa đơn thành công',
+    //             data: newInvoice
+    //         });
+    //     } catch (error) {
+    //         next(error);
+    //     }
+    // }
 
     // Lấy danh sách hóa đơn
     async getInvoices(req, res, next) {
@@ -176,9 +176,10 @@ class InvoiceController {
         }
     }
 
-    async createInvoiceRetail(req, res){
+    async createInvoice(req, res){
         try{
             const {productList, ...invoiceData} = req.body;
+            // console.log(productList);
             const checkExist = await Invoice.findOne({invoiceID: invoiceData.invoiceID, isDeleted: false});
             if (checkExist){
                 return res.status(401).json({ success: false, message: "Mã hóa đơn đã tồn tại."});
@@ -189,14 +190,22 @@ class InvoiceController {
                 return res.status(400).json({ success: false, message: "Lỗi lưu hóa đơn."});
             }
             
-            // cập nhập điểm
-            if (invoiceData.customerPhone !== ''){
-                const updatePoints = invoiceData.points - invoiceData.pointsUsed;
-                const points = customerService.updatePointsRetail(invoiceData.customerPhone, updatePoints);
-                if (!points){
-                    return res.status(401).json({success: false, message: "Cập nhập điểm tích lũy khách hàng thất bại."})
+            // cập nhập khách hàng
+            const updatePoints = invoiceData.points - invoiceData.pointsUsed;
+            if (invoiceData.customerType === 'retail'){
+                if (invoiceData.customerPhone !== ''){
+                    const points = customerService.updateCustomerRetail(invoiceData.customerPhone, updatePoints, invoiceData.total);
+                    if (!points){
+                        return res.status(401).json({success: false, message: "Cập nhập điểm tích lũy khách hàng thất bại."})
+                    }
+                }
+            } else if (invoiceData.customerType === 'wholesale'){
+                const update = customerService.updateCustomerWholesale(invoiceData);
+                if (!update){
+                    return res.status(401).json({success: false, message: "Cập nhật khách hàng sỉ thất bại."})
                 }
             }
+            
 
             await Promise.all(productList.map(book =>
                 invoiceService.addDetailedInvoice(newInvoice.invoiceID, book)
@@ -207,6 +216,19 @@ class InvoiceController {
             res.status(500).json({success: false, message: error.message});
         }
     }
+    
+    async countInvoices(req, res, next) {
+        try {
+            const count = await invoiceService.countInvoices();
+            res.json({
+                success: true,
+                message: 'Đếm số lượng hóa đơn thành công',
+                data: count
+            });
+        } catch (error) {
+            next(error);
+        }
+    }  
 }
 
 module.exports = new InvoiceController();

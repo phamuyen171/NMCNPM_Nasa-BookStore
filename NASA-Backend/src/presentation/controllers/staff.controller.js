@@ -7,6 +7,7 @@ class staffController {
     // req.body chứa thông tin chức vị, CCCD
     const role = req.body.role;
     const cccd = req.body.CCCD;
+    const startDate = req.body.startDate;
     if (!role || !cccd) {
         return res.status(400).json({success: false, message: 'Vui lòng cung cấp đầy đủ thông tin chức vị và CCCD' });
     }
@@ -35,7 +36,7 @@ class staffController {
                 username: username,
                 email: staffEmail,
                 password: password,
-                startDate: new Date()
+                startDate: startDate ? startDate : new Date()
             }            
         });
     }
@@ -124,6 +125,49 @@ class staffController {
         return res.status(500).json({ success: false, message: error.message});
     }
   }
+
+  async updateStaff(req, res) {
+    try {
+      const staffId = req.params.id;
+      const staffData = req.body;
+
+      // Update staff information
+      const updatedStaff = await staffService.updateStaff(staffId, staffData);
+      if (!updatedStaff) {
+        return res.status(404).json({ success: false, message: 'Không tìm thấy nhân viên để cập nhật' });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: 'Cập nhật thông tin nhân viên thành công',
+        data: updatedStaff
+      });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: error.message });
+    }
+  }
+
+  async updateStaffImage(req, res) {
+    try {
+      const staffId = req.params.id;
+      const imageId = req.file.id;
+
+      // Update staff image
+      const updatedStaff = await staffService.updateImage(staffId, imageId);
+      if (!updatedStaff) {
+        return res.status(404).json({ success: false, message: 'Không tìm thấy nhân viên để cập nhật hình ảnh' });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: 'Cập nhật hình ảnh nhân viên thành công',
+        data: updatedStaff
+      });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: error.message });
+    }
+  }
+  
 
 }
 

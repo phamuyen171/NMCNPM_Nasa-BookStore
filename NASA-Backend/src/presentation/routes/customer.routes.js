@@ -17,4 +17,6 @@ router.put('/reset-points', customerController.resetPoints);
 
 router.post('/check-representative', customerController.checkRepresentative);
 
+router.get('/count-customers', customerController.countCustomers);
+
 module.exports = router;

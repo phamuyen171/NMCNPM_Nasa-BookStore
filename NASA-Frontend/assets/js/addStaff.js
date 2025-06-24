@@ -55,7 +55,8 @@ function fillStaffInfo(tag1, tag2){
       },
       body: JSON.stringify({
         role: chucvu,
-        CCCD: cccd
+        CCCD: cccd,
+        startDate: document.getElementById("start-work-day").value.trim()
       })
     })
       .then(response => {
@@ -96,8 +97,11 @@ fillStaffInfo("cccd", "chucvu-select");
 //api thêm nhân viên
 //api/auth/create-account
 function toISODate(ddmmyyyy) {
-  const [day, month, year] = ddmmyyyy.split('/');
-  return new Date(`${year}-${month}-${day}`);
+  let [day, month, year] = ddmmyyyy.split('/');
+  if (!day || !month || !year) {
+    [day, month, year] = ddmmyyyy.split('-');
+  }
+  return new Date(year, month -1, day);
 }
 
 
