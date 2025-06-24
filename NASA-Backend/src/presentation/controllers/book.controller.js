@@ -103,10 +103,10 @@ const bookController = {
     // Lấy danh sách sách phổ biến
     async getPopularBooks(req, res, next) {
             try {
-                console.log('Controller: Getting popular books...');
+                // console.log('Controller: Getting popular books...');
                 const limit = parseInt(req.query.limit) || 4;
                 const popularBooks = await bookService.getPopularBooks(limit);
-                console.log('Controller: Found popular books:', popularBooks);
+                // console.log('Controller: Found popular books:', popularBooks);
                 res.status(200).json({
                     success: true,
                     data: popularBooks

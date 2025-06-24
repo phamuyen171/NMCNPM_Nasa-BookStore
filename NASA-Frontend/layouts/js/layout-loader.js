@@ -8,6 +8,21 @@ window.addEventListener("DOMContentLoaded", () => {
         .then(res => res.text())
         .then(html => {
           el.innerHTML = html;
+          if (id === "header") {
+            // Sau khi header đã load xong, cập nhật tên người dùng
+            const user = JSON.parse(localStorage.getItem("user"));
+            if (user && user.username && user.image) {
+              document.getElementById("userName").innerText = user.username;
+              document.getElementById("userAvatar").src =  `http://localhost:3000/api/image/${user.image}`;
+            }
+
+            // Thêm sự kiện cho nút đăng xuất
+            document.getElementById("logoutBtn").addEventListener("click", () => {
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              window.location.href = "../../index.html";
+            });
+          }
         })
         .catch(err => console.error(`Lỗi khi load ${id}:`, err));
     }
