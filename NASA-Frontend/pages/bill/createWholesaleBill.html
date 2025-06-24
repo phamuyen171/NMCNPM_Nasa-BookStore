@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="../../assets/images/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- css bootstrap -->
     <link
@@ -34,7 +34,7 @@
        <div class="invoice-box p-3 m-4">
         <!-- Dòng TT NASA -->
         <div class="d-flex justify-content-start align-items-center">
-            <img src="../../assets/images/big-logo.png" alt="" class="logo-nasa">
+            <img src="/images/big-logo.png" alt="" class="logo-nasa">
             <div class="detail-info-nasa">
                 <h5 class="nasa-info">CÔNG TY SÁCH NASA</h5>
                 <p class="nasa-info">Mã số thuế: 01234567890</p>
@@ -77,13 +77,13 @@
        </div>
 
        <!-- Hình thức thanh toán -->
-       <div class="payment-method p-2 m-4">
+       <div class="payment-method p-2 m-4" style="display: flex; justify-content: center;">
             <div class="d-flex justify-content-start align-items-center select-btn">
               <p class="select-pay-method mb-0">CHỌN HÌNH THỨC THANH TOÁN</p>
               <button class="btn btn-thanh-toan-ngay fw-bold">THANH TOÁN NGAY</button>
               <button class="btn btn-ghi-no m-3 fw-bold">GHI NỢ</button>
+              <p class="text-danger m-2 d-none" style="font-size: 14px; font-weight: bold;" id="cannot-debt-title"><i>Khách hàng đã vượt mức nợ quy định, vui lòng chọn THANH TOÁN NGAY</i></p>
             </div>
-            <p class="text-danger m-2 d-none" style="font-size: 14px;"><i>Khách hàng đã vượt mức nợ quy định, vui lòng chọn THANH TOÁN NGAY</i></p>
        </div>
       
 
@@ -107,6 +107,7 @@
       ></script>
     </div>
     <script src="../../layouts/js/layout-loader.js"></script>
+    <script src="../../assets/js/utils.js"></script>
 
     <script src="../../components/js/delete-confirm.js"></script>
     <script src="../../components/js/error-modal.js"></script>

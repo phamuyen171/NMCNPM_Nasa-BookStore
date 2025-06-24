@@ -91,6 +91,14 @@ const customerSchema = new mongoose.Schema({
 
 // Thêm compound index để phone chỉ cần unique trong cùng type
 customerSchema.index({ phone: 1, type: 1 }, { unique: true });
+customerSchema.index(
+  { companyName: 1, taxId: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { type: 'wholesale' }
+  }
+);
+
 
 const Customer = mongoose.model('Customer', customerSchema);
 

@@ -101,7 +101,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 
   try {
-      const res = await fetch("http://localhost:3000/api/invoices/retail", {
+      const res = await fetch("http://localhost:3000/api/invoices/", {
           method: "POST",
           headers: {
               'Content-Type': 'application/json',

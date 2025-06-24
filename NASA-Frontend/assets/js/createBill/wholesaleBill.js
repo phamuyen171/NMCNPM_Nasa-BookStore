@@ -5,6 +5,7 @@ let filteredBooks = [];     // Dữ liệu sau khi tìm kiếm
 let currentPage = 0;
 const itemsPerPage = 4;
 const invoiceItems = {};
+let checkCustomerInfo = false;
 
 let checkErrorQuantity = false;
 let checkStaffId = false;
@@ -168,12 +169,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         checkStaffId = false;
       }
 
-      canDisabledButton(invoiceItems, checkStaffId);
+      canDisabledButton(invoiceItems, checkStaffId, checkCustomerInfo);
     }
   });
 
   // Ngăn chặn chuyển trang nếu chưa nhập mã
-  continueBtn.addEventListener('click', (e) => {
+  continueBtn.addEventListener('click', async (e) => {
     const code = staffInput.value.trim();
     if (code === '') {
       e.preventDefault();
@@ -189,9 +190,26 @@ document.addEventListener("DOMContentLoaded", async function () {
     const taxId = document.getElementById('code-tax')?.value.trim() || '';
     const address = document.getElementById('address')?.value.trim() || '';
     const createdDate = new Date().toLocaleString('vi-VN');
-    const invoiceId = 'HD' + Date.now();
+    let invoiceId = '';
+    try {
+      const resInvoice = await fetch(`http://localhost:3000/api/invoices/create-invoice-id/wholesale`, {
+        method: "POST"
+      }); // Gọi API tạo mã hoá đơn mới
+      const createInvoiceId = await resInvoice.json();
+      if (!createInvoiceId.success){
+        console.error('Không thể tạo mã hóa đơn mới');
+        return;
+      }
+      invoiceId = createInvoiceId.invoiceID;
+    } catch (error) {
+      console.error('Lỗi khi lấy mã hoá đơn:', error);
+    }
+
+    // console.log(invoiceId);
+
 
     localStorage.setItem('buyerName', buyerName);
+    localStorage.setItem('buyerPhone', document.getElementById('phone')?.value.trim() || '');
     localStorage.setItem('companyName', companyName);
     localStorage.setItem('taxId', taxId);
     localStorage.setItem('address', address);
@@ -203,6 +221,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     for (const id in invoiceItems) {
       const item = invoiceItems[id];
       invoiceData.push({
+        id: item.book._id,
         title: item.book.name,
         price: item.book.price,
         quantity: item.quantity,
@@ -241,7 +260,7 @@ function addToInvoice(book) {
     return; // tránh trùng sách
   }
 
-  console.log("boOKId:", book._id);
+  // console.log("boOKId:", book._id);
 
   if (book.quantity === 0) {
     showModalError("LỖI", `Sách "${book.name}" đã hết hàng`);
@@ -277,7 +296,7 @@ function addToInvoice(book) {
     delete invoiceItems[book._id];
     row.remove();
     updateTotals();
-    canDisabledButton(invoiceItems, checkStaffId);
+    canDisabledButton(invoiceItems, checkStaffId, checkCustomerInfo);
   };
 
   // Xử lý nhập số lượng
@@ -303,7 +322,7 @@ function addToInvoice(book) {
       updateTotals();
     }
 
-    canDisabledButton(invoiceItems, checkStaffId);
+    canDisabledButton(invoiceItems, checkStaffId, checkCustomerInfo);
   });
 }
 
@@ -318,9 +337,10 @@ function updateTotals() {
   document.getElementById('subtotal').innerText = formatCurrency(subtotal);
 }
 
-function canDisabledButton(invoiceItems, checkStaffId){
+function canDisabledButton(invoiceItems, checkStaffId, customerInfo) {
   const continueBtn = document.getElementById('continue-btn');
-  if (Object.keys(invoiceItems).length === 0 || !checkStaffId){
+  // console.log(customerInfo);
+  if (Object.keys(invoiceItems).length === 0 || !checkStaffId || !customerInfo) {
     continueBtn.classList.remove('valid-continue-btn');
     continueBtn.classList.add('disabled-link');
     return;
@@ -373,9 +393,11 @@ async function checkRepresentative(companyName, taxId, name, phone){
         if (!data.success){
             throw new Error(data.message);
         }
+        checkCustomerInfo = true;
     }
     catch (error){
         showModalError("LỖI LẤY THÔNG TIN ĐƠN VỊ BÁN SỈ", error.message);
+        checkCustomerInfo = false;
     }
 }
 
@@ -389,7 +411,7 @@ personNameTag.addEventListener("keydown", async (e) => {
             return;
         }
         checkRepresentative(companyNameTag.value.trim(), taxId, name, phone);
-
+        canDisabledButton(invoiceItems, checkStaffId, checkCustomerInfo);
     }
 });
 
@@ -402,7 +424,9 @@ personPhoneTag.addEventListener("keydown", async (e) => {
         if (!name){
             return;
         }
-        checkRepresentative(companyNameTag.value.trim(), taxId, name, phone)
+        checkRepresentative(companyNameTag.value.trim(), taxId, name, phone);
+
+        canDisabledButton(invoiceItems, checkStaffId, checkCustomerInfo);
 
     }
 });

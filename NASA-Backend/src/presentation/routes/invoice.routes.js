@@ -6,8 +6,9 @@ const invoiceController = require('../controllers/invoice.controller');
 router.get('/popular-books', invoiceController.getPopularBooks);
 
 // Tạo hóa đơn mới
+// router.post('/', invoiceController.createInvoice);
 router.post('/', invoiceController.createInvoice);
-router.post('/retail', invoiceController.createInvoiceRetail)
+// router.post('/wholesale', invoiceController.createInvoiceWholesale);
 
 // Tạo mã hóa đơn: R0001 - cho KH mua lẻ, và W0001: cho KH mua sỉ
 router.post('/create-invoice-id/:type', invoiceController.createInvoiceId);
