@@ -21,4 +21,6 @@ router.put('/update-staff/:id', staffController.updateStaff);
 
 router.put('/update-staff-image/:id', uploadImg.single('image'), staffController.updateStaffImage);
 
+router.get('/get-staff-by-username/:username', staffController.getStaffById);
+
 module.exports = router;

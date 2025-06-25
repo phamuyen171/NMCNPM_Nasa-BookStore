@@ -168,6 +168,22 @@ class staffController {
     }
   }
   
+  async getStaffById(req, res) {
+    try {
+      const username = req.params.username;
+      const staff = await staffService.getStaffById(username);
+      if (!staff) {
+        return res.status(404).json({ success: false, message: 'Không tìm thấy nhân viên với ID này' });
+      }
+      return res.status(200).json({
+        success: true,
+        message: 'Lấy thông tin nhân viên thành công',
+        data: staff
+      });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: error.message });
+    }
+  }
 
 }
 

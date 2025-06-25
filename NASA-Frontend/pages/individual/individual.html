@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- css bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="../../assets/css/individual.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../../assets/css/login.css" />
+
+    <link rel="stylesheet" href="../../components/css/confirm-modal.css" />
+    <link rel="stylesheet" href="../../components/css/error-modal.css" />
+    <link rel="stylesheet" href="../../components/css/success-modal.css" />
+
+    <title>Nhà Sách NASA</title>
+
+  </head>
+  <body data-modal-error-src="../../components/html/error-modal.html" data-modal-success-src="../../components/html/success-modal.html" data-modal-confirm-src="../../components/html/confirm-modal.html">
+    <div class="container-fluid layout-root d-flex flex-column justify-content-between">
+      <!-- Header -->
+      <div id="header" data-url="../../layouts/html/header.html"></div>
+      
+
+      <!-- Content -->
+      <div class="row">
+        <!-- LEFT -->
+        <div class="col-md-2 main-layout">
+          <div class="sidebar">
+            <a href="./individual.html" class="nav-item active">Thông tin cá nhân</a>
+            <a href="#" class="nav-item">Đổi mật khẩu</a>
+            <a href="#" class="nav-item">Quản lý bán hàng</a>
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="col-md-10" style="margin-bottom: 20px;">
+           <div class="card p-4 mb-4 shadow-sm w-100 khung" style="margin-top: 20px;">
+            <div class="d-flex align-items-center justify-content-center text-center">
+                <!-- Ảnh avatar -->
+                <!-- Wrapper cho ảnh và nút chọn ảnh -->
+                <div class="d-flex flex-column align-items-center me-4">
+                <img src="#" alt="Avatar" class="rounded-circle mb-2" width="200" height="200" id="staffImage" />
+                <input type="file" class="form-control mb-2" id="image-file" accept="image/*">
+                </div>
+
+
+                <!-- Thông tin nhân viên -->
+                <div>
+                <h4 class="fw-bold mb-1" id="staffName">LÊ NGUYỄN HUYỀN VY</h4>
+                <p class="text-muted mb-2" id="role-string">Nhân viên bán hàng - S0003</p>
+                <button class="btn btn-primary me-2" disabled id="edit-button">SỬA THÔNG TIN</button>
+                <!-- <button class="btn btn-secondary">ĐẶT LẠI MẶC ĐỊNH</button> -->
+                </div>
+            </div>
+            </div>
+
+
+
+
+            <!-- Phần dưới: 2 cột -->
+            <div class="row justify-content-center align-items-stretch same-height">
+                <!-- Thông tin cá nhân -->
+                <div class="col-md-5">
+                <div class="card p-4 mb-4 shadow-sm w-100 khung info h-100">
+                    <h5 class="fw-bold mb-3 title">THÔNG TIN CÁ NHÂN</h5>
+                    <div style="margin-top: 10px;">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <label class="form-label fw-bold">Họ và tên:</label>
+                            <input type="text" class="form-control" value="LÊ NGUYỄN HUYỀN VY" readonly id="name-input" style="width: 60%;"/>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label class="form-label fw-bold">Địa chỉ:</label>
+                        <input type="text" class="form-control" value="Trần Hưng Đạo, Mỹ Tho, Tiền Giang" id="address-input" style="width: 60%;"/>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label class="form-label fw-bold">Số điện thoại:</label>
+                        <input type="text" class="form-control" value="0839393973" id="phone-input" style="width: 60%;"/>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label class="form-label fw-bold">CCCD:</label>
+                        <input type="text" class="form-control" value="09356421366" readonly id="CCCD-input" style="width: 60%;"/>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label class="form-label fw-bold">Ngày sinh:</label>
+                        <input type="text" class="form-control" value="20/11/2004" id="birth-input" style="width: 60%;"/>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Thông tin công việc -->
+                <div class="col-md-5">
+                <div class="card p-4 mb-4 shadow-sm w-100 info khung">
+                    <h5 class="fw-bold mb-3 title">THÔNG TIN CÔNG VIỆC</h5>
+                    <div style="margin-top: 10px;">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <label class="form-label fw-bold">Chức vụ</label>
+                            <select class="form-select" disabled id="position-select" style="width: 60%">
+                                <option value="staff" selected>Nhân viên bán hàng</option>
+                                <option value="manager">Quản lý</option>
+                                <option value="accountant">Kế Toán</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label class="form-label fw-bold">Mã nhân viên:</label>
+                        <input type="text" class="form-control" value="S0003" readonly id="username-input" style="width: 60%;"/>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label class="form-label fw-bold">Email:</label>
+                        <input type="text" class="form-control" value="lnhvy@nasa.gmail.com" readonly id="email-input" style="width: 60%;"/>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label class="form-label fw-bold">Ngày vào làm:</label>
+                        <input type="text" class="form-control" value="01/01/2025" readonly id="startDate-input" style="width: 60%;"/>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+
+
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div id="footer" data-url="../../layouts/html/footer.html"></div>
+
+
+      <script src="../../assets/js/individual.js"></script>
+      <!-- js bootstrap -->
+      <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"
+      ></script>
+    </div>
+    <script src="../../layouts/js/layout-loader.js"></script>
+
+    <script src="../../components/js/confirm-modal.js"></script>
+    <script src="../../components/js/error-modal.js"></script>
+    <script src="../../components/js/success-modal.js"></script>
+
+  </body>
+</html>
