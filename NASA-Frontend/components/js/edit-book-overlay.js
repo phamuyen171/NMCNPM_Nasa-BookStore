@@ -44,9 +44,9 @@ export function setupEditOverlayEvents() {
       const successButtons = Array.isArray(window.successModalButtons)
         ? window.successModalButtons
         : [
-            { text: "Xem danh sách", link: "detailBooks.html" },
+            { text: "Đóng", link: window.location.href },
             ];
-
+        localStorage.setItem("bookDetail", JSON.stringify({ ...updatedBook, _id: currentEditId }));
         showSuccessModal("Thành công", "Sách đã được cập nhật", successButtons);
 
     } catch (err) {

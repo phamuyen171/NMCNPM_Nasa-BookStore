@@ -56,8 +56,8 @@ class authController {
     const { username, password } = req.body;
 
     try {
-        const token = await authService.login(username, password);
-        res.json({ success: true, message: "Đăng nhập thành công", data: token });
+        const userData = await authService.login(username, password);
+        res.json({ success: true, message: "Đăng nhập thành công", data: userData });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }

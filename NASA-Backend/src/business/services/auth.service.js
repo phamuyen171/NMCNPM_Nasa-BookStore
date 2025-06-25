@@ -15,7 +15,10 @@ class UserService {
       expiresIn: '1h'
     });
 
-    return token;
+    return {
+      token,
+      user
+    };
   }
 
   async addUser(username, password, role, imageId) {

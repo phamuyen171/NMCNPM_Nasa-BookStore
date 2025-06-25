@@ -118,6 +118,11 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.getElementById('image-file').addEventListener('change', function (event) {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user.username === originalStaff.username){
+      showModalError("LỖI CẬP NHẬP NHÂN VIÊN", "Cập nhập hình ảnh bản thân trong trang cá nhân!");
+      return;
+    }
     noChange = false;
     const file = event.target.files[0];
     if (!file) return;
@@ -147,6 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
       DoB: document.getElementById("birth").value.trim(),
       username: document.getElementById("username").value.trim(),
       password: document.getElementById("password").value.trim(),
+      startDate: toISODate(document.getElementById("start-work-day").value.trim())
     };
 
     noChange = noChange &&
@@ -156,8 +162,10 @@ document.addEventListener("DOMContentLoaded", () => {
     current.email === originalStaff.email &&
     current.phone === originalStaff.phone &&
     toISODate(document.getElementById("birth").value.trim()).toISOString() === originalStaff.DoB &&
+    toISODate(document.getElementById("start-work-day").value.trim()).toISOString() === originalStaff.startDate &&
     current.role === originalStaff.role;
 
+    console.log(current);
     // console.log("No change:", current.DoB, originalStaff.DoB);
     if (noChange) {
       showNoChangeModal();
@@ -165,39 +173,44 @@ document.addEventListener("DOMContentLoaded", () => {
       const staffId = originalStaff._id; // sử dụng _id từ localStorage
 
       showModalConfirm("CẬP NHẬP THÔNG TIN NHÂN VIÊN", `cập nhập nhân viên <b>${current.fullName}</b>`, "", async () => {
-          fetch(`http://localhost:3000/api/staff/update-staff/${staffId}`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ current})
-          })
-          .then(res => res.json())
-          .then(data => {
-            if (data.success) {
-              isChanged = false;
-              showSuccessModal(
-                "Cập nhật thông tin nhân viên",
-                `Cập nhật thông tin nhân viên <b>${staff.fullName}</b> thành công!`,
-                [
-                  {
-                    text: 'Xem danh sách',
-                    link: 'staff.html'
-                  },
-                  {
-                    text: 'Cập nhật nhân viên khác',
-                    link: 'updateStaff.html'
-                    
-                  }
-                ]
-              )
-            }
-          })
-          .catch(err => {
-            showModalError("LỖI", `Không thể kết nối đến server: ${err.message}`);
-            console.error(err);
-            return;
-          });
+          if (Object.keys(current).length !== 0) {
+            fetch(`http://localhost:3000/api/staff/update-staff/${staffId}`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ current})
+            })
+            .then(res => res.json())
+            .then(data => {
+              if (data.success) {
+                isChanged = false;
+                if (!document.getElementById("image-file").files[0]) {
+                  showSuccessModal(
+                    "Cập nhật thông tin nhân viên",
+                    `Cập nhật thông tin nhân viên <b>${staff.fullName}</b> thành công!`,
+                    [
+                      {
+                        text: 'Xem danh sách',
+                        link: 'staff.html'
+                      },
+                      {
+                        text: 'Cập nhật nhân viên khác',
+                        link: 'updateStaff.html'
+                        
+                      }
+                    ]
+                  )
+                }
+                
+              }
+            })
+            .catch(err => {
+              showModalError("LỖI", `Không thể kết nối đến server: ${err.message}`);
+              console.error(err);
+              return;
+            });
+          }
 
           if (!document.getElementById("image-file").files[0]) {
             // Nếu không có file ảnh mới, chỉ cập nhật thông tin
@@ -216,6 +229,21 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!data.success) {
               throw new Error(data.message || "Không thể cập nhật ảnh đại diện");
             }
+            showSuccessModal(
+                "Cập nhật thông tin nhân viên",
+                `Cập nhật thông tin nhân viên <b>${staff.fullName}</b> thành công!`,
+                [
+                  {
+                    text: 'Xem danh sách',
+                    link: 'staff.html'
+                  },
+                  {
+                    text: 'Cập nhật nhân viên khác',
+                    link: 'updateStaff.html'
+                    
+                  }
+                ]
+              )
           })
           .catch(err => {
             showModalError("LỖI", `${err.message}`);

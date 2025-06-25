@@ -56,8 +56,8 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
     }
 
     // Lưu token vào localStorage hoặc cookie
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
+    localStorage.setItem('token', data.data.token);
+    localStorage.setItem('user', JSON.stringify(data.data.user));
 
     // Chuyển hướng đến trang dashboard sau khi đăng nhập thành công
     window.location.href = './pages/dashboard/dashboard.html';

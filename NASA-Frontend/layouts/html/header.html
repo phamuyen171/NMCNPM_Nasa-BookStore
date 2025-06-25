@@ -1,3 +1,4 @@
+<!-- header.html -->
 <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm px-4">
   <div class="container-fluid d--md-flex flex-md-row flex-row-reverse justify-content-between">
 
@@ -52,16 +53,23 @@
           </a>
         </div>
 
-        <!-- Right: Thông báo & Cá nhân -->
+        <!-- Right: Dropdown user -->
         <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 ms-md-auto mt-3 mt-md-0">
-            <div class="d-flex align-items-center gap-1">
-                <i class="fa-solid fa-bell" style="color: #4365b4;"></i>
-                <span style="color: #4365b4;">Thông báo</span>
-            </div>
-            <a href="../../pages/individual/individual.html" class="d-flex text-decoration-none align-items-center gap-1 text-dark">
-                <i class="fa-solid fa-user" style="color: #4365b4;"></i>
-                <span style="color: #4365b4;">Cá nhân</span>
+          <div class="d-flex align-items-center gap-1">
+              <i class="fa-solid fa-bell" style="color: #4365b4;"></i>
+              <span style="color: #4365b4;">Thông báo</span>
+          </div>
+          <div class="dropdown ms-auto">
+            <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="../../public/images/avatar-default.png" alt="avatar" width="32" height="32" class="rounded-circle me-2" id="userAvatar">
+              <strong id="userName">Người dùng</strong>
             </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownUser">
+              <li><a class="dropdown-item" href="../../pages/individual/individual.html" style="color: #4365b4;">Trang cá nhân</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="#" id="logoutBtn">Đăng xuất</a></li>
+            </ul>
+          </div>
         </div>
 
       </div>

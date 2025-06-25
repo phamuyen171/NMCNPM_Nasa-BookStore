@@ -24,7 +24,8 @@ router.get('/:id', async (req, res) => {
     const _id = new mongoose.Types.ObjectId(id);
 
     // Bucket đúng tên
-    const bucket = new GridFSBucket(mongoose.connection.db, {
+    const db = mongoose.connection.useDb('test');
+    const bucket = new GridFSBucket(db, {
       bucketName: 'uploads'
     });
 

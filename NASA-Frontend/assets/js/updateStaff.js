@@ -86,7 +86,7 @@ function createTable(staffs) {
             <td>${staff.phone}</td>
             <td>${staff.CCCD}</td>
             <td>
-            <a href="./detailUpdateStaff.html" class="update-staff" data-staff="${staffEncoded}" style="text-decoration: underline;">Cập nhật</a>
+            <a href="./detailUpdateStaff.html" class="update-staff" data-staff="${staffEncoded}" style="text-decoration: underline;">Chi tiết</a>
             </td>
         </tr>
    `;

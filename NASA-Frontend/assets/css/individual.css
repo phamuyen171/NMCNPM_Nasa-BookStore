@@ -1,0 +1,88 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; 
+}
+
+/* header và footer có chiều cao cố định */
+#header {
+  height: 70px;
+  /* thay bằng đúng chiều cao header bạn load */
+  /* margin-bottom: 25px; */
+}
+
+/* phần giữa chiếm toàn bộ khoảng còn lại */
+.main-layout {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+a {
+  text-decoration: none;
+}
+
+.row {
+  flex-grow: 1;
+}
+
+.col-md-2,
+.col-md-10 {
+  height: 100%;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #c1cef4;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.nav-item {
+  padding: 12px;
+  text-decoration: none;
+  color: black;
+  font-weight: 500;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+.nav-item:hover {
+  background-color: #a6bdf7;
+  font-weight: bold;
+}
+
+.nav-item.active {
+  background-color: #94ACF1;
+  font-weight: bold;
+}
+
+.khung{
+  border: 0.5px solid #1d2088 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 0 0 1px #1d2088 !important; /* thêm viền nổi bật */
+}
+
+.khung.info {
+  min-height: 100%;
+}
+.row.same-height > div {
+  display: flex;
+}
+.row.same-height > div > .card {
+  flex-grow: 1;
+}
+
+.title {
+    display: flex;
+    justify-content: center;
+    color:#1d2088;
+}

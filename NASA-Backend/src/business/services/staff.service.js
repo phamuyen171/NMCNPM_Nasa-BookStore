@@ -26,10 +26,7 @@ class StaffService {
         if (!role) {
             throw new Error('Vui lòng cung cấp vai trò');
         }
-        let find = {
-            status: 'active'
-        }
-        const count = await Staff.countDocuments({ role});
+        const count = await Staff.countDocuments({role});
         const role_dict = {
             'manager': 'M',
             'staff': 'S',
@@ -213,7 +210,7 @@ class StaffService {
             throw new Error(`Không tìm thấy nhân viên với mã nhân viên: ${staffId}`);
         }
 
-        const dob_split = updateData.current.DoB ? updateData.current.DoB.split('/') : [];
+        const dob_split = updateData.current.DoB ? updateData.current.DoB.split('/') : staff.DoB;
 
         // Cập nhật các trường cần thiết
         staff.fullName = updateData.current.fullName? updateData.current.fullName : staff.fullName;
@@ -222,8 +219,9 @@ class StaffService {
         staff.email = updateData.current.email? updateData.current.email : staff.email;
         staff.role = updateData.current.role? updateData.current.role : staff.role;
         staff.phone = updateData.current.phone? updateData.current.phone : staff.phone;
-        staff.DoB = dob_split.length === 3 ? new Date(parseInt(dob_split[2]), parseInt(dob_split[1]) - 1, parseInt(dob_split[0])) : staff.DoB;
+        staff.DoB = dob_split !== staff.DoB ? new Date(parseInt(dob_split[2]), parseInt(dob_split[1]) - 1, parseInt(dob_split[0])) : staff.DoB;
         staff.username = updateData.current.username ? updateData.current.username : staff.username;
+        staff.startDate = updateData.current.startDate ? updateData.current.startDate : staff.startDate;
 
         const saveStaff = await staff.save();
 
@@ -242,25 +240,50 @@ class StaffService {
     }
 
     async updateImage(staffId, image) {
-        if (!staffId || !image) {
-            throw new Error('Vui lòng cung cấp mã nhân viên và hình ảnh');
+        try{
+            if (!staffId || !image) {
+                console.log('Vui lòng cung cấp mã nhân viên và hình ảnh');
+
+                throw new Error('Vui lòng cung cấp mã nhân viên và hình ảnh');
+            }
+
+            const staff = await Staff.findOne({ _id: staffId, isDeleted: false });
+            if (!staff) {       
+                console.log('Không tìm thấy nhân viên với mã nhân viên: ${staffId}');
+
+                throw new Error(`Không tìm thấy nhân viên với mã nhân viên: ${staffId}`);
+            }   
+            staff.image = image;
+            const updatedStaff = await staff.save();
+            if (!updatedStaff) {
+                console.log('Không thể cập nhật hình ảnh nhân viên');
+
+                throw new Error('Không thể cập nhật hình ảnh nhân viên');
+            }
+
+            // Cập nhật hình ảnh trong tài khoản người dùng
+            const updatedUser = await authService.updateImage(staff.username, image);
+            if (!updatedUser) { 
+                console.log('Không thể cập nhật hình ảnh người dùng');
+
+                throw new Error('Không thể cập nhật hình ảnh người dùng');
+            }
+            return staff;
+        } catch (error){
+            throw error;
+        }
+    }
+
+    async getStaffById(username) {
+        if (!username) {
+            throw new Error('Vui lòng cung cấp mã nhân viên');
         }
 
-        const staff = await Staff.findOne({ _id: staffId, isDeleted: false });
-        if (!staff) {       
-            throw new Error(`Không tìm thấy nhân viên với mã nhân viên: ${staffId}`);
-        }   
-        staff.image = image;
-        const updatedStaff = await staff.save();
-        if (!updatedStaff) {
-            throw new Error('Không thể cập nhật hình ảnh nhân viên');
+        const staff = await Staff.findOne({ username, isDeleted: false });
+        if (!staff) {
+            throw new Error(`Không tìm thấy nhân viên với mã nhân viên: ${username}`);
         }
-
-        // Cập nhật hình ảnh trong tài khoản người dùng
-        const updatedUser = await authService.updateImage(staff.username, image);
-        if (!updatedUser) { 
-            throw new Error('Không thể cập nhật hình ảnh người dùng');
-        }
+        return staff;
     }
 }
 
