@@ -116,3 +116,7 @@ a {
 .edit-overlay.active {
   display: flex;
 }
+
+#show-detail-info{
+  cursor: pointer;
+}
