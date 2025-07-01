@@ -18,8 +18,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
             // Thêm sự kiện cho nút đăng xuất
             document.getElementById("logoutBtn").addEventListener("click", () => {
-              localStorage.removeItem("token");
-              localStorage.removeItem("user");
+              localStorage.clear();
               window.location.href = "../../index.html";
             });
           }

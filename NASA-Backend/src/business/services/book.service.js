@@ -98,8 +98,8 @@ class BookService {
             try {
                 const popularBooks = await Book.find({ isDeleted: false })
                     .sort({ soldQuantity: -1 })
-                    .limit(limit)
-                    .select('_id title author price quantity image soldQuantity');
+                    .limit(limit);
+                    // .select('_id title author price quantity image soldQuantity');
                 return popularBooks;
             } catch (error) {
                 throw error;
@@ -797,8 +797,7 @@ class BookService {
         try {
             const newestBooks = await Book.find({ isDeleted: false })
                 .sort({ createdAt: -1 }) // Sắp xếp theo ngày tạo mới nhất
-                .limit(limit)
-                .select('_id title author price quantity image soldQuantity createdAt');
+                .limit(limit);
             return newestBooks;
         } catch (error) {
             throw error;
