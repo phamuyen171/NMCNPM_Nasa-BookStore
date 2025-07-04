@@ -16,3 +16,49 @@ async function getRule(){
         return {};
     }
 }
+
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng tính từ 0
+    const year = String(date.getFullYear()); // Lấy 2 số cuối
+
+    return `${day}/${month}/${year}`;
+}
+
+async function getInvoice(invoiceID){
+  try{
+    const res = await fetch(`http://localhost:3000/api/invoices/?keyword=${invoiceID}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const data = await res.json();
+    if (!data.success){
+      throw new Error(data.message);
+    }
+    return data.data.invoices[0];
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getDetailedInvoice(invoiceData){
+  try{
+    const res = await fetch(`http://localhost:3000/api/invoices/${invoiceData._id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const data = await res.json();
+    if (!data.success){
+      throw new Error(data.message);
+    }
+    return data.data.items;
+  } catch (error) {
+    console.log(error);
+  }
+}

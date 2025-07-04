@@ -5,31 +5,40 @@ const invoiceID = urlParams.get('invoiceID');
 console.log('Đang load chi tiết hóa đơn:', invoiceID);
 
 async function getBillDetailMock() {
+  const invoice = await getInvoice(invoiceID);
+  const invoiceDetail = await getDetailedInvoice(invoice);
+  let companyData;
+  try{
+      const response = await fetch(`http://localhost:3000/api/customers/company-info/${invoice.companyName}`);
+      const data = await response.json();
+      if (!data.success){
+          throw new Error(data.message);
+      }
+      companyData = data.data;
+
+  } catch (error){
+      console.log(error.message);
+  }
   return {
-    companyName: "CÔNG TY TNHH ABC",
-    invoiceID: "HD00123",
-    createdBy: "NV001",
-    invoiceFormNumber: "01GTKT0/001",
-    date: "2025-06-28T10:00:00Z",
-    dueDate: null,
-    paidAt: "2025-06-28T12:00:00Z",
-    subtotal: "2.824,960",
-    totalDiscount: "282,496",
-    discountPercentage: 10,
-    total: "2.452,964",
-    status: "debt", // hoặc "debt"
-    customerPhone: "0912345678",
-    customerType: "wholesale",
-    paymentMethod: "cash",
-    isDeleted: false,
-    productList: [
-      { title: "Lập Trình Python Cơ Bản", quantity: 26, price: 58.72},
-      { title: "Giải Thuật Và Lập Trình", quantity: 12, price: 48.37 },
-      { title: "Cấu Trúc Dữ Liệu", quantity: 20, price: 35.89 }
-    ],
-    buyerName: "Nguyễn Văn A",
-    taxId: "123456789",
-    address: "12 Đường ABC, Quận 1, TP.HCM"
+    companyName: invoice.companyName,
+    invoiceID,
+    createdBy: invoice.createdBy,
+    invoiceFormNumber: invoice.invoiceFormNumber,
+    date: invoice.date,
+    dueDate: invoice.dueDate,
+    paidAt: invoice.paidAt,
+    subtotal: invoice.subtotal,
+    totalDiscount: invoice.totalDiscount,
+    discountPercentage: invoice.discountPercentage,
+    total: invoice.total,
+    status: invoice.status, // hoặc "debt"
+    customerPhone: invoice.customerPhone,
+    customerType: invoice.customerType,
+    paymentMethod: invoice.paymentMethod,
+    productList: invoiceDetail,
+    buyerPhone: invoice.customerPhone,
+    taxId: companyData.taxId,
+    address: companyData.address
   };
 }
 
@@ -39,14 +48,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Render số hóa đơn, ngày tạo
   document.getElementById('so-hoa-don').innerText = data.invoiceID;
   document.getElementById('mau-so').innerText = data.invoiceFormNumber;
-  document.querySelector('.invoice-title p.text-center').innerText = `Ngày lập: ${new Date(data.date).toLocaleDateString('vi-VN')}`;
+  document.querySelector('.invoice-title p.text-center').innerText = `Ngày lập: ${formatDate(data.date)}`;
 
   // Thông tin người mua
   const invoiceBox = document.querySelector('.invoice-box');
   const buyerInfoDiv = document.createElement('div');
   buyerInfoDiv.classList.add('ms-4', 'mb-3');
   buyerInfoDiv.innerHTML = `
-    <p><strong>Họ tên người mua:</strong> ${data.buyerName}</p>
+    <p><strong>SĐT người đại diện:</strong> ${data.buyerPhone}</p>
     <p><strong>Tên đơn vị:</strong> ${data.companyName}</p>
     <p><strong>Mã số thuế:</strong> ${data.taxId}</p>
     <p><strong>Địa chỉ:</strong> ${data.address}</p>
@@ -60,10 +69,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const row = document.createElement('tr');
     row.innerHTML = `
       <td>${index + 1}</td>
-      <td>${item.title}</td>
+      <td>${item.bookTitle}</td>
       <td>${item.quantity}</td>
-      <td>${Number(item.price).toLocaleString('vi-VN')}</td>
-      <td>${Number(item.quantity * item.price).toLocaleString('vi-VN')}</td>
+      <td>${Number(item.pricePerUnit).toLocaleString('vi-VN')}</td>
+      <td>${Number(item.subtotal).toLocaleString('vi-VN')}</td>
     `;
     tbody.appendChild(row);
   });
@@ -102,5 +111,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     billStatus.innerHTML = '<strong>Ghi Nợ</strong>';
     billStatus.style.color = '#ff0000';
     billStatus.style.backgroundColor = '#fdcdcd';
+    billStatus.onclick = () => {
+      // di chuyển tới trang quản lý ghi nợ
+      window.location.href='#'
+    };
   }
 });
