@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
   }
   catch (error){
-    showModalError("LỖI IN DANH SÁCH NHÂN VIÊN", error.message)
+    showModalError("LỖI IN DANH SÁCH HOÁ ĐƠN", error.message)
   }
 });
 

@@ -29,6 +29,12 @@ function formatDate(dateStr) {
     return `${day}/${month}/${year}`;
 }
 
+// ===========Ghi chú========
+//nếu để trống thì không in ra gì cả, sang updateCustomer chỉ xuất hiện nút cập nhật
+//nếu là Nợ xấu thì sang updateCustomer hiện ra 3 nút xoá, thu hồi chiết khấu, cập nhật
+let note = "";
+// =============================
+
 let htmlByType = {
     'retail': `
     <div class="table-responsive">
@@ -56,6 +62,7 @@ let htmlByType = {
             <th>TÊN NGƯỜI ĐẠI DIỆN</th>
             <th>CHIẾT KHẤU</th>
             <th>GHI CHÚ</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -90,11 +97,8 @@ function createTable(customers, type='retail') {
             <td>${customer.phone}</td>
             <td>${customer.name}</td>
             <td>${customer.discountPercentage}%</td>
-            <td>
-            <div>
-                <-- thông báo nợ xấu? -->
-            </div>
-            </td>
+            <td class="bad-debt">${note}</td>
+            <td><button class="btn btn-link update-btn" data-id="${customer._id}">Sửa</button></td>
         </tr>
         `;
     }
@@ -128,6 +132,7 @@ function searchCustomer(allCustomers, type='retail'){
     });
 }
 
+
 function renderTableByPage(data, page, type='retail') {
   currentPage = page;
   const start = (page - 1) * pageSize;
@@ -144,34 +149,48 @@ let currentPage = 1;
 const pageSize = 8;
 
 async function printList(type='retail') {
-    try{
-        let allCustomers = await getFilteredCustomer(type);
+  try{
+    let allCustomers = await getFilteredCustomer(type);
 
-        const text = document.getElementById('notice-text');
-        if (text){
-          if (type === 'retail'){
-            text.innerHTML = "DANH SÁCH KHÁCH HÀNG BÁN LẺ"
-          }
-          else {
-            text.innerHTML = "DANH SÁCH ĐƠN VỊ - ĐẠI LÝ"
-          }
-        }
+    const text = document.getElementById('notice-text');
+    if (text){
+      if (type === 'retail'){
+        text.innerHTML = "DANH SÁCH KHÁCH HÀNG BÁN LẺ"
+      }
+      else {
+        text.innerHTML = "DANH SÁCH ĐƠN VỊ - ĐẠI LÝ"
+      }
+    }
 
-        renderTableByPage(allCustomers, currentPage, type);
+    renderTableByPage(allCustomers, currentPage, type);
 
-        document.addEventListener("click", function (e) {
-            const row = e.target.closest("tr");
-            if (!row || !row.parentElement.matches("tbody")) return;
+    document.addEventListener("click", function (e) {
+      const row = e.target.closest("tr");
+        if (!row || !row.parentElement.matches("tbody")) return;
 
-            document.querySelectorAll("tbody tr").forEach(tr => tr.classList.remove("selected"));
+          document.querySelectorAll("tbody tr").forEach(tr => tr.classList.remove("selected"));
             
-            row.classList.add("selected");
+          row.classList.add("selected");
+      });
+      searchCustomer(allCustomers, type);
+
+      // =========================Xử lý nút Sửa=====================
+      document.querySelectorAll(".update-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const customerId = btn.dataset.id;
+          const customerData = allCustomers.find(c => c._id === customerId);
+          if (customerData) {
+            localStorage.setItem('updateCustomerData', JSON.stringify({
+              ...customerData,
+              _noteFlag: note === "Nợ xấu"
+            }));
+            window.location.href = './updateCustomer.html';
+          }
         });
-        searchCustomer(allCustomers, type);
-    
+      });
     }
     catch (error){
-        showModalError("LỖI IN DANH SÁCH KHÁCH HÀNG", error.message)
+      showModalError("LỖI IN DANH SÁCH KHÁCH HÀNG", error.message)
     }
 }
 

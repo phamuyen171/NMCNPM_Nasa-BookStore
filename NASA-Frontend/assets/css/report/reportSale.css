@@ -1,0 +1,35 @@
+/* =============================Row đầu tiên==================================== */
+.row-select-sale{
+    border: 2px #0f107c solid;
+    border-radius: 10px;
+    margin-right: 2px;
+    padding-top: 10px;   /* hoặc dùng padding-block: 10px  */
+    padding-bottom: 10px;
+}
+
+.p-select-sale {
+    color: #0f107c;
+    margin-right: 50px; /* Cách xa a1 */
+    margin-bottom: 0;    /* Đảm bảo không bị lệch do margin mặc định */
+}
+
+.from-date, .to-date{
+    color: #0f107c;
+    margin-right: 50px; /* Cách xa a1 */
+    margin-bottom: 0;    /* Đảm bảo không bị lệch do margin mặc định */
+}
+
+/* =========================================Title====================================== */
+.title-report{
+    color: #0f107c;
+    font-weight: bold;
+    font-size: 30px;
+}
+/* ===========================Bảng DS============================== */
+.list-sale-title{
+    color: #0f107c;
+}
+.table-primary {
+  --bs-table-bg: #1a3a9c !important;
+  color: #fff;
+}

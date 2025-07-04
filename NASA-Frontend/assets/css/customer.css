@@ -81,3 +81,15 @@ tr.selected {
     justify-content: center; 
     align-items: center; 
 }
+
+/* ===============sửa============ */
+.update-btn{
+  all: unset;
+  text-decoration: underline;
+  color: #0D47A1;
+}
+
+.bad-debt{
+  color: #ff0000;
+  font-weight: bold;
+}
