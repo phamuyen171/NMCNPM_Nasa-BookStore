@@ -45,14 +45,14 @@ class CustomerService {
         
     }
 
-    async updateCustomerWholesale(invoiceDate){
+    async updateCustomerWholesale(invoiceData){
         try{
-            const customer = await this.getCompanyInfoByName(invoiceDate.companyName);
+            const customer = await this.getCompanyInfoByName(invoiceData.companyName);
             if (customer) {
-                if (invoiceDate.paymentMethod === 'paid') {
+                if (invoiceData.paymentMethod === 'paid') {
                     customer.totalSpent += invoiceDate.total;
-                } else if (invoiceDate.status === 'debt') {
-                    customer.currentDebt += invoiceDate.total;
+                } else if (invoiceData.status === 'debt') {
+                    customer.currentDebt += invoiceData.total;
                 }
                 await customer.save();
                 return customer;

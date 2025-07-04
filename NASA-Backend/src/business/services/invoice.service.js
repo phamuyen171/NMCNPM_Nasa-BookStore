@@ -308,7 +308,7 @@ class InvoiceService {
 
         // --- Logic lọc ---
         if (status) {
-            query.status = status;
+            query.customerType = status;
         }
         if (customerPhone) {
             query.customerPhone = new RegExp(customerPhone, 'i'); // Tìm kiếm không phân biệt hoa thường
@@ -343,7 +343,8 @@ class InvoiceService {
         const invoices = await Invoice.find(query)
             .sort(sortOptions)
             .skip(skip)
-            .limit(limit);
+            .limit(limit)
+            .select("invoiceID customerType total date createdBy customerPhone companyName status");
 
         const total = await Invoice.countDocuments(query); // Đếm tổng số hóa đơn khớp query
 
