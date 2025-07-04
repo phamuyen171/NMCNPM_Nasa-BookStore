@@ -78,6 +78,19 @@ class authController {
         return res.status(500).json({ success: false, message: error.message });
     }
   }
+
+  async changePassword(req, res){
+    try{
+      const account = await authService.changePassword(req.params.username, req.body.oldPassword, req.body.newPassword);
+      return res.status(200).json({
+        success: true,
+        message: "Đổi mật khẩu thành công.",
+        data: account
+      });
+    } catch (error){
+      return res.status(500).json({success: false, message: error.message});
+    }
+  }
   
 }
 
