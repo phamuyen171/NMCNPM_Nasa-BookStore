@@ -19,4 +19,6 @@ router.post('/check-representative', customerController.checkRepresentative);
 
 router.get('/count-customers', customerController.countCustomers);
 
+router.get('/check-exist-taxId/:taxId', customerController.checkExistTaxID);
+
 module.exports = router;

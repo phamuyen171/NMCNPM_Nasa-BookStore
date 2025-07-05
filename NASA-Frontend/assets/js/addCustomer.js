@@ -10,7 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
     "address": "Địa chỉ",
     "represent-name": "Tên người đại diện",
     "phone": "SĐT người đại diện",
-    "discount": "Mức chiết khấu"
+    "discount": "Mức chiết khấu",
+    "debtLimit": "Hạn mức ghi nợ"
   };
 
   function showError(input, message) {
@@ -50,23 +51,18 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Kiểm tra trùng mã số thuế
-  const fakeTaxCodes = ["123456789", "987654321", "065486256"]; // Mã số thuế đã tồn tại (giả lập)
   async function checkTaxCodeExists(taxCode) {
-    // try {
-    //   const response = await fetch(`/api/check-tax-code?code=${encodeURIComponent(taxCode)}`);
-    //   const result = await response.json();
-    //   return result.exists; // server trả về { exists: true } nếu trùng
-    // } catch (error) {
-    //   console.error("Lỗi kiểm tra mã số thuế:", error);
-    //   return false; // phòng lỗi kết nối
-    // }
-    // Giả lập delay API và kiểm tra
-    return new Promise(resolve => {
-      setTimeout(() => {
-      const exists = fakeTaxCodes.includes(taxCode);
-      resolve(exists);
-      }, 300); // Giả lập chờ 300ms
-    });
+    try {
+      const response = await fetch(`http://localhost:3000/api/customers/check-exist-taxId/${taxCode}`);
+      const result = await response.json();
+      if (!result.success){
+        throw new Error(result.message);
+      }
+      return result.data.check; 
+    } catch (error) {
+      console.error("Lỗi kiểm tra mã số thuế:", error);
+      return false; 
+    }
   }
 
   //Kiểm tra ngay khi người dùng rời ô input mã số thuế
@@ -145,31 +141,50 @@ document.addEventListener("DOMContentLoaded", () => {
     // Nếu hợp lệ, lấy toàn bộ dữ liệu và gửi về backend
     const data = {
       companyName: document.getElementById("company-name").value.trim(),
-      taxCode: taxCode,
+      taxId: taxCode,
       address: document.getElementById("address").value.trim(),
-      representName: document.getElementById("represent-name").value.trim(),
+      name: document.getElementById("represent-name").value.trim(),
       phone: document.getElementById("phone").value.trim(),
-      discount: document.getElementById("discount").value.replace("%", "").trim()
+      discountPercentage: Number(document.getElementById("discount").value.replace("%", "").trim()),
+      type: "wholesale",
+      debtLimit: Number(document.getElementById("debtLimit").value.trim())
     };
 
+    console.log(data);
+
     try {
-      const response = await fetch("/api/add-customer", {
+      const response = await fetch("http://localhost:3000/api/customers/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
       });
 
       if (response.ok) {
-        alert("Thêm khách hàng thành công!");
-        form.reset();
-        clearErrors();
+        // alert("Thêm khách hàng thành công!");
+        // form.reset();
+        // clearErrors();
+        showSuccessModal(
+          'THÊM KHÁCH HÀNG SỈ',
+          `Thêm khách hàng <b>${data.companyName}</b> thành công!`,
+          [
+            {
+              text: 'Xem danh sách',
+              link: 'customer.html'
+            },
+            {
+              text: 'Thêm khách hàng',
+              link: 'addCustomer.html'
+            }
+          ]
+        )
       } else {
         const res = await response.json();
-        alert("Thêm thất bại: " + res.message || "Lỗi không rõ.");
+        // alert("Thêm thất bại: " + res.message || "Lỗi không rõ.");
+        showModalError("THÊM KHÁCH HÀNG SỈ", res.message);
       }
     } catch (error) {
       console.error("Lỗi gửi dữ liệu:", error);
-      alert("Đã xảy ra lỗi khi gửi dữ liệu.");
+      showModalError("Đã xảy ra lỗi khi gửi dữ liệu.");
     }
   }
 
