@@ -239,6 +239,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     localStorage.setItem('totalPrice', totalPrice);
 
     // Lúc này, bạn có thể chuyển trang (nếu dùng link)
+    window.location.href = './createWholesaleBill.html';
   });
 
 });

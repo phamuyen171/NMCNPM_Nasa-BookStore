@@ -186,6 +186,34 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  const createNewBillBtn = document.getElementById("tao-bill-moi");
+
+if (createNewBillBtn){
+  createNewBillBtn.addEventListener("click", (event) => {
+    event.preventDefault(); 
+    
+    // Xoá localStorage nếu cần
+    deleteLocalStorage();
+
+    // Sau khi xử lý xong, mới chuyển trang
+    window.location.href = "./bill.html";
+  });
+}
+
+
+const viewListBillBtn = document.getElementById("xem-ds-bill");
+
+if (viewListBillBtn){
+  viewListBillBtn.addEventListener("click", (event) => {
+    event.preventDefault(); 
+
+    deleteLocalStorage();
+
+    // Sau khi xử lý xong, mới chuyển trang
+    window.location.href = "./listBill.html";
+  });
+}
+
 });
 
 const statusEl = document.getElementById('status-pay');
@@ -206,4 +234,19 @@ if (statusEl) {
   } else if (statusPay === 'Ghi nợ') {
     statusEl.classList.add('text-danger'); // màu đỏ
   }
+}
+
+function deleteLocalStorage(){
+  localStorage.removeItem("invoiceData");
+  localStorage.removeItem("totalQty");
+  localStorage.removeItem("totalPrice");
+  localStorage.removeItem("staffCode");
+  localStorage.removeItem("buyerName");
+  localStorage.removeItem("address");
+  localStorage.removeItem("buyerPhone");
+  localStorage.removeItem("companyName");
+  localStorage.removeItem("createdDate");
+  localStorage.removeItem("invoiceId");
+  localStorage.removeItem("statusPay");
+  localStorage.removeItem("taxId");
 }
