@@ -278,7 +278,7 @@ function addToInvoice(book) {
         style="grid-template-columns: 40px 1fr 100px 80px; gap: 10px;">
         <button class="btn btn-sm remove-item">X</button>
         <span class="book-title">${book.name}</span>
-        <input type="text" class="form-control text-end price" value="${book.price}" disabled />
+        <input type="text" class="form-control text-end price" value="${convertMoney(book.price)}" disabled />
         <input type="number" class="form-control text-end quantity" value="1" min="1" max="${book.quantity}" />
     </div>
     <div class="error-msg text-danger small" style="display: none; grid-column: span 4; padding-left: 50px;">

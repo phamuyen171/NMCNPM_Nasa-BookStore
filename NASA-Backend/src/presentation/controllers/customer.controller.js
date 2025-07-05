@@ -24,7 +24,7 @@ exports.createOrGetCustomer = async (req, res) => {
 // Thêm khách hàng mới (cho use-case Thêm khách hàng mới)
 exports.addCustomer = async (req, res) => {
     try {
-        const { phone, name, type, companyName, taxId, address, discountPercentage } = req.body;
+        const { phone, name, type, companyName, taxId, address, discountPercentage, debtLimit } = req.body;
         // Kiểm tra số điện thoại đã tồn tại chưa
         const existingCustomer = await Customer.findOne({ phone: phone, isDeleted: false });
         if (existingCustomer) {
@@ -41,7 +41,7 @@ exports.addCustomer = async (req, res) => {
             const countWholesale = await Customer.countDocuments({type});
             customerId = `WH${String(countWholesale+1).padStart(3, '0')}`;
         }
-        const newCustomer = await Customer.create({ phone, name, type, companyName, taxId, address, discountPercentage, customerId });
+        const newCustomer = await Customer.create({ phone, name, type, companyName, taxId, address, discountPercentage, customerId, debtLimit });
         res.status(201).json({ success: true, message: 'Thêm khách hàng thành công', data: newCustomer });
     } catch (error) {
         console.error("Lỗi khi thêm khách hàng: ", error);

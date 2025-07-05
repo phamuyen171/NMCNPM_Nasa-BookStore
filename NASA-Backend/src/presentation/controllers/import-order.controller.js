@@ -2,6 +2,7 @@ const importOrderService = require('../../business/services/import-order.service
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
+const ImportOrder = require('../../data/models/import-order.model');
 
 const importOrderController = {
     // Lấy danh sách sách sắp hết/hết hàng
@@ -19,6 +20,42 @@ const importOrderController = {
             });
         }
     },
+
+    async getOrders(req, res) {
+    try {
+        const { startDate, endDate } = req.query;
+        let filter = {};
+        if (startDate && endDate){
+            // Chuyển chuỗi thành Date
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            // Đảm bảo end là cuối ngày (23:59:59)
+            end.setHours(23, 59, 59, 999);
+
+            filter["createdAt"] = {
+                $gte: start,
+                $lte: end
+            }
+        }
+
+        // Truy vấn hóa đơn
+        const orders = await ImportOrder.find(filter);
+
+        res.status(200).json({
+            success: true,
+            message: "Lấy danh sách hóa đơn nhập sách thành công.",
+            data: orders
+        });
+
+    } catch (error) {
+            res.status(500).json({
+            success: false,
+            message: error.message
+            });
+        }
+    },
+
 
     // Tạo đơn nhập sách mới
     async createImportOrder(req, res) {

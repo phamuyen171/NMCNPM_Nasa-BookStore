@@ -1,42 +1,48 @@
 import { renderPagination } from "../../../components/js/pagination.js";
 
-// Dữ liệu mẫu
-const listImportBooks = [
-  {
-    "_id": "1a2b3c",
-    "title": "Giáo Trình Toán Cao Cấp",
-    "publisher": "NXB Giáo Dục Việt Nam",
-    "createdAt": "2025-06-11T13:56:28.522+00:00",
-    "priceImport": 22.24,
-    "quantityImport": 10,
-    "total": 222.40
-  },
-  {
-    "_id": "4d5e6f",
-    "title": "Lập Trình Python Cơ Bản",
-    "publisher": "NXB Trẻ",
-    "createdAt": "2025-06-20T09:15:12.104+00:00",
-    "priceImport": 18.50,
-    "quantityImport": 5,
-    "total": 92.50
-  },
-  {
-    "_id": "7g8h9i",
-    "title": "Kỹ Thuật Số và Ứng Dụng",
-    "publisher": "NXB Khoa Học & Kỹ Thuật",
-    "createdAt": "2025-07-01T17:42:05.711+00:00",
-    "priceImport": 35.75,
-    "quantityImport": 3,
-    "total": 107.25
+let listImportBooks;
+
+async function getImportInfo(startDate='', endDate=''){
+  try{
+    let list = [];
+    const res = await fetch(`http://localhost:3000/api/books/get-import-orders?startDate=${startDate}&endDate=${endDate}`);
+    const data = await res.json();
+    if (!data.success){
+      throw new Error(data.message);
+    }
+    const importOrders = data.data;
+    for (const order of importOrders) {
+      for (const book of order.items) {
+        let importData = { _id: order._id, createdAt: order.createdAt };
+        importData['quantityImport'] = book.quantity;
+
+        const resBook = await fetch(`http://localhost:3000/api/books/${book.bookId}`);
+        const dataBook = await resBook.json();
+        if (!dataBook.success) {
+          throw new Error(dataBook.message);
+        }
+
+        importData['title'] = dataBook.data.title;
+        importData['publisher'] = dataBook.data.publisher;
+        importData['priceImport'] = dataBook.data.priceImport;
+        importData['total'] = importData['quantityImport'] * importData['priceImport'];
+        list.push(importData);
+      }
+    }
+    return list;
+  } catch (error) {
+    console.log("Lỗi lấy hóa đơn nhập sách: ", error.message);
   }
-];
+  
+}
 
 let currentPage = 1;
 const pageSize = 5;
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   try {
     // Sắp xếp mặc định: ngày mới nhất trước
+    listImportBooks = await getImportInfo();
     listImportBooks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     renderTableByPage(listImportBooks, currentPage);
@@ -129,10 +135,10 @@ function createTable(data) {
       <tr>
         <td>${item.title}</td>
         <td>${item.publisher}</td>
-        <td>${new Date(item.createdAt).toLocaleDateString('vi-VN')}</td>
-        <td>${item.priceImport.toFixed(2)}</td>
+        <td>${formatDate(item.createdAt)}</td>
+        <td>${convertMoney(item.priceImport)}</td>
         <td>${item.quantityImport}</td>
-        <td>${item.total.toFixed(2)}</td>
+        <td>${convertMoney(item.total)}</td>
       </tr>
     `;
   });
