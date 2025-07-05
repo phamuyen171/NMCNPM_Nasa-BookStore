@@ -32,18 +32,6 @@ const renderImportList = (bookList) => {
         const bookRow = document.createElement('div');
         bookRow.className = 'mb-3 d-flex align-items-center justify-content-between';
 
-        // bookRow.innerHTML = `
-        //     <label class="form-label mb-0 me-2" style="flex: 1;">${book.title}</label>
-        //     <input type="number" class="form-control" style="width: 100px;" min="1" id="import-${book._id}" data-title="${book.title}" placeholder="Số lượng"/>
-        // `;
-        // bookRow.innerHTML = `
-        //     <label class="form-label mb-0 me-2" style="flex: 1;">
-        //         ${book.title}
-        //         <span class="text-muted ms-3"> Hiện tại: ${book.quantity}</span>
-        //     </label>
-        //     <input type="number" class="form-control" style="width: 100px;" min="1" id="import-${book._id}" data-title="${book.title}" placeholder="Số lượng"/>
-        // `;
-
         bookRow.innerHTML = `
             <div class="container">
                 <div class="row align-items-center mb-3">
@@ -165,7 +153,7 @@ document.getElementById('apply-common-quantity').addEventListener('click', () =>
 
     if (isNaN(value) || value <= 0) {
         // alert('Vui lòng nhập số lượng hợp lệ lớn hơn 0.');
-        showModalError(title, 'Vui lòng nhập số lượng hợp lệ lớn hơn (tối thiểu <b>${max_import}</b> và tối đa <b>${min_import}</b>).');
+        showModalError(title, `Vui lòng nhập số lượng hợp lệ lớn hơn (tối thiểu <b>${min_import}</b> và tối đa <b>${max_import}</b>).`);
         return;
     }
 
@@ -246,7 +234,7 @@ document.getElementById('confirmImport').addEventListener('click', () => {
 
     if (importData.length === 0) {
         // alert('Vui lòng nhập ít nhất một sách với số lượng hợp lệ (> 0).');
-        showModalError('LỖI NHẬP SÁCH', `Vui lòng nhập ít nhất một sách với số lượng hợp lệ (tối thiểu <b>${max_import}</b> và tối đa <b>${min_import}</b>).`);
+        showModalError('LỖI NHẬP SÁCH', `Vui lòng nhập ít nhất một sách với số lượng hợp lệ (tối thiểu <b>${min_import}</b> và tối đa <b>${max_import}</b>).`);
         return;
     }
 

@@ -6,14 +6,15 @@
 
 #floating-import-button {
   position: fixed;
-  bottom: 30px;
+  bottom: 120px;
   right: 30px;
-  width: 60px;
-  height: 60px;
+  width: 200px;
   font-size: 24px;
   z-index: 1050;
-  color: white;
-  background-color: rgb(37, 200, 37);
+  color: black;
+  background-color: #c1cef4;
+  border-radius: 8px;
+  font-size: 18px;
 }
 
 .dropdown {

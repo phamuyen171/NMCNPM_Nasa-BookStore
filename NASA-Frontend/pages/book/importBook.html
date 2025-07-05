@@ -47,6 +47,12 @@
             
             <div id="pagination-container" class="mt-3"></div>
         </div>
+        <button type="button" class="btn btn-primary px-4 py-2 fw-bold"
+          id="floating-import-button"
+          data-bs-toggle="modal"
+          data-bs-target="#importBookModal">
+          <i class="fas fa-plus me-2"></i> Nhập sách
+        </button>
       </div>
 
 
@@ -56,10 +62,11 @@
 
 
       <!-- ==========================Xử lý modal nhập sách================================== -->
-      <button type="button" class="btn rounded-circle shadow-lg"
+      <!-- <button type="button" class="btn rounded-circle shadow-lg"
         id="floating-import-button" data-bs-toggle="modal" data-bs-target="#importBookModal">
         <i class="fas fa-plus"></i>
-      </button>
+      </button> -->
+
 
       <!-- Modal Nút nhập sách trên trang Nhập Sách -->
       <div class="modal fade" id="importBookModal" tabindex="-1" aria-labelledby="importBookModalLabel" aria-hidden="true">
@@ -100,60 +107,6 @@
             </div>
         </div>
       </div>
-
-      <!-- Modal xác nhận nhập sách -->
-      <!-- <div class="modal fade" id="confirmImportBookModal" tabindex="-1" aria-labelledby="confirmImportBookModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-            <div class="modal-header" style="color: #ffffff; background-color:#4365b4">
-                <h5 class="modal-title" id="importBookModalLabel">Xác nhận</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
-            </div>
-            <div class="modal-body">
-                Bạn có chắc chắn muốn nhập thêm sách với số lượng đã nhập không?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-primary" id="informSuccessImportBook">Xác nhận</button>
-            </div>
-            </div>
-        </div>
-      </div> -->
-
-      <!-- Modal thông báo -->
-      <!-- <div class="modal fade" id="informSuccessImportBookModal" tabindex="-1" aria-labelledby="informSuccessImportBookModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-            <div class="modal-header" style="color: #ffffff; background-color:#4365b4">
-                
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
-            </div>
-            <div class="modal-body d-flex justify-content-center align-items-center">
-                <i class="fa-solid fa-circle-check p-1" style="color: #07bb25;"></i>
-                <strong>Nhập thêm sách thành công</strong>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-            </div>
-            </div>
-        </div>
-      </div> -->
-
-      <!-- script đóng mở modal -->
-      <!-- <script>
-        //đóng modal xác nhận và hiện modal thông báo
-        document.getElementById('informSuccessImportBook').addEventListener('click', () => {
-            // Ẩn modal nhập sách
-            const importModal = bootstrap.Modal.getInstance(document.getElementById('confirmImportBookModal'));
-            importModal.hide();
-
-            // Hiện modal xác nhận
-            const confirmModal = new bootstrap.Modal(document.getElementById('informSuccessImportBookModal'));
-            confirmModal.show();
-        });
-      </script> -->
-
-      <!-- ============================================================================================= -->
 
 
 
