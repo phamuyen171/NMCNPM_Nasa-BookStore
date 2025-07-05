@@ -60,12 +60,14 @@ const customerSchema = new mongoose.Schema({
     companyName: {
         type: String,
         trim: true,
-        default: null
+        default: null,
+        unique: true
     },
     taxId: {
         type: String,
         trim: true,
-        default: null
+        default: null,
+        unique: true
     },
     address: {
         type: String,

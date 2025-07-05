@@ -1,5 +1,6 @@
 const Customer = require('../../data/models/customer.model');
 const customerService = require('../../business/services/customer.service');
+const Invoice = require('../../data/models/invoice.model')
 
 // Tạo hoặc lấy thông tin khách hàng theo số điện thoại
 exports.createOrGetCustomer = async (req, res) => {
@@ -140,10 +141,10 @@ exports.checkRepresentative = async (req, res) => {
 
 exports.updateCustomer = async (req, res) => {
     try {
-        const { phone } = req.params; // Lấy số điện thoại từ URL parameters
-        const updateData = req.body; // Lấy dữ liệu cập nhật từ body của request
+        const { id } = req.params; 
+        const updateData = req.body;
 
-        const updatedCustomer = await customerService.updateCustomer(phone, updateData);
+        const updatedCustomer = await customerService.updateCustomer(id, updateData);
 
         res.status(200).json({ success: true, message: 'Cập nhật thông tin khách hàng thành công', data: updatedCustomer });
     } catch (error) {
@@ -158,9 +159,9 @@ exports.updateCustomer = async (req, res) => {
 
 exports.deleteCustomer = async (req, res) => {
     try {
-        const { phone } = req.params; // Lấy số điện thoại từ URL parameters
+        const { id } = req.params; // Lấy số điện thoại từ URL parameters
 
-        const deletedCustomer = await customerService.deleteCustomer(phone);
+        const deletedCustomer = await customerService.deleteCustomer(id);
 
         res.status(200).json({ success: true, message: 'Xóa mềm tài khoản khách hàng thành công', data: deletedCustomer });
     } catch (error) {
@@ -199,4 +200,47 @@ exports.checkExistTaxID = async (req, res) => {
     } catch (error){
         res.status(500).json({success: false, message: error.message});
     }
-}
+};
+
+exports.isBadDebt = async (req, res) => {
+    try {
+        if (!req.params.companyName){
+            throw new Error("Tên công ty không hợp lệ.");
+        }
+        const filter = {
+            isDeleted: false,
+            companyName: req.params.companyName,
+            customerType: "wholesale",
+            paymentMethod: "debt",
+            $or: [
+                { paidAt: null, dueDate: { $lt: new Date() } },
+                { $expr: { $gt: ["$paidAt", "$dueDate"] } }
+            ]
+        }
+        const invoices = await Invoice.find(filter);
+        let check = false;
+        if (invoices){
+            if (invoices.length > 0){
+                check = true;
+            }
+            res.status(200).json({success: true, data: { isBadDebt: check}});
+        }
+    } catch (error){
+        res.status(500).json({ success: false, message: error.message});
+    }
+};
+
+exports.resetDiscount = async (req, res) => {
+    try{
+        const id = req.params.id;
+        if (!id){
+            throw new Error("Mã Khách hàng không hợp lệ.");
+        }
+        const customer = await Customer.findOne({_id: id, isDeleted: false});
+        customer.discountPercentage = 0;
+        const savedCustomer = await customer.save();
+        res.status(200).json({success: true, message: "Thu hồi chiết khấu khách hàng thành công", data: savedCustomer});
+    } catch (error){
+        res.status(500).json({success: false, message: error.message});
+    }
+};
