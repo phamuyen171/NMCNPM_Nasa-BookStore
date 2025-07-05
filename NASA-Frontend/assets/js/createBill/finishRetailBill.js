@@ -58,15 +58,15 @@ window.addEventListener('DOMContentLoaded', async () => {
     row.innerHTML = `
       <td>${index + 1}</td>
       <td>${item.title}</td>
-      <td>${item.price.toLocaleString()}$</td>
+      <td>${convertMoney(item.price)}</td>
       <td>${item.quantity}</td>
-      <td>${item.total.toLocaleString()}$</td>
+      <td>${convertMoney(item.total)}</td>
     `;
     tbody.appendChild(row);
   });
 
   document.getElementById('total-qty').innerText = totalQty;
-  document.getElementById('total-price').innerText = totalPrice.toLocaleString() + '$';
+  document.getElementById('total-price').innerText = convertMoney(totalPrice);
     //============================== API TT khách hàng ====================================
   const discountRow = document.getElementById('discount-row');
   const finalPriceRow = document.getElementById('final-price-row');
@@ -143,7 +143,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     // const finalPrice = document.getElementById('final-price');
     // const finalPriceRow = document.getElementById('final-price-row');
     // const discountSeparator = document.getElementById('discount-separator');
-    finalPrice.innerText = totalPrice + '$'; 
+    finalPrice.innerText = convertMoney(totalPrice); 
     finalPriceRow.classList.remove('d-none');
     discountSeparator.classList.remove('d-none');
   });
@@ -168,7 +168,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     // const finalPrice = document.getElementById('final-price');
     // const finalPriceRow = document.getElementById('final-price-row');
     // const discountSeparator = document.getElementById('discount-separator');
-    finalPrice.innerText = totalPrice + '$'; 
+    finalPrice.innerText = convertMoney(totalPrice); 
     finalPriceRow.classList.remove('d-none');
     discountSeparator.classList.remove('d-none');
     
@@ -234,7 +234,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             discountRow.classList.add('d-none');
             discountSeparator.classList.remove('d-none');
             finalPriceRow.classList.remove('d-none');
-            finalPrice.innerText = final.toLocaleString() + '$';
+            finalPrice.innerText = convertMoney(final);
             if (continueBtn) continueBtn.innerText = 'TẠO HÓA ĐƠN';
             
           } else {
@@ -272,8 +272,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     const discount = usedPoints * rules.point.pointToCash;
     const final = Math.max(0, rawTotal - discount);
 
-    discountAmount.innerText = discount + '$';
-    finalPrice.innerText = final.toLocaleString() + '$';
+    discountAmount.innerText = convertMoney(discount);
+    finalPrice.innerText = convertMoney(final.toLocaleString());
 
     discountRow.classList.remove('d-none');
     finalPriceRow.classList.remove('d-none');
@@ -304,7 +304,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     // ✨ Gán lại giá trị "Thành tiền" bằng "Tạm tính"
     discountSeparator.classList.remove('d-none');
     const final = rawTotal;
-    finalPrice.innerText = final.toLocaleString() + '$';
+    finalPrice.innerText = convertMoney(final);
 
     if (continueBtn) {
       continueBtn.innerText = 'TẠO HÓA ĐƠN';
@@ -329,9 +329,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     const totalQty = localStorage.getItem('totalQty') || 0;
     const subTotal = localStorage.getItem('totalPrice') || 0;
 
-    let discount = document.getElementById('discount-amount')?.innerText?.replace('$', '') || 0;
+    let discount = parseCurrencyVND(document.getElementById('discount-amount')?.innerText) || 0;
 
-    const finalTotal = document.getElementById('final-price')?.innerText?.replace('$', '') || subTotal;
+    const finalTotal = parseCurrencyVND(document.getElementById('final-price')?.innerText) || subTotal;
 
     const earnedPoints = Math.floor(parseFloat(finalTotal)/rules.point.cashToPoint);
 

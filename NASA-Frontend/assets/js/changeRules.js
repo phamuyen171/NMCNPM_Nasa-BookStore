@@ -1,3 +1,11 @@
+function convertAfterChange(tagId) {
+  const tag = document.getElementById(tagId);
+  tag.addEventListener("blur", () => {
+    tag.value = convertMoney(tag.value);
+  });
+}
+
+
 async function showRuleInfo(){
     try{
         const res = await fetch("http://localhost:3000/api/rules/", {
@@ -13,16 +21,16 @@ async function showRuleInfo(){
         document.getElementById('maxImportBook').value = rules.book.maxImportBook;
         document.getElementById('maxImportableBook').value = rules.book.maxImportableBook;
 
-        document.getElementById('maxLowDebt').value = rules.debt.maxLowDebt;
+        document.getElementById('maxLowDebt').value = convertMoney(rules.debt.maxLowDebt);
         document.getElementById('timeLowDebt').value = rules.debt.timeLowDebt;
-        document.getElementById('maxHighDebt').value = rules.debt.maxHighDebt;
+        document.getElementById('maxHighDebt').value = convertMoney(rules.debt.maxHighDebt);
         document.getElementById('timeHighDebt').value = rules.debt.timeHighDebt;
 
-        document.getElementById('minBillValue').value = rules.point.minBillValue;
+        document.getElementById('minBillValue').value = convertMoney(rules.point.minBillValue);
         document.getElementById('minPointToUse').value = rules.point.minPointToUse;
-        document.getElementById('cashToPoint').value = rules.point.cashToPoint;
-        document.getElementById('pointToCash').value = rules.point.pointToCash;
-        document.getElementById('minUsedLevel').value = rules.point.minUsedLevel;
+        document.getElementById('cashToPoint').value = convertMoney(rules.point.cashToPoint);
+        document.getElementById('pointToCash').value = convertMoney(rules.point.pointToCash);
+        document.getElementById('minUsedLevel').value = convertMoney(rules.point.minUsedLevel);
     }
     catch(error){
         console.log(error.message);
@@ -59,11 +67,11 @@ async function updateRules(rules){
         console.log(error.message);
     }
 }
-
+const tagConvertList = ['maxLowDebt', 'maxHighDebt', 'minBillValue', 'cashToPoint', 'pointToCash', 'minUsedLevel']
 document.addEventListener("DOMContentLoaded", function () {
     // Hiển thị value
     showRuleInfo();
-
+    tagConvertList.forEach(id => convertAfterChange(id)); // ✅ Gọi 1 lần
     // cập nhập
     const update_btn = document.getElementById('update-btn');
     if (update_btn) {
@@ -80,17 +88,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 "maxImportableBook": document.getElementById('maxImportableBook').value
             };
             const debt = {
-                "maxLowDebt": document.getElementById('maxLowDebt').value,
+                "maxLowDebt": parseCurrencyVND(document.getElementById('maxLowDebt').value),
                 "timeLowDebt": document.getElementById('timeLowDebt').value,
-                "maxHighDebt": document.getElementById('maxHighDebt').value,
+                "maxHighDebt": parseCurrencyVND(document.getElementById('maxHighDebt').value),
                 "timeHighDebt": document.getElementById('timeHighDebt').value
             };
             const point = {
-                "minBillValue": document.getElementById('minBillValue').value,
+                "minBillValue": parseCurrencyVND(document.getElementById('minBillValue').value),
                 "minPointToUse": document.getElementById('minPointToUse').value,
-                "cashToPoint": document.getElementById('cashToPoint').value,
-                "pointToCash": document.getElementById('pointToCash').value,
-                "minUsedLevel": document.getElementById('minUsedLevel').value
+                "cashToPoint": parseCurrencyVND(document.getElementById('cashToPoint').value),
+                "pointToCash": parseCurrencyVND(document.getElementById('pointToCash').value),
+                "minUsedLevel": parseCurrencyVND(document.getElementById('minUsedLevel').value)
             };
 
             const rules = { "book": book, "debt": debt, "point": point};

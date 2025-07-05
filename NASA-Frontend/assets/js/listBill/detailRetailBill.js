@@ -41,9 +41,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         row.innerHTML = `
         <td>${index + 1}</td>
         <td>${product.bookTitle}</td>
-        <td>${product.pricePerUnit.toFixed(2)}</td>
+        <td>${convertMoney(product.pricePerUnit)}</td>
         <td>${product.quantity}</td>
-        <td>${product.subtotal.toFixed(2)}</td>
+        <td>${convertMoney(product.subtotal)}</td>
         `;
         tbody.appendChild(row);
         totalQty += product.quantity;
@@ -51,16 +51,16 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     // Tổng số lượng và tạm tính
     document.getElementById('total-qty').innerText = totalQty;
-    document.getElementById('total-price').innerText = invoice_fetch.subtotal.toFixed(2);
+    document.getElementById('total-price').innerText = convertMoney(invoice_fetch.subtotal);
 
     // Giảm giá
     if (invoice_fetch.totalDiscount > 0) {
         document.getElementById('discount-row').classList.remove('d-none');
-        document.getElementById('discount-amount').innerText = invoice_fetch.totalDiscount.toFixed(2);
+        document.getElementById('discount-amount').innerText = convertMoney(invoice_fetch.totalDiscount);
     }
     document.getElementById('discount-separator').classList.remove('d-none');
     document.getElementById('final-price-row').classList.remove('d-none');
-    document.getElementById('final-price').innerText = invoice_fetch.total.toFixed(2);
+    document.getElementById('final-price').innerText = convertMoney(invoice_fetch.total);
 
     // Điểm tích lũy
     if (document.getElementById('sdt-khach-hang').value === "Không có") {

@@ -14,8 +14,8 @@ async function getCustomerData(name, companyName, taxId, phone) {
         return data.data;
     }
     catch (error){
-        // showModalError("LỖI LẤY THÔNG TIN ĐƠN VỊ BÁN SỈ", error.message);
-        console.error("Lỗi lấy thông tin đơn vị bán sỉ:", error);
+        showModalError("LỖI LẤY THÔNG TIN ĐƠN VỊ BÁN SỈ", error.message);
+        // console.error("Lỗi lấy thông tin đơn vị bán sỉ:", error);
         return null;
     }
 }
@@ -68,8 +68,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       <td>${index + 1}</td>
       <td>${item.title}</td>
       <td>${item.quantity}</td>
-      <td>${Number(item.price).toLocaleString('vi-VN')}</td>
-      <td>${Number(item.total).toLocaleString('vi-VN')}</td>
+      <td>${convertMoney(item.price)}</td>
+      <td>${convertMoney(item.total)}</td>
     `;
     tbody.appendChild(row);
   });
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const subtotalRow = document.createElement('tr');
   subtotalRow.innerHTML = `
   <td colspan="4" class="text-end fw-bold">Tạm tính</td>
-  <td class="fw-bold">${Number(totalPrice).toLocaleString('vi-VN')}</td>
+  <td class="fw-bold">${convertMoney(totalPrice)}</td>
   `;
 
   const customer = await getCustomerData(buyerName, companyName, taxId, localStorage.getItem('buyerPhone'));
@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const finalPriceRow = document.createElement('tr');
   finalPriceRow.innerHTML = `
   <td colspan="4" class="text-end fw-bold">Thành tiền</td>
-  <td class="fw-bold">${Number(finalAmount).toLocaleString('vi-VN')}</td>
+  <td class="fw-bold">${convertMoney(finalAmount)}</td>
   `;
 
   // Thêm các dòng này vào bảng

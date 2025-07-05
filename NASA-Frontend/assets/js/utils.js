@@ -62,3 +62,16 @@ async function getDetailedInvoice(invoiceData){
     console.log(error);
   }
 }
+
+function convertMoney(value){
+  const formatted = new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND'
+  }).format(value);
+  return formatted;
+}
+
+function parseCurrencyVND(str) {
+  // Xóa tất cả ký tự không phải số
+  return Number(str.replace(/[^\d]/g, ""));
+}

@@ -24,7 +24,7 @@ exports.createOrGetCustomer = async (req, res) => {
 // Thêm khách hàng mới (cho use-case Thêm khách hàng mới)
 exports.addCustomer = async (req, res) => {
     try {
-        const { phone, name, type, idCard, companyName, taxId, address, discountPercentage } = req.body;
+        const { phone, name, type, companyName, taxId, address, discountPercentage } = req.body;
         // Kiểm tra số điện thoại đã tồn tại chưa
         const existingCustomer = await Customer.findOne({ phone: phone, isDeleted: false });
         if (existingCustomer) {
@@ -36,8 +36,12 @@ exports.addCustomer = async (req, res) => {
         if (taxId && existingTaxId) { // Chỉ kiểm tra nếu taxId được cung cấp và đã tồn tại
             return res.status(409).json({ success: false, message: 'Mã số thuế đã tồn tại' });
         }
-
-        const newCustomer = await Customer.create({ phone, name, type, idCard, companyName, taxId, address, discountPercentage });
+        let customerId = null;
+        if (type === "wholesale"){
+            const countWholesale = await Customer.countDocuments({type});
+            customerId = `WH${String(countWholesale+1).padStart(3, '0')}`;
+        }
+        const newCustomer = await Customer.create({ phone, name, type, companyName, taxId, address, discountPercentage, customerId });
         res.status(201).json({ success: true, message: 'Thêm khách hàng thành công', data: newCustomer });
     } catch (error) {
         console.error("Lỗi khi thêm khách hàng: ", error);
@@ -175,5 +179,24 @@ exports.countCustomers = async (req, res) => {
     } catch (error) {
         console.error("Lỗi khi đếm số lượng khách hàng: ", error);
         res.status(500).json({ success: false, message: 'Lỗi server khi đếm số lượng khách hàng' });
+    }
+};
+
+exports.checkExistTaxID = async (req, res) => {
+    try{
+        if (!req.params.taxId) {
+            return res.status(400).json({ success: false, message: "Thiếu mã số thuế." });
+        }
+        const customer = await Customer.findOne({
+           taxId: req.params.taxId,
+           type: "wholesale" ,
+           isDeleted: false
+        });
+        const exists = !!customer;
+        const message = exists ? "Mã số thuế đã tồn tại." : "Mã số thuế không tồn tại.";
+        res.status(200).json({ success: true, message, data: { check: exists } });
+
+    } catch (error){
+        res.status(500).json({success: false, message: error.message});
     }
 }
