@@ -1,34 +1,33 @@
 import { renderPagination } from "../../../components/js/pagination.js";
 
-const bills = [
-    {
-        invoiceID: '00001',
-        customerType: 'retail',
-        total: 78.41,
-        date: '2025-06-19T14:11:10.638+00:00',
-        createdBy: 'S0001',
-        customerInfo: '0834567239',
-        status: 'paid'
-    },
-    {
-        invoiceID: '00002',
-        customerType: 'wholesale',
-        total: 1190.74,
-        date: '2025-03-14T14:11:10.638+00:00',
-        createdBy: 'S0002',
-        customerInfo: 'Đại lý Soul Books',
-        status: 'debt'
-    },
-    {
-        invoiceID: '00003',
-        customerType: 'wholesale',
-        total: 2968.32,
-        date: '2025-01-31T14:11:10.638+00:00',
-        createdBy: 'S0003',
-        customerInfo: 'Trường ĐH Khoa học tự nhiên',
-        status: 'paid'
+
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng tính từ 0
+    const year = String(date.getFullYear()); // Lấy 2 số cuối
+
+    return `${day}/${month}/${year}`;
+}
+
+async function getAllInvoices(){
+  try{
+    const res = await fetch("http://localhost:3000/api/invoices/", {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const data = await res.json();
+    if (!data.success){
+      throw new Error(data.message);
     }
-];
+    return data.data.invoices;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 function createTable(bills) {
   if (bills.length === 0) {
@@ -54,7 +53,7 @@ function createTable(bills) {
   `;
 
   bills.forEach(bill => {
-    const typeText = bill.customerType === 'retail' ? 'Bán lẻ' : 'CTGT';
+    const typeText = bill.customerType === 'retail' ? 'Bán lẻ' : 'Bán sỉ';
     const statusText = bill.status === 'paid' ? 'Đã thanh toán' : 'Ghi nợ';
     const detailPage = bill.customerType === 'retail' ? 'detailRetailBill.html' : 'detailWholesaleBill.html';
 
@@ -73,7 +72,7 @@ function createTable(bills) {
         <td>${bill.invoiceID}</td>
         <td>${typeText}</td>
         <td>${bill.total}</td>
-        <td>${new Date(bill.date).toLocaleDateString('vi-VN')}</td>
+        <td>${formatDate(bill.date)}</td>
         <td>${bill.createdBy}</td>
         <td>${bill.customerInfo}</td>
         <td><span style="${statusStyle}; font-weight: bold;">${statusText}</span></td>
@@ -108,10 +107,16 @@ function renderTableByPage(data, page) {
 
 let currentPage = 1;
 const pageSize = 8;
+let allBills;
 
 document.addEventListener("DOMContentLoaded", async function () {
   try{
-    let allBills = bills;
+    allBills = await getAllInvoices();
+    allBills.forEach(bill => {
+      bill.customerInfo = bill.customerType === "retail"
+        ? bill.customerPhone || "Không"
+        : bill.companyName;
+    });
 
     renderTableByPage(allBills, currentPage);
 
@@ -155,22 +160,36 @@ document.querySelectorAll('.retail-bill').forEach(link => {
 
     // Lấy loại filter
     const filterType = this.getAttribute('data-filter');
-    let filteredBills = [];
 
-    if (filterType === 'all') {
-      filteredBills = bills;
-    } else if (filterType === 'retail') {
-      filteredBills = bills.filter(bill => bill.customerType === 'retail');
-    } else if (filterType === 'wholesale') {
-      filteredBills = bills.filter(bill => bill.customerType === 'wholesale');
-    } else if (filterType === 'paid') {
-      filteredBills = bills.filter(bill => bill.customerType === 'wholesale' && bill.status === 'paid');
-    } else if (filterType === 'debt') {
-      filteredBills = bills.filter(bill => bill.customerType === 'wholesale' && bill.status === 'debt');
-    }
+    applyFilters(filterType);
 
-    // Reset về trang 1
-    renderTableByPage(filteredBills, 1);
+    
+    document.getElementById("filter-date").addEventListener("change", () => {
+      applyFilters();
+    });
   });
 });
+
+function applyFilters(currentFilterType) {
+  let filtered = allBills;
+
+  // Filter theo loại
+  if (currentFilterType === 'retail') {
+    filtered = filtered.filter(b => b.customerType === 'retail');
+  } else if (currentFilterType === 'wholesale') {
+    filtered = filtered.filter(b => b.customerType === 'wholesale');
+  } else if (currentFilterType === 'paid') {
+    filtered = filtered.filter(b => b.customerType === 'wholesale' && b.status === 'paid');
+  } else if (currentFilterType === 'debt') {
+    filtered = filtered.filter(b => b.customerType === 'wholesale' && b.status === 'debt');
+  }
+
+  // Filter theo ngày nếu có chọn
+  const selectedDate = document.getElementById("filter-date").value;
+  if (selectedDate && currentFilterType !== "all") {
+    filtered = filtered.filter(bill => bill.date.split("T")[0] === selectedDate);
+  }
+
+  renderTableByPage(filtered, 1);
+}
 

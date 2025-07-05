@@ -38,11 +38,13 @@ class InvoiceController {
             const { page, limit, status, customerPhone, startDate, endDate, keyword, sortBy, sortOrder } = req.query;
             const currentUser = req.user;
 
+            const total = await Invoice.countDocuments({ isDeleted: { $ne: true } }); 
+
             const result = await invoiceService.getInvoices(
                 currentUser,
                 {
                     page: parseInt(page) || 1,
-                    limit: parseInt(limit) || 10,
+                    limit: parseInt(limit) || total,
                     status,
                     customerPhone,
                     startDate,

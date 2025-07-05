@@ -308,7 +308,7 @@ class InvoiceService {
 
         // --- Logic lọc ---
         if (status) {
-            query.status = status;
+            query.customerType = status;
         }
         if (customerPhone) {
             query.customerPhone = new RegExp(customerPhone, 'i'); // Tìm kiếm không phân biệt hoa thường
@@ -323,13 +323,14 @@ class InvoiceService {
             }
         }
         if (keyword) {
-            // Kiểm tra nếu keyword có định dạng của invoiceID
-            if (keyword.startsWith('INV-')) {
-                query.invoiceID = keyword; // Tìm kiếm chính xác mã hóa đơn
-            } else {
-                // Nếu không phải invoiceID, tìm kiếm trong customerPhone
-                query.customerPhone = new RegExp(keyword, 'i'); // Tìm kiếm không phân biệt hoa thường
-            }
+            // // Kiểm tra nếu keyword có định dạng của invoiceID
+            // if (keyword.startsWith('INV-')) {
+            //     query.invoiceID = keyword; // Tìm kiếm chính xác mã hóa đơn
+            // } else {
+            //     // Nếu không phải invoiceID, tìm kiếm trong customerPhone
+            //     query.customerPhone = new RegExp(keyword, 'i'); // Tìm kiếm không phân biệt hoa thường
+            // }
+            query.invoiceID = keyword; 
         }
 
         // --- Logic sắp xếp ---
@@ -344,6 +345,7 @@ class InvoiceService {
             .sort(sortOptions)
             .skip(skip)
             .limit(limit);
+            // .select("invoiceID customerType total date createdBy customerPhone companyName status");
 
         const total = await Invoice.countDocuments(query); // Đếm tổng số hóa đơn khớp query
 
@@ -406,6 +408,7 @@ class InvoiceService {
                 createdAt: invoice.createdAt,
                 dueDate: invoice.dueDate,
                 paidAt: invoice.paidAt,
+                companyName: invoice.companyName,
                 items: formattedDetails
             };
         } catch (error) {

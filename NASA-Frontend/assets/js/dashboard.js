@@ -98,10 +98,28 @@ function renderBooks(container, data, currentPage, btnPrev, btnNext) {
     bookDiv.style.margin = "0 10px";
 
     bookDiv.innerHTML = `
-      <img src="${sach.anh}" class="img-fluid mb-2" style="height: 140px; object-fit: cover; border: 1px solid #ccc; border-radius: 5px;">
-      <p style="font-size: 14px; color: #1a3a9c;">${sach.ten}</p>
+      <div class="book">
+        <img src="${sach.image}" class="img-fluid mb-2" style="height: 140px; object-fit: cover; border: 1px solid #ccc; border-radius: 5px;">
+        <p style="font-size: 14px; color: #1a3a9c;">${sach.title}</p>
+      </div>
     `;
     container.appendChild(bookDiv);
+
+    const bookElement = bookDiv.querySelector('.book');
+    bookElement.dataset.info = JSON.stringify(sach); 
+
+    // Gắn sự kiện click vào toàn bộ thẻ .book
+    bookElement.addEventListener('click', (e) => {
+      const info = e.currentTarget.dataset.info;
+      try {
+        localStorage.setItem("bookDetail", info);
+        window.location.href = `../book/bookInfo.html`;
+      } catch (err) {
+        console.error("Lỗi khi parse data-info:", err);
+      }
+    });
+  
+
   }
 
   btnPrev.style.display = currentPage.value === 0 ? "none" : "inline-block";
@@ -167,10 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
       throw new Error("Không có dữ liệu sách mới nhất.");
     }
     data.data.forEach(book => {
-      sachMoiData.push({
-        ten: book.title,
-        anh: book.image || "https://via.placeholder.com/120" // Sử dụng ảnh mặc định nếu không có})
-      });
+      sachMoiData.push(book);
     });
     renderBooks(containerNew, sachMoiData, currentPageNew, btnPrevNew, btnNextNew);
   })
@@ -192,10 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
       throw new Error("Không có dữ liệu sách phổ biến.");
     }
     data.data.forEach(book => {
-      sachHotData.push({
-        ten: book.title,
-        anh: book.image || "https://via.placeholder.com/120" // Sử dụng ảnh mặc định nếu không có})
-      });
+      sachHotData.push(book);
     });
     renderBooks(containerHot, sachHotData, currentPageHot, btnPrevHot, btnNextHot);
 

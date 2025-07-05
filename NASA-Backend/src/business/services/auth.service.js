@@ -69,6 +69,30 @@ class UserService {
     }
   }
 
+  async changePassword(username, oldPassword, newPassword){
+    try{
+      const account = await User.findOne({ username: username, status: 'active' });
+      if (!account) {
+          throw new Error('Không tìm thấy tài khoản phù hợp');
+      }
+
+      const checkOldPass = await bcrypt.compare(oldPassword, account.password);
+
+      if (!checkOldPass){
+        throw new Error('Mật khẩu hiện tại không đúng!');
+      }
+
+      account.password = await bcrypt.hash(newPassword, 10);
+      await account.save({
+        runValidators: true
+      });
+
+      return account;
+    } catch (error){
+      throw error;
+    }
+  }
+
   async lockAccount(username){
     try{
       const user = await User.findOne({username, status:"active"});

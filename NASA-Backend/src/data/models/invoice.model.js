@@ -57,6 +57,10 @@ const invoiceSchema = new mongoose.Schema({
             message: 'Số điện thoại phải có 10 chữ số'
         }
     },
+    companyName: {
+        type: String,
+        default: null
+    },
     customerType: {
         type: String,
         enum: ['retail', 'wholesale'],

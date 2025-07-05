@@ -32,7 +32,7 @@
       
 
       <!-- Content -->
-       <div class="container invoice-box mt-2 mb-2 p-5 pt-0 pb-0" style="width: 70%; height: 100%;">
+       <div class="container invoice-box mt-2 mb-2 p-5 pt-0 pb-0">
         <!-- Dòng TT NASA -->
         <div class="d-flex justify-content-start align-items-center">
             <img src="../../public/images/big-logo.png" alt="" class="logo-nasa">
@@ -74,17 +74,23 @@
             <tbody>
                 <!-- Nội dung sẽ được JS render -->
             </tbody>
-            </table>
+        </table>
        </div>
 
        <!--Tình trạng thanh toán -->
-       <div class="d-flex justify-content-center align-items-center" style="font-size: 20px;">
+       <div class="d-flex justify-content-center align-items-center" style="font-size: 20px; margin-top: 20px;">
           <p class="mx-3 fw-bold">Tình trạng</p>
           <p id="bill-status" class="text-center"><strong></strong></p>
        </div>
-      
 
-
+      <div class="d-flex justify-content-center mt-3 gap-3">
+        <button class="btn btn-primary px-4 py-2 fw-bold" onclick="window.location.href='./bill.html'" style="background-color: #c1cff7; color: black; border: none;">
+          TẠO HÓA ĐƠN MỚI
+        </button>
+        <button class="btn btn-primary px-4 py-2 fw-bold" onclick="window.location.href='./listBill.html'" style="background-color: #c1cff7; color: black; border: none;">
+          XEM DANH SÁCH
+        </button>
+      </div>
 
 
 
