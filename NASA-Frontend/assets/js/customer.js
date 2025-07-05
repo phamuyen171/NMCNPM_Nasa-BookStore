@@ -19,16 +19,6 @@ async function getFilteredCustomer(type="retail"){
   return data.data;
 }
 
-function formatDate(dateStr) {
-    const date = new Date(dateStr);
-
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng tính từ 0
-    const year = String(date.getFullYear()); // Lấy 2 số cuối
-
-    return `${day}/${month}/${year}`;
-}
-
 // ===========Ghi chú========
 //nếu để trống thì không in ra gì cả, sang updateCustomer chỉ xuất hiện nút cập nhật
 //nếu là Nợ xấu thì sang updateCustomer hiện ra 3 nút xoá, thu hồi chiết khấu, cập nhật
@@ -69,14 +59,14 @@ let htmlByType = {
   `
 };
 
-function createTable(customers, type='retail') {
+async function createTable(customers, type='retail') {
   if (customers.length === 0) {
     return `<p class="text-muted">Không tìm thấy khách hàng phù hợp.</p>`;
   }
 
   let html = htmlByType[type];
 
-  customers.forEach(customer => {
+  for (const customer of customers) {
     if (type === 'retail'){
         html += `
         <tr>
@@ -89,34 +79,60 @@ function createTable(customers, type='retail') {
         `;
     }
     else{
+      // console.log(customer);
+      // kiểm tra nợ xấu
+      try{
+        const req = await fetch(`http://localhost:3000/api/customers/is-bad-debt/${encodeURIComponent(customer.companyName)}`);
+        const resData = await req.json();
+        if (!resData.success){
+          throw new Error(resData.message);
+        }
+        note = resData.data.isBadDebt === true? "Nợ xấu":"";
         html += `
-        <tr>
-            <td>${customer.companyName}</td>
-            <td>${customer.taxId}</td>
-            <td>${customer.address}</td>
-            <td>${customer.phone}</td>
-            <td>${customer.name}</td>
-            <td>${customer.discountPercentage}%</td>
-            <td class="bad-debt">${note}</td>
-            <td><button class="btn btn-link update-btn" data-id="${customer._id}">Sửa</button></td>
-        </tr>
+          <tr>
+              <td>${customer.companyName}</td>
+              <td>${customer.taxId}</td>
+              <td>${customer.address}</td>
+              <td>${customer.phone}</td>
+              <td>${customer.name}</td>
+              <td>${customer.discountPercentage}%</td>
+              <td class="bad-debt">${note}</td>
+              <td><button class="btn btn-link update-btn" data-id="${customer._id}">Sửa</button></td>
+          </tr>
         `;
+      } catch(error){
+        console.log(error.message);
+      }      
     }
     
     
-  });
+  }
 
   html += `</tbody></table></div>`;
   return html;
 }
 
-function renderTable(staffs, type='retail') {
+async function renderTable(staffs, type='retail') {
   const container = document.getElementById("customers-container");
-  container.innerHTML = createTable(staffs, type);
+  container.innerHTML = await createTable(staffs, type);
+
+  document.querySelectorAll(".update-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const customerId = btn.dataset.id;
+      const customerData = staffs.find(c => c._id === customerId);
+      if (customerData) {
+        localStorage.setItem('updateCustomerData', JSON.stringify({
+          ...customerData,
+          _noteFlag: note === "Nợ xấu"
+        }));
+        window.location.href = './updateCustomer.html';
+      }
+    });
+  });
 }
 
 function searchCustomer(allCustomers, type='retail'){
-    document.getElementById("search-customer").addEventListener("input", function () {
+    document.getElementById("search-customer").addEventListener("input", async function () {
       const keyword = this.value.trim().toLowerCase();
       let filtered = allCustomers.filter(customer =>
         customer.name.toLowerCase().includes(keyword) ||
@@ -128,20 +144,20 @@ function searchCustomer(allCustomers, type='retail'){
             customer.taxId.toLowerCase().includes(keyword)
         )
       }
-      renderTableByPage(filtered, currentPage, type);
+      await renderTableByPage(filtered, currentPage, type);
     });
 }
 
 
-function renderTableByPage(data, page, type='retail') {
+async function renderTableByPage(data, page, type='retail') {
   currentPage = page;
   const start = (page - 1) * pageSize;
   const end = start + pageSize;
   const paginatedCustomers = data.slice(start, end);
 
-  renderTable(paginatedCustomers, type);
-  renderPagination(data.length, pageSize, currentPage, (newPage) => {
-    renderTableByPage(data, newPage, type);
+  await renderTable(paginatedCustomers, type);
+  renderPagination(data.length, pageSize, currentPage, async (newPage) => {
+    await renderTableByPage(data, newPage, type);
   });
 }
 
@@ -162,7 +178,7 @@ async function printList(type='retail') {
       }
     }
 
-    renderTableByPage(allCustomers, currentPage, type);
+    await renderTableByPage(allCustomers, currentPage, type);
 
     document.addEventListener("click", function (e) {
       const row = e.target.closest("tr");
@@ -174,20 +190,6 @@ async function printList(type='retail') {
       });
       searchCustomer(allCustomers, type);
 
-      // =========================Xử lý nút Sửa=====================
-      document.querySelectorAll(".update-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const customerId = btn.dataset.id;
-          const customerData = allCustomers.find(c => c._id === customerId);
-          if (customerData) {
-            localStorage.setItem('updateCustomerData', JSON.stringify({
-              ...customerData,
-              _noteFlag: note === "Nợ xấu"
-            }));
-            window.location.href = './updateCustomer.html';
-          }
-        });
-      });
     }
     catch (error){
       showModalError("LỖI IN DANH SÁCH KHÁCH HÀNG", error.message)

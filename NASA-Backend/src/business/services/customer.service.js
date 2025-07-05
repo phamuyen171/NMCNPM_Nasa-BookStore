@@ -131,18 +131,11 @@ class CustomerService {
         }
     }
 
-    async updateCustomer(phone, updateData) {
+    async updateCustomer(id, updateData) {
         try {
-            // Loại bỏ các trường không nên cập nhật trực tiếp hoặc không cần thiết
-            delete updateData.phone; // Không cho phép cập nhật phone qua hàm này để tránh phức tạp
-            delete updateData.points; // Điểm sẽ được cập nhật riêng
-            delete updateData.totalSpent; // Tổng chi tiêu sẽ được cập nhật riêng
-            delete updateData.createdAt;
-            delete updateData.updatedAt;
-            delete updateData.isDeleted; // Có thể có hàm riêng để xóa mềm
 
             const updatedCustomer = await Customer.findOneAndUpdate(
-                { phone: phone, isDeleted: false },
+                { _id: id, isDeleted: false, type: "wholesale" },
                 { $set: updateData },
                 { new: true, runValidators: true } // `new: true` trả về tài liệu đã cập nhật, `runValidators: true` chạy các validation trong Schema
             );
@@ -156,10 +149,10 @@ class CustomerService {
         }
     }
 
-    async deleteCustomer(phone) {
+    async deleteCustomer(id) {
         try {
             const customer = await Customer.findOneAndUpdate(
-                { phone: phone, isDeleted: false },
+                { _id: id, isDeleted: false },
                 { $set: { isDeleted: true } },
                 { new: true } // Trả về tài liệu đã cập nhật
             );
