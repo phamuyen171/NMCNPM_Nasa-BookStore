@@ -1,0 +1,40 @@
+.customer-board {
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #0f107c;
+    margin-top: 10px;
+    background-color: #fefefe;
+}
+
+.board-title {
+    color: #0f107c;
+    font-weight: bold;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+}
+
+.col-form-label {
+    color: #1a3a9c;
+    font-weight: bold;
+    padding-left: 250px;
+    margin-right: 50px;
+}
+
+.btn-add-customer{
+    color: #fff;
+    background-color: #1a3a9c;
+    margin-top: 10px;
+    margin-left: 550px;
+    margin-bottom: 10px;
+}
+.btn-add-customer:hover{
+    color: #fff;
+    background-color: #4669d4;
+    margin-top: 10px;
+    margin-left: 550px;
+}
+
+.error-text {
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
