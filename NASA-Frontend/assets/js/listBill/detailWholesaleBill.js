@@ -71,8 +71,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       <td>${index + 1}</td>
       <td>${item.bookTitle}</td>
       <td>${item.quantity}</td>
-      <td>${Number(item.pricePerUnit).toLocaleString('vi-VN')}</td>
-      <td>${Number(item.subtotal).toLocaleString('vi-VN')}</td>
+      <td>${convertMoney(item.pricePerUnit)}</td>
+      <td>${convertMoney(item.subtotal)}</td>
     `;
     tbody.appendChild(row);
   });
@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const subtotalRow = document.createElement('tr');
   subtotalRow.innerHTML = `
     <td colspan="4" class="text-end fw-bold">Tạm tính</td>
-    <td class="fw-bold">${data.subtotal}</td>
+    <td class="fw-bold">${convertMoney(data.subtotal)}</td>
   `;
   tbody.appendChild(subtotalRow);
 
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const finalPriceRow = document.createElement('tr');
   finalPriceRow.innerHTML = `
     <td colspan="4" class="text-end fw-bold">Thành tiền</td>
-    <td class="fw-bold">${data.total}</td>
+    <td class="fw-bold">${convertMoney(data.total)}</td>
   `;
   tbody.appendChild(finalPriceRow);
 

@@ -46,7 +46,7 @@ export function renderBooks(bookList, importMode=false) {
                 <p class="mb-1 book-author"><strong>Tác giả:</strong> ${book.author}</p>
                 <p class="mb-1 book-cate"><strong>Thể loại:</strong> ${book.category}</p>
                 <p class="mb-1 book-publisher"><strong>Nhà xuất bản:</strong> ${book.publisher}</p>
-                <p class="mb-1 book-price"><strong>Giá:</strong> ${book.price} đ</p>
+                <p class="mb-1 book-price"><strong>Giá:</strong> ${convertMoney(book.price)}</p>
                 <p class="mb-1 book-quan"><strong>Số lượng:</strong> ${book.quantity}</p>
                 <p class="mb-1 book-des"><strong>Mô tả:</strong> ${book.description}</p>
               </div>
@@ -115,7 +115,7 @@ export function renderBooks(bookList, importMode=false) {
           author: card.querySelector(".book-author").textContent.replace("Tác giả: ", ""),
           category: card.querySelector(".book-cate").textContent.replace("Thể loại: ", ""),
           publisher: card.querySelector(".book-publisher").textContent.replace("Nhà xuất bản: ", ""),
-          price: card.querySelector(".book-price").textContent.replace("Giá: ", "").replace(" đ", ""),
+          price: parseCurrencyVND(card.querySelector(".book-price").textContent.replace("Giá: ", "")),
           quantity: card.querySelector(".book-quan").textContent.replace("Số lượng: ", ""),
           description: card.querySelector(".book-des").textContent.replace("Mô tả: ", ""),
           image: card.querySelector("img").src,

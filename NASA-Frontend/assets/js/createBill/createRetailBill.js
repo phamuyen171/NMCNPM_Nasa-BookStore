@@ -23,25 +23,25 @@ window.addEventListener('DOMContentLoaded', async () => {
     row.innerHTML = `
       <td>${index + 1}</td>
       <td>${product.title}</td>
-      <td>${product.price.toLocaleString()}₫</td>
+      <td>${convertMoney(product.price)}</td>
       <td>${product.quantity}</td>
-      <td>${product.total.toLocaleString()}₫</td>
+      <td>${convertMoney(product.total)}</td>
     `;
     tbody.appendChild(row);
   });
 
   // Tổng số lượng và tạm tính
   document.getElementById('total-qty').innerText = invoice.totalQty;
-  document.getElementById('total-price').innerText = invoice.subTotal.toLocaleString() + '₫';
+  document.getElementById('total-price').innerText = convertMoney(invoice.subTotal);
 
   // Giảm giá (nếu có)
   if (invoice.discount > 0) {
     document.getElementById('discount-row').classList.remove('d-none');
-    document.getElementById('discount-amount').innerText = invoice.discount.toLocaleString() + '₫';
+    document.getElementById('discount-amount').innerText = convertMoney(invoice.discount);
   }
   document.getElementById('discount-separator').classList.remove('d-none');
   document.getElementById('final-price-row').classList.remove('d-none');
-  document.getElementById('final-price').innerText = invoice.finalTotal.toLocaleString() + '₫';
+  document.getElementById('final-price').innerText = convertMoney(invoice.finalTotal);
 
   // Điểm tích lũy
   if (invoice.isCustomer){

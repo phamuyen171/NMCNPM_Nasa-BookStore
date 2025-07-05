@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     let bookInfo = JSON.parse(localStorage.getItem("bookDetail"));
 
     document.getElementById("bookImage").src = bookInfo.image.trim();
-    document.getElementById("soldPrice").textContent = bookInfo.price + " VND";
-    document.getElementById("importPrice").textContent = bookInfo.priceImport;
+    document.getElementById("soldPrice").textContent = convertMoney(bookInfo.price);
+    document.getElementById("importPrice").textContent = convertMoney(bookInfo.priceImport);
     if (bookInfo.quantity >= rule.book.maxImportableBook){
         document.getElementById("status").textContent = "Còn hàng";
         document.getElementById("stock").textContent = bookInfo.quantity;

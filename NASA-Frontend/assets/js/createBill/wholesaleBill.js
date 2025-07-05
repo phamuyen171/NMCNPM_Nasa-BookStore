@@ -44,7 +44,7 @@ function renderPage() {
             <div class="pb-1">(${book.author})</div>
             <div>Số lượng: ${book.quantity}</div>
             <div>Đã bán: ${book.soldQuantity}</div>
-            <div class="product-price">${Number(book.price).toLocaleString()} $</div>
+            <div class="product-price">${convertMoney(book.price)}</div>
           </div>
         </div>
       `;
