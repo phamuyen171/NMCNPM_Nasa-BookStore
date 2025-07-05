@@ -30,7 +30,7 @@ async function showRuleInfo(){
         document.getElementById('minPointToUse').value = rules.point.minPointToUse;
         document.getElementById('cashToPoint').value = convertMoney(rules.point.cashToPoint);
         document.getElementById('pointToCash').value = convertMoney(rules.point.pointToCash);
-        document.getElementById('minUsedLevel').value = convertMoney(rules.point.minUsedLevel);
+        document.getElementById('minUsedLevel').value = rules.point.minUsedLevel;
     }
     catch(error){
         console.log(error.message);
@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "minPointToUse": document.getElementById('minPointToUse').value,
                 "cashToPoint": parseCurrencyVND(document.getElementById('cashToPoint').value),
                 "pointToCash": parseCurrencyVND(document.getElementById('pointToCash').value),
-                "minUsedLevel": parseCurrencyVND(document.getElementById('minUsedLevel').value)
+                "minUsedLevel": document.getElementById('minUsedLevel').value
             };
 
             const rules = { "book": book, "debt": debt, "point": point};

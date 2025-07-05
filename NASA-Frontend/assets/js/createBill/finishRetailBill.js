@@ -225,7 +225,7 @@ window.addEventListener('DOMContentLoaded', async () => {
               continueBtn.classList.add('btn-primary');
 
             } else if (final < rules.point.minBillValue) {
-              document.getElementById("minValue").innerText = rules.point.minBillValue + "$";
+              document.getElementById("minValue").innerText = convertMoney(rules.point.minBillValue);
               cannotRewardMessage.classList.add('d-none');
               orderNotEnoughTotal.classList.remove('d-none');
             }
@@ -273,7 +273,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     const final = Math.max(0, rawTotal - discount);
 
     discountAmount.innerText = convertMoney(discount);
-    finalPrice.innerText = convertMoney(final.toLocaleString());
+    finalPrice.innerText = convertMoney(final);
 
     discountRow.classList.remove('d-none');
     finalPriceRow.classList.remove('d-none');

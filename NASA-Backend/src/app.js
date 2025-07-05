@@ -23,10 +23,10 @@ app.use(cors()); // Cho phép các origin khác nhau truy cập API (cần đi�
 app.use(express.json()); // Để đọc body của request dạng JSON
 
 // Routes
+app.use('/api/books', importOrderRoutes); // Thêm routes cho đơn nhập sách (sử dụng chung prefix /api/books)
 app.use('/api/books', bookRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/staff', staffRoutes);
-app.use('/api/books', importOrderRoutes); // Thêm routes cho đơn nhập sách (sử dụng chung prefix /api/books)
 app.use('/api/invoices', invoiceRoutes); // Thêm routes cho hóa đơn
 app.use('/api/customers', customerRoutes); // Thêm routes cho khách hàng
 app.use('/api/image', imageRoutes);

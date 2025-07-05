@@ -1,39 +1,40 @@
 import { renderPagination } from "../../../components/js/pagination.js";
 
-// Dữ liệu mẫu
-const listSales = [
-  {
-    "_id": "000001",
-    "total": 222.40,
-    "createdAt": "2025-03-11T13:56:28.522+00:00",
-    "prevStatus": "paid",
-    "nowStatus": ""
-    
-  },
-  {
-    "_id": "000002",
-    "total": 523.56,
-    "createdAt": "2025-04-22T13:56:28.522+00:00",
-    "prevStatus": "debt",
-    "nowStatus": ""
-    
-  },
-  {
-    "_id": "000003",
-    "total": 634.89,
-    "createdAt": "2025-07-01T13:56:28.522+00:00",
-    "prevStatus": "debt",
-    "nowStatus": "paid"
-    
-  },
-  
-];
+async function getAllInvoices(){
+  try{
+    const res = await fetch("http://localhost:3000/api/invoices/", {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const data = await res.json();
+    if (!data.success){
+      throw new Error(data.message);
+    }
+    return data.data.invoices;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+let listSales = [];
 
 let currentPage = 1;
 const pageSize = 5;
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   try {
+    const allBills = await getAllInvoices();
+    allBills.forEach(bill => {
+      listSales.push({
+        _id: bill.invoiceID,
+        total: bill.total,
+        createdAt: bill.createdAt,
+        prevStatus: bill.status,
+        nowStatus: bill.paidAt? "paid":""
+      });
+    });
     // Sắp xếp mặc định: ngày mới nhất trước
     listSales.sort((a, b) => a._id > b._id);
 
@@ -56,7 +57,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
   } catch (error) {
-    showModalError("LỖI IN DANH SÁCH HOÁ ĐƠN", error.message);
+    // showModalError("LỖI IN DANH SÁCH HOÁ ĐƠN", error.message);
+    console.error( error.message);
   }
 });
 
@@ -123,18 +125,23 @@ function createTable(data) {
     let note = "";
     if (item.prevStatus === "debt") {
       if (item.nowStatus === "") {
-        note = "Ghi nợ";
+        // note = "Ghi nợ";
+        note = "<td style='color:red;'><b>Ghi nợ</b></td>"
       } else if (item.nowStatus === "paid") {
-        note = "Thu hồi ghi nợ";
+        // note = "Thu hồi ghi nợ";
+        note = "<td style='color:#F4631E;'><b>Thu hồi ghi nợ</b></td>"
       }
+    } else {
+      // note = "Đã thanh toán";
+      note = "<td style='color:green;'><b>Đã thanh toán</b></td>"
     }
 
     html += `
       <tr>
         <td>${item._id}</td>
-        <td>${item.total}</td>
-        <td>${new Date(item.createdAt).toLocaleDateString('vi-VN')}</td>
-        <td>${note}</td>
+        <td>${convertMoney(item.total)}</td>
+        <td>${formatDate(item.createdAt)}</td>
+        ${note}
       </tr>
     `;
   });
@@ -151,6 +158,10 @@ function createTable(data) {
 // Render bảng vào giao diện
 function renderTable(data) {
   const container = document.getElementById("sales-container");
+  if (!container) {
+    console.error("Không tìm thấy phần tử #sales-container");
+    return;
+  }
   container.innerHTML = createTable(data);
 }
 

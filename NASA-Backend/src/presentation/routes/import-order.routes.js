@@ -15,4 +15,6 @@ router.put('/import-order/receive/:orderId', importOrderController.updateBookQua
 // Xuất PDF đơn nhập
 router.get('/import-order/:orderId/pdf', importOrderController.exportImportOrderPDF);
 
+router.get('/get-import-orders', importOrderController.getOrders);
+
 module.exports = router; 
