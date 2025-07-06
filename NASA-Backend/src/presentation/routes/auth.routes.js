@@ -12,6 +12,6 @@ router.post('/login', authController.login);
 
 router.put('/reset-password/:username', protect, authorize(['manager']), authController.resetPassWord);
 
-router.put('/change-password/:username', protect, authorize(['manager']), authController.changePassword);
+router.put('/change-password/:username', authController.changePassword);
 
 module.exports = router;
