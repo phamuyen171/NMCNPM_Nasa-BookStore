@@ -1,26 +1,33 @@
 // src/presentation/routes/staff.routes.js
 const express = require('express');
 const router = express.Router();
-const staffController = require('../controllers/staff.controller'); // Đường dẫn này đi lên 1 cấp presentation, rồi vào controllers
-// const { protect, authorize } = require('../../middlewares/auth.middleware');
+const staffController = require('../controllers/staff.controller');
+const { protect, authorize } = require('../../middlewares/auth.middleware');
 const uploadImg = require('../../business/services/uploadImage.service');
 
-router.post('/fill-staff-auto', staffController.fillStaffAuto);
+// Tự động điền thông tin nhân viên (chỉ manager)
+router.post('/fill-staff-auto', protect, authorize(['manager']), staffController.fillStaffAuto);
 
-router.get('/get-staff-by-page', staffController.getStaffByPage);
+// Xem danh sách nhân viên (tất cả vai trò)
+router.get('/get-staff-by-page', protect, authorize(['manager', 'accountant', 'staff']), staffController.getStaffByPage);
+router.get('/get-all-staffs', protect, authorize(['manager', 'accountant', 'staff']), staffController.getAllStaffs);
 
-router.get('/get-all-staffs', staffController.getAllStaffs);
+// Đổi trạng thái nhân viên (chỉ manager)
+router.put('/change-status/:id', protect, authorize(['manager']), staffController.changeStatus);
 
-router.put('/change-status/:id', staffController.changeStatus);
+// Xóa nhân viên (chỉ manager)
+router.delete('/delete-staff/:id', protect, authorize(['manager']), staffController.deleteStaff);
 
-router.delete('/delete-staff/:id', staffController.deleteStaff);
+// Kiểm tra tồn tại nhân viên (tất cả vai trò)
+router.get('/check-staff-exist/:staffId', protect, authorize(['manager', 'accountant', 'staff']), staffController.checkStaffExist);
 
-router.get('/check-staff-exist/:staffId', staffController.checkStaffExist);
+// Cập nhật thông tin nhân viên (chỉ manager)
+router.put('/update-staff/:id', protect, authorize(['manager']), staffController.updateStaff);
 
-router.put('/update-staff/:id', staffController.updateStaff);
+// Cập nhật ảnh nhân viên (chỉ manager)
+router.put('/update-staff-image/:id', protect, authorize(['manager']), uploadImg.single('image'), staffController.updateStaffImage);
 
-router.put('/update-staff-image/:id', uploadImg.single('image'), staffController.updateStaffImage);
-
-router.get('/get-staff-by-username/:username', staffController.getStaffById);
+// Xem chi tiết nhân viên theo username (tất cả vai trò)
+router.get('/get-staff-by-username/:username', protect, authorize(['manager', 'accountant', 'staff']), staffController.getStaffById);
 
 module.exports = router;

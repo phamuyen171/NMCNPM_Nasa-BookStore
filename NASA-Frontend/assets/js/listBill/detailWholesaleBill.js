@@ -8,16 +8,20 @@ async function getBillDetailMock() {
   const invoice = await getInvoice(invoiceID);
   const invoiceDetail = await getDetailedInvoice(invoice);
   let companyData;
-  try{
-      const response = await fetch(`http://localhost:3000/api/customers/company-info/${invoice.companyName}`);
-      const data = await response.json();
-      if (!data.success){
-          throw new Error(data.message);
+  try {
+    const response = await fetch(`http://localhost:3000/api/customers/company-info/${invoice.companyName}`, {
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
       }
-      companyData = data.data;
+    });
+    const data = await response.json();
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+    companyData = data.data;
 
-  } catch (error){
-      console.log(error.message);
+  } catch (error) {
+    console.log(error.message);
   }
   return {
     companyName: invoice.companyName,
@@ -113,7 +117,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     billStatus.style.backgroundColor = '#fdcdcd';
     billStatus.onclick = () => {
       // di chuyển tới trang quản lý ghi nợ
-      window.location.href='#'
+      window.location.href = '#'
     };
   }
 });

@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 //gọi api lấy mã nhân viên, tên tk, mk
-function fillStaffInfo(tag1, tag2){
+function fillStaffInfo(tag1, tag2) {
   document.getElementById(tag1).addEventListener("change", function () {
     const tag_first = this.value;
     const tag_second = document.getElementById(tag2).value;
@@ -39,8 +39,8 @@ function fillStaffInfo(tag1, tag2){
       return;
     }
     let chucvu;
-    let cccd; 
-    if (tag1 === "chucvu-select"){
+    let cccd;
+    if (tag1 === "chucvu-select") {
       chucvu = tag_first;
       cccd = tag_second;
     } else {
@@ -51,7 +51,9 @@ function fillStaffInfo(tag1, tag2){
     fetch("http://localhost:3000/api/staff/fill-staff-auto", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + localStorage.getItem("token")
+
       },
       body: JSON.stringify({
         role: chucvu,
@@ -101,7 +103,7 @@ function toISODate(ddmmyyyy) {
   if (!day || !month || !year) {
     [day, month, year] = ddmmyyyy.split('-');
   }
-  return new Date(year, month -1, day);
+  return new Date(year, month - 1, day);
 }
 
 
@@ -153,15 +155,18 @@ document.getElementById("create-account").addEventListener("click", function () 
     formData.append('image', inputImg.files[0]);
     formData.append('startDate', toISODate(document.getElementById("start-work-day").value.trim()))
 
-    try{
+    try {
       const res = await fetch('http://localhost:3000/api/auth/create-account', {
         method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
         body: formData
       });
       const data_res = await res.json();
       console.log(data_res);
       if (!res.ok) throw new Error(data_res.message);
-      
+
       showSuccessModal(
         "THÊM NHÂN VIÊN",
         `Thêm nhân viên <b>${data_res.data.fullName}</b> thành công!`,
@@ -173,19 +178,19 @@ document.getElementById("create-account").addEventListener("click", function () 
           {
             text: 'Thêm nhân viên',
             link: 'addStaff.html'
-            
+
           }
         ]
       )
     }
-    catch(err) {
+    catch (err) {
       // alert('Lỗi khi gửi dữ liệu: ' + err.message);
       showModalError("THÊM NHÂN VIÊN", `Lỗi khi thêm nhân viên: ${err.message}`);
     }
-    
+
   })
 
-  
+
 });
 
 

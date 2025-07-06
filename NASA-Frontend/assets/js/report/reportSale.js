@@ -1,15 +1,16 @@
 import { renderPagination } from "../../../components/js/pagination.js";
 
-async function getAllInvoices(){
-  try{
+async function getAllInvoices() {
+  try {
     const res = await fetch("http://localhost:3000/api/invoices/", {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
       }
     });
     const data = await res.json();
-    if (!data.success){
+    if (!data.success) {
       throw new Error(data.message);
     }
     return data.data.invoices;
@@ -32,7 +33,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         total: bill.total,
         createdAt: bill.createdAt,
         prevStatus: bill.status,
-        nowStatus: bill.paidAt? "paid":""
+        nowStatus: bill.paidAt ? "paid" : ""
       });
     });
     // Sắp xếp mặc định: ngày mới nhất trước
@@ -58,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   } catch (error) {
     // showModalError("LỖI IN DANH SÁCH HOÁ ĐƠN", error.message);
-    console.error( error.message);
+    console.error(error.message);
   }
 });
 

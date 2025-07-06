@@ -1,43 +1,45 @@
 async function getCustomerData(name, companyName, taxId, phone) {
-    try{
-        const res = await fetch("http://localhost:3000/api/customers/check-representative", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({companyName, taxId, name, phone})
-        });
-        const data = await res.json();
-        if (!data.success){
-            throw new Error(data.message);
-        }
-        return data.data;
+  try {
+    const res = await fetch("http://localhost:3000/api/customers/check-representative", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+      },
+      body: JSON.stringify({ companyName, taxId, name, phone })
+    });
+    const data = await res.json();
+    if (!data.success) {
+      throw new Error(data.message);
     }
-    catch (error){
-        showModalError("LỖI LẤY THÔNG TIN ĐƠN VỊ BÁN SỈ", error.message);
-        // console.error("Lỗi lấy thông tin đơn vị bán sỉ:", error);
-        return null;
-    }
+    return data.data;
+  }
+  catch (error) {
+    showModalError("LỖI LẤY THÔNG TIN ĐƠN VỊ BÁN SỈ", error.message);
+    // console.error("Lỗi lấy thông tin đơn vị bán sỉ:", error);
+    return null;
+  }
 }
 
-async function createBillWholesale(fetchData){
-    try {
-        const res = await fetch("http://localhost:3000/api/invoices/", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(fetchData)
-        });
-        const data = await res.json();
+async function createBillWholesale(fetchData) {
+  try {
+    const res = await fetch("http://localhost:3000/api/invoices/", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+      },
+      body: JSON.stringify(fetchData)
+    });
+    const data = await res.json();
 
-        if(!data.success){
-          throw new Error(data.message);
-        }
-        window.location.href = 'finalWholesaleBill.html';
-    } catch (error){
-      showModalError("LỖI TẠO HÓA ĐƠN BÁN SỈ", error.message);
+    if (!data.success) {
+      throw new Error(data.message);
     }
+    window.location.href = 'finalWholesaleBill.html';
+  } catch (error) {
+    showModalError("LỖI TẠO HÓA ĐƠN BÁN SỈ", error.message);
+  }
 
 }
 
@@ -97,7 +99,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // console.log("Customer data:", customer);
 
   // Chiết khấu 
-  const discountRate = customer ? customer.discountPercentage / 100 : 0; 
+  const discountRate = customer ? customer.discountPercentage / 100 : 0;
   const discountAmount = totalPrice * discountRate;
 
   const discountRow = document.createElement('tr');
@@ -126,7 +128,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     invoiceFormNumber: '01GTKT0/001',
     date: new Date(),
     dueDate: null,
-    paidAt: null, 
+    paidAt: null,
     subtotal: totalPrice,
     totalDiscount: discountAmount,
     discountPercentage: customer ? customer.discountPercentage : 0,
@@ -188,31 +190,31 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const createNewBillBtn = document.getElementById("tao-bill-moi");
 
-if (createNewBillBtn){
-  createNewBillBtn.addEventListener("click", (event) => {
-    event.preventDefault(); 
-    
-    // Xoá localStorage nếu cần
-    deleteLocalStorage();
+  if (createNewBillBtn) {
+    createNewBillBtn.addEventListener("click", (event) => {
+      event.preventDefault();
 
-    // Sau khi xử lý xong, mới chuyển trang
-    window.location.href = "./bill.html";
-  });
-}
+      // Xoá localStorage nếu cần
+      deleteLocalStorage();
+
+      // Sau khi xử lý xong, mới chuyển trang
+      window.location.href = "./bill.html";
+    });
+  }
 
 
-const viewListBillBtn = document.getElementById("xem-ds-bill");
+  const viewListBillBtn = document.getElementById("xem-ds-bill");
 
-if (viewListBillBtn){
-  viewListBillBtn.addEventListener("click", (event) => {
-    event.preventDefault(); 
+  if (viewListBillBtn) {
+    viewListBillBtn.addEventListener("click", (event) => {
+      event.preventDefault();
 
-    deleteLocalStorage();
+      deleteLocalStorage();
 
-    // Sau khi xử lý xong, mới chuyển trang
-    window.location.href = "./listBill.html";
-  });
-}
+      // Sau khi xử lý xong, mới chuyển trang
+      window.location.href = "./listBill.html";
+    });
+  }
 
 });
 
@@ -236,7 +238,7 @@ if (statusEl) {
   }
 }
 
-function deleteLocalStorage(){
+function deleteLocalStorage() {
   localStorage.removeItem("invoiceData");
   localStorage.removeItem("totalQty");
   localStorage.removeItem("totalPrice");

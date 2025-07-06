@@ -19,7 +19,11 @@ let thongKeData = {
 
 // Đảm bảo chạy sau khi DOM đã load
 document.addEventListener('DOMContentLoaded', () => {
-  fetch("http://localhost:3000/api/books/count-books")
+  fetch("http://localhost:3000/api/books/count-books", {
+    headers: {
+      'Authorization': 'Bearer ' + localStorage.getItem('token')
+    }
+  })
   .then(async response => {
     const data = await response.json();
 
@@ -39,7 +43,11 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error("Lỗi khi lấy dữ liệu thống kê sách:", error);
   });
 
-  fetch("http://localhost:3000/api/invoices/count-invoices")
+  fetch("http://localhost:3000/api/invoices/count-invoices", {
+    headers: {
+      'Authorization': 'Bearer ' + localStorage.getItem('token')
+    }
+  })
   .then(async response => {
     const data = await response.json();
 
@@ -59,7 +67,11 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error("Lỗi khi lấy dữ liệu thống kê hóa đơn:", error);
   });
 
-  fetch("http://localhost:3000/api/customers/count-customers")
+  fetch("http://localhost:3000/api/customers/count-customers", {
+    headers: {
+      'Authorization': 'Bearer ' + localStorage.getItem('token')
+    }
+  })
   .then(async response => {
     const data = await response.json();
 
@@ -171,7 +183,11 @@ btnNextHot.addEventListener("click", () => {
 
 // Gọi lần đầu
 document.addEventListener("DOMContentLoaded", () => {
-  fetch("http://localhost:3000/api/books/get-newest-books?limit=10")
+  fetch("http://localhost:3000/api/books/get-newest-books?limit=10", {
+    headers: {
+      'Authorization': 'Bearer ' + localStorage.getItem('token')
+    }
+  })
   .then(async response => {
     const data = await response.json();
 
@@ -193,7 +209,11 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("Lỗi khi lấy dữ liệu sách mới nhấ:", error);
   });
 
-  fetch("http://localhost:3000/api/books/popular-books?limit=10")
+  fetch("http://localhost:3000/api/books/popular-books?limit=10", {
+    headers: {
+      'Authorization': 'Bearer ' + localStorage.getItem('token')
+    }
+  })
   .then(async response => {
     const data = await response.json();
 

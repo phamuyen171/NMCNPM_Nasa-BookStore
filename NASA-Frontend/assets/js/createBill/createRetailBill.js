@@ -44,9 +44,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('final-price').innerText = convertMoney(invoice.finalTotal);
 
   // Điểm tích lũy
-  if (invoice.isCustomer){
+  if (invoice.isCustomer) {
     document.getElementById('earned-points').innerText = `+${invoice.earnedPoints} điểm`;
-    document.getElementById('total-points').innerText = `${previousPoints + invoice.earnedPoints - invoice.usedPoints} điểm`;  
+    document.getElementById('total-points').innerText = `${previousPoints + invoice.earnedPoints - invoice.usedPoints} điểm`;
   } else {
     document.getElementById('diem-tich-luy').style.display = "none";
     document.getElementById('tong-tich-luy').style.display = "none";
@@ -70,7 +70,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     "isDeleted": false
   }
 
-  if (invoice.isCreatingNewCustomer){
+  if (invoice.isCreatingNewCustomer) {
     const newCustomer = {
       "phone": invoice.customerPhone,
       "name": invoice.customerName,
@@ -83,15 +83,16 @@ window.addEventListener('DOMContentLoaded', async () => {
     };
     try {
       const res = await fetch("http://localhost:3000/api/customers/add", {
-          method: "POST",
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newCustomer)
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
+        body: JSON.stringify(newCustomer)
       });
       const data = await res.json();
 
-      if(!data.success){
+      if (!data.success) {
         throw new Error(data.message);
       }
     } catch (error) {
@@ -101,22 +102,23 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 
   try {
-      const res = await fetch("http://localhost:3000/api/invoices/", {
-          method: "POST",
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(fetch_data_invoice)
-      });
-      const data = await res.json();
+    const res = await fetch("http://localhost:3000/api/invoices/", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+      },
+      body: JSON.stringify(fetch_data_invoice)
+    });
+    const data = await res.json();
 
-      if(!data.success){
-        throw new Error(data.message);
-      }
-      
-      document.getElementById('success').classList.remove('d-none');
-      document.getElementById('success').classList.add('d-flex');
-  } catch (error){
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+
+    document.getElementById('success').classList.remove('d-none');
+    document.getElementById('success').classList.add('d-flex');
+  } catch (error) {
     showModalError("LỖI TẠO HÓA ĐƠN BÁN LẺ", error.message);
   }
 

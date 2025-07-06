@@ -16,7 +16,10 @@ window.addEventListener('DOMContentLoaded', async () => {
   // Lấy mã hóa đơn
   try {
     const resInvoice = await fetch(`http://localhost:3000/api/invoices/create-invoice-id/retail`, {
-      method: "POST"
+      method: "POST",
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+      }
     }); // Gọi API tạo mã hoá đơn mới
     const invoiceData = await resInvoice.json();
     if (!invoiceData.success){
@@ -32,7 +35,11 @@ window.addEventListener('DOMContentLoaded', async () => {
   // Lấy thông tin nhân viên theo staffCode
   if (staffCode) {
     try {
-      const resStaff = await fetch(`http://localhost:3000/api/staff/check-staff-exist/${staffCode}`); // Gọi API lấy nhân viên
+      const resStaff = await fetch(`http://localhost:3000/api/staff/check-staff-exist/${staffCode}`, {
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
+      }); // Gọi API lấy nhân viên
       const staffData = await resStaff.json();
       if (!staffData){
         console.error('Lỗi không tìm thấy nhân viên');
@@ -196,7 +203,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     timeout = setTimeout(async () => {
       if (phone.length == 10) { // Chỉ gọi nếu số điện thoại đủ độ dài
         try {
-          const res = await fetch(`http://localhost:3000/api/customers/phone/${phone}`); // Thay URL API thật
+          const res = await fetch(`http://localhost:3000/api/customers/phone/${phone}`, {
+            headers: {
+              'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+          }); // Thay URL API thật
           if (!res.ok) throw new Error('Không tìm thấy khách hàng');
           const data = await res.json();
 

@@ -14,7 +14,11 @@ function formatDate(dateStr) {
 
 async function getStaffData(userInfo){
     try {
-        const res = await fetch(`http://localhost:3000/api/staff/get-staff-by-username/${userInfo.username}`);
+        const res = await fetch(`http://localhost:3000/api/staff/get-staff-by-username/${userInfo.username}`, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+          });
         if (!res.ok){
             throw new Error("Không tìm thấy thông tin nhân viên");
         }
@@ -111,6 +115,7 @@ async function updateStaffInfo(staffId, updatedData){
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": "Bearer " + localStorage.getItem("token")
                 },
                 body: JSON.stringify({current: updatedData})
             })
@@ -150,6 +155,9 @@ async function updateStaffInfo(staffId, updatedData){
 
         fetch(`http://localhost:3000/api/staff/update-staff-image/${staffId}`, {
             method: "PUT",
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            },
             body: formData
         })
         .then(res => res.json())

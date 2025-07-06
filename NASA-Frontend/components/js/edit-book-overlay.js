@@ -34,7 +34,9 @@ export function setupEditOverlayEvents() {
     try {
       const res = await fetch(`http://localhost:3000/api/books/${currentEditId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+                  'Authorization': 'Bearer ' + localStorage.getItem('token')
+         },
         body: JSON.stringify(updatedBook),
       });
       const data = await res.json();

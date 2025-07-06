@@ -109,7 +109,11 @@ document.addEventListener("DOMContentLoaded", async function () {
   let limitbe = 0;
 
   try {
-    const response = await fetch(`http://localhost:3000/api/books?page=1`);
+    const response = await fetch(`http://localhost:3000/api/books?page=1`, {
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+      }
+    });
     const result = await response.json();
 
     if (result.success) {
@@ -124,7 +128,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     for (let i = 2; i <= totalPages; i++) {
-      const res = await fetch(`http://localhost:3000/api/books?page=${i}`);
+      const res = await fetch(`http://localhost:3000/api/books?page=${i}`, {
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
+      });
       const data = await res.json();
 
       if (data.success) {
@@ -138,7 +146,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   } catch (error) {
     console.error("Lỗi khi gọi API:", error);
   }
-  
+
   filteredBooks = booksData;
   renderPage();
 
@@ -151,20 +159,24 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   staffInput.addEventListener('keydown', async (event) => {
     let code;
-    if (event.key === 'Enter'){
+    if (event.key === 'Enter') {
       code = staffInput.value.trim();
-      if (code === ''){
+      if (code === '') {
         continueBtn.classList.remove('valid-continue-btn');
         continueBtn.classList.add('disabled-link');
         return;
       }
-      try{
-        const response = await fetch(`http://localhost:3000/api/staff/check-staff-exist/${code}`);
-        if (!response.ok){
+      try {
+        const response = await fetch(`http://localhost:3000/api/staff/check-staff-exist/${code}`, {
+          headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+          }
+        });
+        if (!response.ok) {
           throw new Error("Sai mã nhân viên");
         }
         checkStaffId = true;
-      } catch (error){
+      } catch (error) {
         showModalError("LỖI TẠO HÓA ĐƠN", 'Mã nhân viên không tồn tại. Hãy nhập đúng mã nhân viên của bạn!');
         checkStaffId = false;
       }
@@ -193,10 +205,13 @@ document.addEventListener("DOMContentLoaded", async function () {
     let invoiceId = '';
     try {
       const resInvoice = await fetch(`http://localhost:3000/api/invoices/create-invoice-id/wholesale`, {
-        method: "POST"
+        method: "POST",
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
       }); // Gọi API tạo mã hoá đơn mới
       const createInvoiceId = await resInvoice.json();
-      if (!createInvoiceId.success){
+      if (!createInvoiceId.success) {
         console.error('Không thể tạo mã hóa đơn mới');
         return;
       }
@@ -249,7 +264,7 @@ window.nextPage = nextPage;
 window.prevPage = prevPage;
 
 // ==========================================BẢNG 2: CHI TIẾT==============================================
-  
+
 function formatCurrency(number) {
   return Number(number).toLocaleString('vi-VN');
 }
@@ -362,72 +377,77 @@ function canDisabledButton(invoiceItems, checkStaffId, customerInfo) {
 //==================API KHÁCH HÀNG=============================
 let taxId;
 const companyNameTag = document.getElementById('name');
-companyNameTag.addEventListener("keydown", async (e)=>{
-    if (e.key === "Enter"){
-        const companyName = companyNameTag.value.trim();
-        try{
-            const response = await fetch(`http://localhost:3000/api/customers/company-info/${companyName}`);
-            const data = await response.json();
-            if (!data.success){
-                throw new Error(data.message);
-            }
-            taxId = data.data.taxId;
-            document.getElementById('code-tax').value = taxId;
-            document.getElementById('address').value = data.data.address;
-        } catch (error){
-            showModalError("LỖI LẤY THÔNG TIN ĐƠN VỊ BÁN Sỉ", error.message);
+companyNameTag.addEventListener("keydown", async (e) => {
+  if (e.key === "Enter") {
+    const companyName = companyNameTag.value.trim();
+    try {
+      const response = await fetch(`http://localhost:3000/api/customers/company-info/${companyName}`, {
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
         }
+      });
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.message);
+      }
+      taxId = data.data.taxId;
+      document.getElementById('code-tax').value = taxId;
+      document.getElementById('address').value = data.data.address;
+    } catch (error) {
+      showModalError("LỖI LẤY THÔNG TIN ĐƠN VỊ BÁN Sỉ", error.message);
     }
+  }
 });
 
-async function checkRepresentative(companyName, taxId, name, phone){
-    try{
-        // console.log(JSON.stringify({companyName, taxId, name, phone}));
-        const res = await fetch("http://localhost:3000/api/customers/check-representative", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({companyName, taxId, name, phone})
-        });
-        const data = await res.json();
-        if (!data.success){
-            throw new Error(data.message);
-        }
-        checkCustomerInfo = true;
+async function checkRepresentative(companyName, taxId, name, phone) {
+  try {
+    // console.log(JSON.stringify({companyName, taxId, name, phone}));
+    const res = await fetch("http://localhost:3000/api/customers/check-representative", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+      },
+      body: JSON.stringify({ companyName, taxId, name, phone })
+    });
+    const data = await res.json();
+    if (!data.success) {
+      throw new Error(data.message);
     }
-    catch (error){
-        showModalError("LỖI LẤY THÔNG TIN ĐƠN VỊ BÁN SỈ", error.message);
-        checkCustomerInfo = false;
-    }
+    checkCustomerInfo = true;
+  }
+  catch (error) {
+    showModalError("LỖI LẤY THÔNG TIN ĐƠN VỊ BÁN SỈ", error.message);
+    checkCustomerInfo = false;
+  }
 }
 
 const personNameTag = document.getElementById('person-name');
 personNameTag.addEventListener("keydown", async (e) => {
-    if (e.key === "Enter"){
-        let name = personNameTag.value.trim();
+  if (e.key === "Enter") {
+    let name = personNameTag.value.trim();
 
-        let phone = document.getElementById('phone').value.trim();
-        if (!phone){
-            return;
-        }
-        checkRepresentative(companyNameTag.value.trim(), taxId, name, phone);
-        canDisabledButton(invoiceItems, checkStaffId, checkCustomerInfo);
+    let phone = document.getElementById('phone').value.trim();
+    if (!phone) {
+      return;
     }
+    checkRepresentative(companyNameTag.value.trim(), taxId, name, phone);
+    canDisabledButton(invoiceItems, checkStaffId, checkCustomerInfo);
+  }
 });
 
 const personPhoneTag = document.getElementById('phone');
 personPhoneTag.addEventListener("keydown", async (e) => {
-    if (e.key === "Enter"){
-        let phone = personPhoneTag.value.trim();
+  if (e.key === "Enter") {
+    let phone = personPhoneTag.value.trim();
 
-        let name = document.getElementById('person-name').value.trim();
-        if (!name){
-            return;
-        }
-        checkRepresentative(companyNameTag.value.trim(), taxId, name, phone);
-
-        canDisabledButton(invoiceItems, checkStaffId, checkCustomerInfo);
-
+    let name = document.getElementById('person-name').value.trim();
+    if (!name) {
+      return;
     }
+    checkRepresentative(companyNameTag.value.trim(), taxId, name, phone);
+
+    canDisabledButton(invoiceItems, checkStaffId, checkCustomerInfo);
+
+  }
 });

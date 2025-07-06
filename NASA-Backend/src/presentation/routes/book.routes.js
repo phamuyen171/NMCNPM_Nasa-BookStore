@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const bookController = require('../controllers/book.controller');
+const { protect, authorize } = require('../../middlewares/auth.middleware');
 
+// public route
 router.get('/count-books', bookController.getBookCount); // Lấy tổng số sách
 router.get('/get-newest-books', bookController.getNewestBooks); // Lấy sách mới nhất
 
@@ -14,25 +16,23 @@ router.get('/available/:id', bookController.isBookAvailable); // Kiểm tra sác
 router.get('/:id', bookController.getBookById); // Lấy chi tiết sách
 
 // Các route cần quyền quản lý (protect và authorize)
-router.post('/', bookController.createBook); // Thêm sách mới
-router.put('/:id', bookController.updateBook); // Cập nhật sách
-router.delete('/:id', bookController.deleteBook); // Xóa mềm sách
-router.post('/batch-delete', bookController.batchSoftDeleteBooks); // Xóa mềm hàng loạt
+router.post('/', protect, authorize(['manager']), bookController.createBook);
+router.put('/:id', protect, authorize(['manager']), bookController.updateBook);
+router.delete('/:id', protect, authorize(['manager']), bookController.deleteBook);
+router.post('/batch-delete', protect, authorize(['manager']), bookController.batchSoftDeleteBooks);
+router.put('/discontinue/:id', protect, authorize(['manager']), bookController.markBookAsDiscontinued);
 
 
-router.put('/discontinue/:id', bookController.markBookAsDiscontinued); // Ngừng kinh doanh (cần quyền quản lý)
+// // Route cập nhật thông tin sách
+// router.put('/:id', bookController.updateBook);
 
+// // Route xóa sách
+// router.delete('/:id', bookController.deleteBook);
 
-// Route cập nhật thông tin sách
-router.put('/:id', bookController.updateBook);
+// // Route để lấy thông tin chi tiết một cuốn sách theo ID
+// router.get('/:id', bookController.getBookById);
 
-// Route xóa sách
-router.delete('/:id', bookController.deleteBook);
-
-// Route để lấy thông tin chi tiết một cuốn sách theo ID
-router.get('/:id', bookController.getBookById);
-
-// Route for batch soft deleting books
-router.post('/batch-delete', bookController.batchSoftDeleteBooks);
+// // Route for batch soft deleting books
+// router.post('/batch-delete', bookController.batchSoftDeleteBooks);
 
 module.exports = router;

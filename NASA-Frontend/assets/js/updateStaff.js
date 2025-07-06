@@ -1,26 +1,29 @@
 import { renderPagination } from "../../components/js/pagination.js";
 
-async function getAllStaffs(){
+async function getAllStaffs() {
   const response = await fetch('http://localhost:3000/api/staff/get-all-staffs', {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + localStorage.getItem('token')
+    },
   });
 
   const text = await response.text();
 
-  if (!response.ok){
-    throw new Error (response.statusText);
+  if (!response.ok) {
+    throw new Error(response.statusText);
   }
 
   let data;
-  try{
+  try {
     data = JSON.parse(text);
   }
   catch {
     throw new Error("Không thể phân tích phản hồi từ server");
   }
 
-  if (!data || !data.data){
+  if (!data || !data.data) {
     throw new Error('Không tồn tại nhân viên nào');
   }
 
@@ -33,13 +36,13 @@ async function getAllStaffs(){
 // }
 
 function formatDate(dateStr) {
-    const date = new Date(dateStr);
+  const date = new Date(dateStr);
 
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng tính từ 0
-    const year = String(date.getFullYear()); // Lấy 2 số cuối
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng tính từ 0
+  const year = String(date.getFullYear()); // Lấy 2 số cuối
 
-    return `${day}/${month}/${year}`;
+  return `${day}/${month}/${year}`;
 }
 
 function createTable(staffs) {
@@ -67,16 +70,16 @@ function createTable(staffs) {
 
   staffs.forEach(staff => {
     let role;
-    if (staff.role === "manager"){
+    if (staff.role === "manager") {
       role = "Cửa hàng trưởng";
-    } else if (staff.role === "staff"){
+    } else if (staff.role === "staff") {
       role = "Nhân viên bán hàng";
     } else {
       role = "Kế toán";
     }
     // console.log(staff._id);
-   const staffEncoded = encodeURIComponent(JSON.stringify(staff));
-   html += `
+    const staffEncoded = encodeURIComponent(JSON.stringify(staff));
+    html += `
         <tr>
             <td>${staff.username}</td>
             <td>${staff.fullName}</td>
@@ -117,7 +120,7 @@ let currentPage = 1;
 const pageSize = 8;
 
 document.addEventListener("DOMContentLoaded", async function () {
-  try{
+  try {
     let allStaffs = await getAllStaffs();
 
     // chỉ cập nhập nhân viên chưa bị sa thải
@@ -127,14 +130,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     //sự kiện click vào các dòng
     document.addEventListener("click", function (e) {
-        const row = e.target.closest("tr");
-        if (!row || !row.parentElement.matches("tbody")) return;
+      const row = e.target.closest("tr");
+      if (!row || !row.parentElement.matches("tbody")) return;
 
-        // Xóa class 'selected' khỏi tất cả hàng
-        document.querySelectorAll("tbody tr").forEach(tr => tr.classList.remove("selected"));
-        
-        // Thêm class 'selected' cho hàng được click
-        row.classList.add("selected");
+      // Xóa class 'selected' khỏi tất cả hàng
+      document.querySelectorAll("tbody tr").forEach(tr => tr.classList.remove("selected"));
+
+      // Thêm class 'selected' cho hàng được click
+      row.classList.add("selected");
     });
 
     // Lắng nghe sự kiện nhập vào ô tìm kiếm
@@ -148,16 +151,16 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
 
     document.addEventListener("click", function (e) {
-        if (e.target.classList.contains("update-staff")) {
-            const encoded = e.target.getAttribute("data-staff");
-            const staff = JSON.parse(decodeURIComponent(encoded));
+      if (e.target.classList.contains("update-staff")) {
+        const encoded = e.target.getAttribute("data-staff");
+        const staff = JSON.parse(decodeURIComponent(encoded));
 
-            localStorage.setItem("selectedStaff", JSON.stringify(staff));
-        }
+        localStorage.setItem("selectedStaff", JSON.stringify(staff));
+      }
     });
 
   }
-  catch (error){
+  catch (error) {
     showModalError("LỖI IN DANH SÁCH NHÂN VIÊN", error.message)
   }
 

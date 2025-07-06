@@ -70,9 +70,9 @@ const renderImportList = (bookList) => {
 // ==================================================================
 
 // In ra danh sách
-async function initBooks(page=1) {
-//   const url = `http://localhost:3000/api/books?page=${page}`;
-//   const data = await getBooksByPage(url);
+async function initBooks(page = 1) {
+    //   const url = `http://localhost:3000/api/books?page=${page}`;
+    //   const data = await getBooksByPage(url);
     const data = await getAllBooks();
 
     //in sách ra trang html
@@ -95,7 +95,7 @@ async function initBooks(page=1) {
 }
 
 if (window.location.pathname.includes("importBook.html")) {
-  initBooks();
+    initBooks();
 }
 
 // ===================================================
@@ -103,7 +103,10 @@ async function handleImportAndConfirm(items) {
     // Gọi API tạo đơn nhập
     const response = await fetch('http://localhost:3000/api/books/import-order', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
         body: JSON.stringify({ items: items })
     });
 
@@ -217,7 +220,7 @@ document.getElementById('confirmImport').addEventListener('click', () => {
 
     if (hasInvalidInput) {
         if (overMaxBooks.length > 0 && underMinBooks.length > 0) {
-            showModalError('LỖI NHẬP SÁCH', 
+            showModalError('LỖI NHẬP SÁCH',
                 `Số lượng nhập cho các sách: ${overMaxBooks.join(', ')} vượt quá giới hạn <b>${max_import}</b>.
                 <br> Số lượng nhập cho các sách: ${underMinBooks.join(', ')} nhỏ hơn số lượng tối thiểu <b>${min_import}</b>.`);
         }
@@ -238,9 +241,9 @@ document.getElementById('confirmImport').addEventListener('click', () => {
         return;
     }
 
-    const errorTitle = 'LỖI NHẬP SÁCH';    
+    const errorTitle = 'LỖI NHẬP SÁCH';
     showModalConfirm("NHẬP SÁCH", `nhập sách`, "../../",
-        async() =>{
+        async () => {
             try {
                 await handleImportAndConfirm(importData);
 
@@ -263,7 +266,7 @@ document.getElementById('confirmImport').addEventListener('click', () => {
             }
         }
     );
-    
+
 });
 
 

@@ -1,15 +1,16 @@
 import { renderPagination } from "../../../components/js/pagination.js";
 
-async function getAllInvoices(){
-  try{
+async function getAllInvoices() {
+  try {
     const res = await fetch("http://localhost:3000/api/invoices/", {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
       }
     });
     const data = await res.json();
-    if (!data.success){
+    if (!data.success) {
       throw new Error(data.message);
     }
     return data.data.invoices;
@@ -52,8 +53,8 @@ function createTable(bills) {
       statusStyle = 'color: #1a3a9c; background-color: #c1c4f4; padding: 4px 8px; border-radius: 4px;';
     } else if (bill.status === 'debt') {
       statusStyle = 'color: #ff0000; background-color: #fdcdcd; padding: 4px 8px; border-radius: 4px;';
-    }else{
-        statusStyle = 'display: none;';
+    } else {
+      statusStyle = 'display: none;';
     }
 
     html += `
@@ -99,7 +100,7 @@ const pageSize = 8;
 let allBills;
 
 document.addEventListener("DOMContentLoaded", async function () {
-  try{
+  try {
     allBills = await getAllInvoices();
     allBills.forEach(bill => {
       bill.customerInfo = bill.customerType === "retail"
@@ -111,14 +112,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     //sự kiện click vào các dòng
     document.addEventListener("click", function (e) {
-        const row = e.target.closest("tr");
-        if (!row || !row.parentElement.matches("tbody")) return;
+      const row = e.target.closest("tr");
+      if (!row || !row.parentElement.matches("tbody")) return;
 
-        // Xóa class 'selected' khỏi tất cả hàng
-        document.querySelectorAll("tbody tr").forEach(tr => tr.classList.remove("selected"));
-        
-        // Thêm class 'selected' cho hàng được click
-        row.classList.add("selected");
+      // Xóa class 'selected' khỏi tất cả hàng
+      document.querySelectorAll("tbody tr").forEach(tr => tr.classList.remove("selected"));
+
+      // Thêm class 'selected' cho hàng được click
+      row.classList.add("selected");
     });
 
     // Lắng nghe sự kiện nhập vào ô tìm kiếm
@@ -132,7 +133,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       renderTableByPage(filtered, currentPage);
     });
   }
-  catch (error){
+  catch (error) {
     showModalError("LỖI IN DANH SÁCH HOÁ ĐƠN", error.message)
   }
 });
@@ -152,7 +153,7 @@ document.querySelectorAll('.retail-bill').forEach(link => {
 
     applyFilters(filterType);
 
-    
+
     document.getElementById("filter-date").addEventListener("change", () => {
       applyFilters();
     });

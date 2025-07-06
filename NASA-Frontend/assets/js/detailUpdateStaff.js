@@ -76,7 +76,8 @@ document.addEventListener("DOMContentLoaded", () => {
           fetch("http://localhost:3000/api/staff/fill-staff-auto", {
             method: "POST",
             headers: {
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + localStorage.getItem("token")
             },
             body: JSON.stringify({
               role: roleSelect.value,
@@ -178,6 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
               method: "PUT",
               headers: {
                 "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
               },
               body: JSON.stringify({ current})
             })
@@ -222,6 +224,9 @@ document.addEventListener("DOMContentLoaded", () => {
           formData.append('startDate', toISODate(document.getElementById("start-work-day").value.trim()));
           fetch(`http://localhost:3000/api/staff/update-staff-image/${staffId}`, {
             method: "PUT",
+            headers: {
+              "Authorization": "Bearer " + localStorage.getItem("token")
+            },
             body: formData
           })
           .then(res => res.json())

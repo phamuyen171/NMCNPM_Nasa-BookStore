@@ -53,7 +53,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Kiểm tra trùng mã số thuế
   async function checkTaxCodeExists(taxCode) {
     try {
-      const response = await fetch(`http://localhost:3000/api/customers/check-exist-taxId/${taxCode}`);
+      const response = await fetch(`http://localhost:3000/api/customers/check-exist-taxId/${taxCode}`, {
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
+      });
       const result = await response.json();
       if (!result.success){
         throw new Error(result.message);
@@ -155,7 +159,10 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await fetch("http://localhost:3000/api/customers/add", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("token")
+        },
         body: JSON.stringify(data)
       });
 

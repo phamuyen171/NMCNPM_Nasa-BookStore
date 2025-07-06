@@ -1,42 +1,46 @@
-async function getRule(){
-    try{
-        const res = await fetch("http://localhost:3000/api/rules/", {
-            method: "GET"
-        });
-        const data = await res.json();
-        if (!data.success){
-            console.log("Lấy thông tin quy định thất bại.")
-            return {};
-        }
-        const rules = data.data[0];
-        return rules;
-    }
-    catch(error){
-        console.log(error.message);
-        return {};
-    }
-}
-
-function formatDate(dateStr) {
-    const date = new Date(dateStr);
-
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng tính từ 0
-    const year = String(date.getFullYear()); // Lấy 2 số cuối
-
-    return `${day}/${month}/${year}`;
-}
-
-async function getInvoice(invoiceID){
-  try{
-    const res = await fetch(`http://localhost:3000/api/invoices/?keyword=${invoiceID}`, {
-      method: 'GET',
+async function getRule() {
+  try {
+    const res = await fetch("http://localhost:3000/api/rules/", {
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json'
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
       }
     });
     const data = await res.json();
-    if (!data.success){
+    if (!data.success) {
+      console.log("Lấy thông tin quy định thất bại.")
+      return {};
+    }
+    const rules = data.data[0];
+    return rules;
+  }
+  catch (error) {
+    console.log(error.message);
+    return {};
+  }
+}
+
+function formatDate(dateStr) {
+  const date = new Date(dateStr);
+
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng tính từ 0
+  const year = String(date.getFullYear()); // Lấy 2 số cuối
+
+  return `${day}/${month}/${year}`;
+}
+
+async function getInvoice(invoiceID) {
+  try {
+    const res = await fetch(`http://localhost:3000/api/invoices/?keyword=${invoiceID}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+      }
+    });
+    const data = await res.json();
+    if (!data.success) {
       throw new Error(data.message);
     }
     return data.data.invoices[0];
@@ -45,16 +49,17 @@ async function getInvoice(invoiceID){
   }
 }
 
-async function getDetailedInvoice(invoiceData){
-  try{
+async function getDetailedInvoice(invoiceData) {
+  try {
     const res = await fetch(`http://localhost:3000/api/invoices/${invoiceData._id}`, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
       }
     });
     const data = await res.json();
-    if (!data.success){
+    if (!data.success) {
       throw new Error(data.message);
     }
     return data.data.items;
@@ -63,7 +68,7 @@ async function getDetailedInvoice(invoiceData){
   }
 }
 
-function convertMoney(value){
+function convertMoney(value) {
   const formatted = new Intl.NumberFormat('vi-VN', {
     style: 'currency',
     currency: 'VND'

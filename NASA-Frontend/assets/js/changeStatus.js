@@ -19,7 +19,10 @@ document.addEventListener("click", (e) => {
         try {
           const response = await fetch(`http://localhost:3000/api/staff/change-status/${staffId}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
           });
 
           const data = await response.json();

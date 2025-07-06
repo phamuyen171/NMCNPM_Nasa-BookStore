@@ -4,25 +4,51 @@ const jwt = require('jsonwebtoken');
 
 
 class UserService {
+  // async login(username, password) {
+  //   const user = await User.findOne({ username, status: 'active' });
+  //   if (!user) throw new Error('Mã nhân viên không tồn tại');
+
+  //   const match = await bcrypt.compare(password, user.password);
+  //   if (!match) throw new Error('Sai mật khẩu');
+
+  //   const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, {
+  //     expiresIn: '1h'
+  //   });
+
+  //   return {
+  //     token,
+  //     user
+  //   };
+  // }
+
   async login(username, password) {
     const user = await User.findOne({ username, status: 'active' });
     if (!user) throw new Error('Mã nhân viên không tồn tại');
 
-    const match = await bcrypt.compare(password, user.password);
+    const match = await require('bcryptjs').compare(password, user.password);
     if (!match) throw new Error('Sai mật khẩu');
 
-    const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, {
-      expiresIn: '1h'
-    });
+    const token = require('jsonwebtoken').sign(
+      { id: user._id, username: user.username },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
 
+    // Trả về token và thông tin user (trừ password)
     return {
       token,
-      user
+      user: {
+        _id: user._id,
+        username: user.username,
+        role: user.role,
+        status: user.status,
+        image: user.image
+      }
     };
   }
 
   async addUser(username, password, role, imageId) {
-    
+
     if (!username || !password || !role) {
       throw new Error('Vui lòng cung cấp username, password và role');
     }
@@ -31,10 +57,10 @@ class UserService {
     if (existingUser) {
       throw new Error('Username đã tồn tại');
     }
-    
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    try{
+    try {
       const newUser = new User({
         username,
         password: hashedPassword,
@@ -50,35 +76,35 @@ class UserService {
     }
   }
 
-  async resetPassword(username, password){
+  async resetPassword(username, password) {
     try {
       const account = await User.findOne({ username: username, status: 'active' });
 
       if (!account) {
-          throw new Error('Không tìm thấy tài khoản phù hợp');
+        throw new Error('Không tìm thấy tài khoản phù hợp');
       }
       account.password = await bcrypt.hash(password, 10);
 
       await account.save({
-          runValidators: true
+        runValidators: true
       });
       return account;
 
     } catch (error) {
-        throw error;
+      throw error;
     }
   }
 
-  async changePassword(username, oldPassword, newPassword){
-    try{
+  async changePassword(username, oldPassword, newPassword) {
+    try {
       const account = await User.findOne({ username: username, status: 'active' });
       if (!account) {
-          throw new Error('Không tìm thấy tài khoản phù hợp');
+        throw new Error('Không tìm thấy tài khoản phù hợp');
       }
 
       const checkOldPass = await bcrypt.compare(oldPassword, account.password);
 
-      if (!checkOldPass){
+      if (!checkOldPass) {
         throw new Error('Mật khẩu hiện tại không đúng!');
       }
 
@@ -88,16 +114,16 @@ class UserService {
       });
 
       return account;
-    } catch (error){
+    } catch (error) {
       throw error;
     }
   }
 
-  async lockAccount(username){
-    try{
-      const user = await User.findOne({username, status:"active"});
+  async lockAccount(username) {
+    try {
+      const user = await User.findOne({ username, status: "active" });
 
-      if (!user){
+      if (!user) {
         throw new Error(`Không tìm thấy tài khoản cho mã nhân viên <b>${username}</b>!`);
       }
 
@@ -109,21 +135,21 @@ class UserService {
 
       return user;
     }
-    catch (error){
+    catch (error) {
       throw error;
     }
   }
 
   async updateUsername(oldUsername, newUsername) {
     const user = await User.findOne({ username: oldUsername, status: 'active' });
-    if (!user) throw new Error('Không tìm thấy tài khoản với username đã cho'); 
+    if (!user) throw new Error('Không tìm thấy tài khoản với username đã cho');
     user.username = newUsername;
     return await user.save({ runValidators: true });
   }
 
   async updateImage(username, imageId) {
     const user = await User.findOne({ username, status: 'active' });
-    if (!user) throw new Error('Không tìm thấy tài khoản với username đã cho'); 
+    if (!user) throw new Error('Không tìm thấy tài khoản với username đã cho');
     user.image = imageId;
     return await user.save({ runValidators: true });
   }

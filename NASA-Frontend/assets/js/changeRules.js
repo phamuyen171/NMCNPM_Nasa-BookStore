@@ -1,18 +1,18 @@
 function convertAfterChange(tagId) {
-  const tag = document.getElementById(tagId);
-  tag.addEventListener("blur", () => {
-    tag.value = convertMoney(tag.value);
-  });
+    const tag = document.getElementById(tagId);
+    tag.addEventListener("blur", () => {
+        tag.value = convertMoney(tag.value);
+    });
 }
 
 
-async function showRuleInfo(){
-    try{
+async function showRuleInfo() {
+    try {
         const res = await fetch("http://localhost:3000/api/rules/", {
             method: "GET"
         });
         const data = await res.json();
-        if (!data.success){
+        if (!data.success) {
             showModalError("LỖI THAY ĐỔI QUY ĐỊNH", data.message);
             return;
         }
@@ -32,24 +32,25 @@ async function showRuleInfo(){
         document.getElementById('pointToCash').value = convertMoney(rules.point.pointToCash);
         document.getElementById('minUsedLevel').value = rules.point.minUsedLevel;
     }
-    catch(error){
+    catch (error) {
         console.log(error.message);
     }
 }
 
-async function updateRules(rules){
-    try{
+async function updateRules(rules) {
+    try {
         const res = await fetch("http://localhost:3000/api/rules/", {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
             },
             body: JSON.stringify(rules)
         });
 
         const data = await res.json();
 
-        if(!data.success){
+        if (!data.success) {
             showModalError("LỖI THAY ĐỔI QUY ĐỊNH", data.message);
             return;
         }
@@ -63,7 +64,7 @@ async function updateRules(rules){
                 }
             ]
         );
-    } catch (error){
+    } catch (error) {
         console.log(error.message);
     }
 }
@@ -75,13 +76,13 @@ document.addEventListener("DOMContentLoaded", function () {
     // cập nhập
     const update_btn = document.getElementById('update-btn');
     if (update_btn) {
-        
+
         document.querySelectorAll('input').forEach(input => {
             input.addEventListener('input', e => {
                 update_btn.disabled = false;
             });
         });
-        update_btn.addEventListener('click', async ()=>{
+        update_btn.addEventListener('click', async () => {
             const book = {
                 "minImportBook": document.getElementById('minImportBook').value,
                 "maxImportBook": document.getElementById('maxImportBook').value,
@@ -101,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "minUsedLevel": document.getElementById('minUsedLevel').value
             };
 
-            const rules = { "book": book, "debt": debt, "point": point};
+            const rules = { "book": book, "debt": debt, "point": point };
 
             showModalConfirm("THAY ĐỔI QUY ĐỊNH", "thay đổi quy định", "", () => {
                 updateRules(rules);

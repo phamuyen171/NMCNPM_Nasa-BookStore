@@ -18,13 +18,17 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (invoice_fetch.customerPhone) {
       document.getElementById('sdt-khach-hang').innerText = invoice_fetch.customerPhone;
       try {
-          const res = await fetch(`http://localhost:3000/api/customers/phone/${invoice_fetch.customerPhone}`); // Thay URL API thật
-          if (!res.ok) throw new Error('Không tìm thấy khách hàng');
-          const data = await res.json();
-          document.getElementById('ten-khach-hang').innerText = data.data.name;
-        } catch (error) {
-          console.warn('Không tìm thấy khách hàng:', error);
-        }
+        const res = await fetch(`http://localhost:3000/api/customers/phone/${invoice_fetch.customerPhone}`, {
+          headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+          }
+        }); // Thay URL API thật
+        if (!res.ok) throw new Error('Không tìm thấy khách hàng');
+        const data = await res.json();
+        document.getElementById('ten-khach-hang').innerText = data.data.name;
+      } catch (error) {
+        console.warn('Không tìm thấy khách hàng:', error);
+      }
     } else {
       document.getElementById('sdt-khach-hang').innerText = "Không có";
       document.getElementById('ten-khach-hang').innerText = "Không có";
@@ -37,16 +41,16 @@ window.addEventListener('DOMContentLoaded', async () => {
     tbody.innerHTML = '';
     let totalQty = 0;
     productList.forEach((product, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
+      const row = document.createElement('tr');
+      row.innerHTML = `
         <td>${index + 1}</td>
         <td>${product.bookTitle}</td>
         <td>${convertMoney(product.pricePerUnit)}</td>
         <td>${product.quantity}</td>
         <td>${convertMoney(product.subtotal)}</td>
         `;
-        tbody.appendChild(row);
-        totalQty += product.quantity;
+      tbody.appendChild(row);
+      totalQty += product.quantity;
     });
 
     // Tổng số lượng và tạm tính
@@ -55,8 +59,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     // Giảm giá
     if (invoice_fetch.totalDiscount > 0) {
-        document.getElementById('discount-row').classList.remove('d-none');
-        document.getElementById('discount-amount').innerText = convertMoney(invoice_fetch.totalDiscount);
+      document.getElementById('discount-row').classList.remove('d-none');
+      document.getElementById('discount-amount').innerText = convertMoney(invoice_fetch.totalDiscount);
     }
     document.getElementById('discount-separator').classList.remove('d-none');
     document.getElementById('final-price-row').classList.remove('d-none');
@@ -64,12 +68,12 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     // Điểm tích lũy
     if (document.getElementById('sdt-khach-hang').value === "Không có") {
-        // const totalPoints = invoice.previousPoints + invoice.earnedPoints - invoice.usedPoints;
-        document.getElementById('earned-points').innerText = `+${parseInt(invoice_fetch.total/rule.point.cashToPoint)} điểm`;
-        // document.getElementById('total-points').innerText = `${totalPoints} điểm`;
+      // const totalPoints = invoice.previousPoints + invoice.earnedPoints - invoice.usedPoints;
+      document.getElementById('earned-points').innerText = `+${parseInt(invoice_fetch.total / rule.point.cashToPoint)} điểm`;
+      // document.getElementById('total-points').innerText = `${totalPoints} điểm`;
     } else {
-        document.getElementById('diem-tich-luy').style.display = "none";
-        // document.getElementById('tong-tich-luy').style.display = "none";
+      document.getElementById('diem-tich-luy').style.display = "none";
+      // document.getElementById('tong-tich-luy').style.display = "none";
     }
 
     // // Hiển thị trạng thái thành công
@@ -80,47 +84,50 @@ window.addEventListener('DOMContentLoaded', async () => {
     showModalError("LỖI LẤY HÓA ĐƠN", error.message);
   }
 
-   //==== NÚT XOÁ HÓA ĐƠN ====
-   document.getElementById('delete-bill').addEventListener('click', () => {
+  //==== NÚT XOÁ HÓA ĐƠN ====
+  document.getElementById('delete-bill').addEventListener('click', () => {
     showModalDelete(
-        "XÓA HOÁ ĐƠN",
-        invoice_fetch.invoiceID, // Phần nội dung xác thực là mã hoá đơn
-        async () => {
+      "XÓA HOÁ ĐƠN",
+      invoice_fetch.invoiceID, // Phần nội dung xác thực là mã hoá đơn
+      async () => {
         fetch(`http://localhost:3000/api/invoices/${invoice_fetch.invoiceID}`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+          },
         })
-        .then(async response => {
+          .then(async response => {
             const data = await response.json();
             if (!response.ok) {
-            throw new Error(data.message);
+              throw new Error(data.message);
             }
             return data;
-        })
-        .then(data => {
+          })
+          .then(data => {
             if (data.success) {
-            showSuccessModal(
+              showSuccessModal(
                 'XÓA HOÁ ĐƠN',
                 `Xoá hoá đơn <b>${invoice_fetch.invoiceID}</b> thành công!`,
                 [
-                {
+                  {
                     text: 'Xem danh sách',
                     link: 'listBill.html'
-                }
+                  }
                 ]
-            );
+              );
             } else {
-            showModalError('XÓA HOÁ ĐƠN', data.message);
+              showModalError('XÓA HOÁ ĐƠN', data.message);
             }
-        })
-        .catch(error => {
+          })
+          .catch(error => {
             showModalError('XÓA HOÁ ĐƠN', error.message);
-        });
-        },
-        () => showModalError(
-        "XÓA HOÁ ĐƠN", 
+          });
+      },
+      () => showModalError(
+        "XÓA HOÁ ĐƠN",
         `Nhập đúng <b>${invoice_fetch.invoiceID}</b> để xác thực.`
-        )
+      )
     );
   });
 });

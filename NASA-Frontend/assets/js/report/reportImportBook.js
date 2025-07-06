@@ -2,12 +2,17 @@ import { renderPagination } from "../../../components/js/pagination.js";
 
 let listImportBooks;
 
-async function getImportInfo(startDate='', endDate=''){
-  try{
+async function getImportInfo(startDate = '', endDate = '') {
+  try {
     let list = [];
-    const res = await fetch(`http://localhost:3000/api/books/get-import-orders?startDate=${startDate}&endDate=${endDate}`);
+    const res = await fetch(`http://localhost:3000/api/books/get-import-orders?startDate=${startDate}&endDate=${endDate}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+      }
+    });
     const data = await res.json();
-    if (!data.success){
+    if (!data.success) {
       throw new Error(data.message);
     }
     const importOrders = data.data;
@@ -16,7 +21,12 @@ async function getImportInfo(startDate='', endDate=''){
         let importData = { _id: order._id, createdAt: order.createdAt };
         importData['quantityImport'] = book.quantity;
 
-        const resBook = await fetch(`http://localhost:3000/api/books/${book.bookId}`);
+        const resBook = await fetch(`http://localhost:3000/api/books/${book.bookId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+          }
+        });
         const dataBook = await resBook.json();
         if (!dataBook.success) {
           throw new Error(dataBook.message);
@@ -33,7 +43,7 @@ async function getImportInfo(startDate='', endDate=''){
   } catch (error) {
     console.log("Lỗi lấy hóa đơn nhập sách: ", error.message);
   }
-  
+
 }
 
 let currentPage = 1;

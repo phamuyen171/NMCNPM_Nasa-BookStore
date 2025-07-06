@@ -209,7 +209,11 @@ document.addEventListener("DOMContentLoaded", async function () {
   let limitbe = 0;
 
   try {
-    const response = await fetch(`http://localhost:3000/api/books?page=1`);
+    const response = await fetch(`http://localhost:3000/api/books?page=1`, {
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+      }
+    });
     const result = await response.json();
 
     if (result.success) {
@@ -224,7 +228,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     for (let i = 2; i <= totalPages; i++) {
-      const res = await fetch(`http://localhost:3000/api/books?page=${i}`);
+      const res = await fetch(`http://localhost:3000/api/books?page=${i}`, {
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
+      });
       const data = await res.json();
 
       if (data.success) {
@@ -259,7 +267,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         return;
       }
       try{
-        const response = await fetch(`http://localhost:3000/api/staff/check-staff-exist/${code}`);
+        const response = await fetch(`http://localhost:3000/api/staff/check-staff-exist/${code}`, {
+          headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+          }
+        });
         if (!response.ok){
           throw new Error("Sai mã nhân viên");
         }
