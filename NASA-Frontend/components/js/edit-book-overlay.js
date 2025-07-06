@@ -11,9 +11,15 @@ export function showEditOverlay(book) {
   document.getElementById("edit-image").value = book.image;
   document.getElementById("edit-description").value = book.description;
   document.querySelector(".edit-overlay").classList.add("active");
+  console.log(convertMoney(book.price))
 }
 
 export function setupEditOverlayEvents() {
+  
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user.role !== "manager"){
+    document.getElementById("edit-price").disabled = true;
+  }
   document.getElementById("cancelEditBtn").addEventListener("click", () => {
     document.querySelector(".edit-overlay").classList.remove("active");
   });
@@ -26,7 +32,7 @@ export function setupEditOverlayEvents() {
       category: document.getElementById("edit-category").value,
       publisher: document.getElementById("edit-publisher").value,
       quantity: Number(document.getElementById("edit-quantity").value),
-      price: parseFloat(document.getElementById("edit-price").value),
+      price: document.getElementById("edit-price").value,
       image: document.getElementById("edit-image").value,
       description: document.getElementById("edit-description").value,
     };
@@ -34,7 +40,10 @@ export function setupEditOverlayEvents() {
     try {
       const res = await fetch(`http://localhost:3000/api/books/${currentEditId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("token")
+        },
         body: JSON.stringify(updatedBook),
       });
       const data = await res.json();

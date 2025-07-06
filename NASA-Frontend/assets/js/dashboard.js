@@ -78,6 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
   .catch(error => { 
     console.error("Lỗi khi lấy dữ liệu thống kê khách hàng:", error);
   });
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user.role === "staff"){
+    document.getElementById("report-btn").style.display = "none";
+  }
 });
 
 // ========================================Dòng 3===========================================

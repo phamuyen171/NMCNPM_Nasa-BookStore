@@ -156,6 +156,9 @@ document.getElementById("create-account").addEventListener("click", function () 
     try{
       const res = await fetch('http://localhost:3000/api/auth/create-account', {
         method: 'POST',
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
         body: formData
       });
       const data_res = await res.json();

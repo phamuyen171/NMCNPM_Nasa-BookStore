@@ -24,31 +24,40 @@ function showModalConfirm(title = "THÊM SÁCH", message = "thêm sách", link_i
   }
   if (modal) modal.style.display = "flex";
   if (titleEl) titleEl.textContent = `XÁC NHẬN ${title}`;
-
-  // if (link_icon !== "") {
-  //   const iconEl = document.getElementById("linkIcon");
-  //   if (iconEl) {
-  //     iconEl.src = link_icon + 'components/images/confirm-icon.svg';
-  //     iconEl.style.display = "block"; // Hiển thị icon nếu có
-  //   }
-  // }
     
   const confirmBtn = document.getElementById('confirmActionBtn');
   const cancelBtn = document.getElementById('cancelActionBtn');
   
-  // Xóa event listener cũ
-  confirmBtn.replaceWith(confirmBtn.cloneNode(true));
-  cancelBtn.replaceWith(cancelBtn.cloneNode(true));
+  // // Xóa event listener cũ
+  // confirmBtn.replaceWith(confirmBtn.cloneNode(true));
+  // cancelBtn.replaceWith(cancelBtn.cloneNode(true));
   
-  // Thêm event listener mới
-  document.getElementById('confirmActionBtn').onclick = () => {
-        // hideModal('confirmationModal');
-        modal.style.display = "none";
-        onConfirm();
-    };
+  // // Thêm event listener mới
+  // document.getElementById('confirmActionBtn').onclick = () => {
+  //       // hideModal('confirmationModal');
+  //       modal.style.display = "none";
+  //       onConfirm();
+  //   };
     
-    document.getElementById('cancelActionBtn').onclick = () => {
-        // hideModal('confirmationModal');
-        modal.style.display = "none";
-    };
+  //   document.getElementById('cancelActionBtn').onclick = () => {
+  //       // hideModal('confirmationModal');
+  //       modal.style.display = "none";
+  //   };
+  // Gỡ sự kiện cũ
+  const newConfirmBtn = confirmBtn.cloneNode(true);
+  confirmBtn.replaceWith(newConfirmBtn);
+
+  const newCancelBtn = cancelBtn.cloneNode(true);
+  cancelBtn.replaceWith(newCancelBtn);
+
+  // Gán lại sự kiện mới
+  newConfirmBtn.onclick = () => {
+    modal.style.display = "none";
+    onConfirm();
+  };
+
+  newCancelBtn.onclick = () => {
+    modal.style.display = "none";
+  };
+
 }

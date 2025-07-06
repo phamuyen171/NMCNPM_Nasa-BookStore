@@ -55,7 +55,7 @@ export function renderBooks(bookList, importMode=false) {
               <button class="btn bg-white btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"></button>
               <ul class="dropdown-menu">
                 <li><a class="dropdown-item update-btn" href="#" data-id="${book._id}">Cập nhật</a></li>
-                <li><a class="dropdown-item delete-btn" data-id="${book._id}" data-title="${book.title}">Xoá</a></li>
+                <li class="prevent-delete"><a class="dropdown-item delete-btn" data-id="${book._id}" data-title="${book.title}">Xoá</a></li>
               </ul>
             </div>
           </div>
@@ -180,7 +180,14 @@ async function initBooks(page = 1) {
   renderPagination(data.total, data.limit, data.page, (newPage) => {
     initBooks(newPage);
   });
-  
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user.role !== "manager"){
+    document.getElementById("add-book-btn").style.display = "none";
+    document.getElementById("import-book-btn").style.display = "none";
+    document.querySelectorAll(".prevent-delete").forEach(btn => {
+      btn.style.display = "none";
+    });
+  }
 }
 
 if (window.location.pathname.includes("detailBooks.html")) {
@@ -197,6 +204,3 @@ window.addEventListener("DOMContentLoaded", () => {
       setupEditOverlayEvents(); // sau khi HTML đã gắn vào DOM
     });
 });
-
-
-

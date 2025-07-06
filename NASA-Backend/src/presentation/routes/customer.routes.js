@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const customerController = require('../controllers/customer.controller');
+const { protect, authorize } = require('../../middlewares/auth.middleware');
 
 router.post('/', customerController.createOrGetCustomer);
 router.post('/add', customerController.addCustomer);
@@ -9,7 +10,7 @@ router.post('/points', customerController.updatePoints);
 router.get('/company-info/:companyName', customerController.getCompanyInfoByName);
 
 router.put('/update-customer/:id', customerController.updateCustomer);
-router.delete('/delete-customer/:id', customerController.deleteCustomer);
+router.delete('/delete-customer/:id', protect, authorize(['manager']), customerController.deleteCustomer);
 
 router.get('/filter-customer/retail', customerController.getRetailCustomer);
 router.get('/filter-customer/wholesale', customerController.getWholestailCustomer);
@@ -23,6 +24,6 @@ router.get('/check-exist-taxId/:taxId', customerController.checkExistTaxID);
 
 router.get('/is-bad-debt/:companyName', customerController.isBadDebt);
 
-router.put('/reset-discount/:id', customerController.resetDiscount);
+router.put('/reset-discount/:id',protect, authorize(['manager']),  customerController.resetDiscount);
 
 module.exports = router;

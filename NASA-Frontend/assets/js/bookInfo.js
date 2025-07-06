@@ -1,6 +1,12 @@
 import { showEditOverlay, setupEditOverlayEvents } from "../../components/js/edit-book-overlay.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
+        
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user.role !== "manager"){
+    document.getElementById("add-book-btn").style.display = "none";
+    document.getElementById("import-book-btn").style.display = "none";
+    }
     const rule = await getRule();
     const container = document.getElementById("edit-overlay-container");
     const url = container.dataset.url;

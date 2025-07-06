@@ -52,7 +52,7 @@ let htmlByType = {
             <th>TÊN NGƯỜI ĐẠI DIỆN</th>
             <th>CHIẾT KHẤU</th>
             <th>GHI CHÚ</th>
-            <th></th>
+            <th class="edit-btn"></th>
           </tr>
         </thead>
         <tbody>
@@ -97,7 +97,7 @@ async function createTable(customers, type='retail') {
               <td>${customer.name}</td>
               <td>${customer.discountPercentage}%</td>
               <td class="bad-debt">${note}</td>
-              <td><button class="btn btn-link update-btn" data-id="${customer._id}">Sửa</button></td>
+              <td class="edit-btn"><button class="btn btn-link update-btn" data-id="${customer._id}">Sửa</button></td>
           </tr>
         `;
       } catch(error){
@@ -189,7 +189,14 @@ async function printList(type='retail') {
           row.classList.add("selected");
       });
       searchCustomer(allCustomers, type);
-
+      if (type === "wholesale"){
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user.role !== "manager"){
+          document.querySelectorAll(".edit-btn").forEach(tag => {
+            tag.style.display = "none";
+          })
+        }
+      }
     }
     catch (error){
       showModalError("LỖI IN DANH SÁCH KHÁCH HÀNG", error.message)
@@ -219,7 +226,7 @@ async function resetPoints(){
 
         const data = await response.json();
         if (!response.ok){
-            showModalError("LỖI RESET MẬT KHẨU", data.message);
+            showModalError("LỖI RESET ĐIỂM KHÁCH HÀNG", data.message);
         }
     }
 }

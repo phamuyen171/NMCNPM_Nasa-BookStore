@@ -2,11 +2,12 @@
 const express = require('express');
 const router = express.Router();
 const ruleController = require('../controllers/rule.controller'); 
+const { protect, authorize } = require('../../middlewares/auth.middleware');
 
 router.get('/', ruleController.getRules);
 
 router.post('/', ruleController.createRules);
 
-router.put('/', ruleController.updateRules);
+router.put('/', protect, authorize(['manager']), ruleController.updateRules);
 
 module.exports = router;

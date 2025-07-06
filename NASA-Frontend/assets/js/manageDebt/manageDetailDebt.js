@@ -158,7 +158,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         try {
           const res = await fetch("http://localhost:3000/api/invoices/send-email", {
             method: "POST",
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+              'Content-Type': 'application/json',
+              "Authorization": "Bearer " + localStorage.getItem("token")
+            },
             body: JSON.stringify({companyName: data.companyName, invoiceID: data.invoiceID}),
           });
           const resData = await res.json();
@@ -176,7 +179,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           // Mở modal xác nhận
           showSuccessModal(
               "THÀNH CÔNG",
-              "Đã xuất tập tin PDF lưu thông tin chi tiết hóa đơn và khoản nợ.",
+              "Đã gửi email thông tin chi tiết hóa đơn và khoản nợ thành công.",
               [
                   {
                       text: "XEM DANH SÁCH GHI NỢ",
@@ -186,49 +189,59 @@ document.addEventListener("DOMContentLoaded", async () => {
           );
         } catch (err) {
             showModalError("LỖI GỬI THÔNG BÁO", "Không thể gửi thông báo lên hệ thống.");
+            console.error(err);
         }
     }
   });
 
   //=============================Đánh dấu=========================  
-  document.getElementById("mark-paid").addEventListener("click", function () {
-    showModalConfirm(
-        "CẬP NHẬP TRẠNG THÁI THANH TOÁN",
-        "cập nhật trạng thái <b>“ĐÃ THANH TOÁN”</b> cho hóa đơn", "../../",
-        async () => {
-          // Lưu invoiceID vào localStorage
-          // const paidInvoices = JSON.parse(localStorage.getItem("paidInvoices") || "[]");
-
-          // Chuyển sang trang quản lý nợ
-          // window.location.href = "./manageDebt.html";
-          // fetch api đánh dấu thanh toán
-          console.log(invoiceID);
-          try{
-            const res = await fetch(`http://localhost:3000/api/invoices/${invoiceID}/mark-as-paid`, { method: "PATCH"});
-            const resData = await res.json();
-            if (!resData.success){
-              throw new Error(resData.message);
-            }
-            // if (!paidInvoices.includes(invoiceID)) {
-            //   paidInvoices.push(invoiceID);
-            //   localStorage.setItem("paidInvoices", JSON.stringify(paidInvoices));
-            // }
-            showSuccessModal(
-                'CẬP NHẬP TRẠNG THÁI THANH TOÁN',
-                'cập nhật trạng thái <b>“ĐÃ THANH TOÁN”</b> cho hóa đơn thành công!',
-                [
-                    {
-                        text: 'Xem danh sách ghi nợ',
-                        link: 'manageDebt.html'
-                    }
-                ]
-            );
-          } catch(error){
-            showModalError("LỖI CẬP NHẬP TRẠNG THÁI THANH TOÁN", "Đã có lỗi khi cập nhập. Vui lòng thử lại sau.");
-            console.error(error.message);
-          }
+  document.getElementById("mark-paid").addEventListener("click", async function () {
+    // showModalConfirm(
+    //     "CẬP NHẬP TRẠNG THÁI THANH TOÁN",
+    //     "cập nhật trạng thái <b>“ĐÃ THANH TOÁN”</b> cho hóa đơn", "../../",
+    //     async () => {
+    //       try{
+    //         const res = await fetch(`http://localhost:3000/api/invoices/${invoiceID}/mark-as-paid`, { method: "PATCH"});
+    //         const resData = await res.json();
+    //         if (!resData.success){
+    //           throw new Error(resData.message);
+    //         }
+    //         showSuccessModal(
+    //             'CẬP NHẬP TRẠNG THÁI THANH TOÁN',
+    //             'Cập nhật trạng thái <b>“ĐÃ THANH TOÁN”</b> cho hóa đơn thành công!',
+    //             [
+    //                 {
+    //                     text: 'Xem danh sách ghi nợ',
+    //                     link: 'manageDebt.html'
+    //                 }
+    //             ]
+    //         );
+    //       } catch(error){
+    //         showModalError("LỖI CẬP NHẬP TRẠNG THÁI THANH TOÁN", "Đã có lỗi khi cập nhập. Vui lòng thử lại sau.");
+    //         console.error(error.message);
+    //       }
           
-        }
-    );
+    //     }
+    // );
+    try{
+      const res = await fetch(`http://localhost:3000/api/invoices/${invoiceID}/mark-as-paid`, { method: "PATCH"});
+      const resData = await res.json();
+      if (!resData.success){
+        throw new Error(resData.message);
+      }
+      showSuccessModal(
+          'CẬP NHẬP TRẠNG THÁI THANH TOÁN',
+          'Cập nhật trạng thái <b>“ĐÃ THANH TOÁN”</b> cho hóa đơn thành công!',
+          [
+              {
+                  text: 'Xem danh sách ghi nợ',
+                  link: 'manageDebt.html'
+              }
+          ]
+      );
+    } catch(error){
+      showModalError("LỖI CẬP NHẬP TRẠNG THÁI THANH TOÁN", "Đã có lỗi khi cập nhập. Vui lòng thử lại sau.");
+      console.error(error.message);
+    }
   });
 });

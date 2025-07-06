@@ -103,7 +103,10 @@ async function handleImportAndConfirm(items) {
     // Gọi API tạo đơn nhập
     const response = await fetch('http://localhost:3000/api/books/import-order', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
         body: JSON.stringify({ items: items })
     });
 
@@ -129,7 +132,10 @@ async function handleImportAndConfirm(items) {
     // Gọi API để cập nhật trạng thái đơn nhập sang "confirmed"
     const confirmResponse = await fetch(`http://localhost:3000/api/books/import-order/confirm/${orderId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
     });
 
     if (!confirmResponse.ok) {
@@ -138,7 +144,10 @@ async function handleImportAndConfirm(items) {
 
     const updateReponse = await fetch(`http://localhost:3000/api/books/import-order/receive/${orderId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
     });
     if (!confirmResponse.ok) {
         throw new Error("Lỗi khi cập nhập số lượng sách trong kho.");
