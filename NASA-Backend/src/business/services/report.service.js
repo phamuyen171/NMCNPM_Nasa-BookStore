@@ -2,6 +2,7 @@ const ImportOrder = require('../../data/models/import-order.model');
 const Book = require('../../data/models/book.model');
 const Invoice = require('../../data/models/invoice.model');
 const InvoiceDetail = require('../../data/models/invoiceDetail.model');
+const Customer = require('../../data/models/customer.model');
 
 const getBookImportStatistics = async (filters) => {
     const { day, month, year } = filters;

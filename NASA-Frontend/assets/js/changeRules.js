@@ -9,7 +9,10 @@ function convertAfterChange(tagId) {
 async function showRuleInfo(){
     try{
         const res = await fetch("http://localhost:3000/api/rules/", {
-            method: "GET"
+            method: "GET",
+            headers: { 
+                'Content-Type': 'application/json'
+            }
         });
         const data = await res.json();
         if (!data.success){
@@ -43,6 +46,7 @@ async function updateRules(rules){
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token') 
             },
             body: JSON.stringify(rules)
         });
@@ -67,7 +71,7 @@ async function updateRules(rules){
         console.log(error.message);
     }
 }
-const tagConvertList = ['maxLowDebt', 'maxHighDebt', 'minBillValue', 'cashToPoint', 'pointToCash', 'minUsedLevel']
+const tagConvertList = ['maxLowDebt', 'maxHighDebt', 'minBillValue', 'cashToPoint', 'pointToCash']
 document.addEventListener("DOMContentLoaded", function () {
     let checkRole = false;
     const user = JSON.parse(localStorage.getItem("user"));
