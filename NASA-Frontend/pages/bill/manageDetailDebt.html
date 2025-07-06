@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- css bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="../../assets/css/login.css" />
+    <link rel="stylesheet" href="../../assets/css/detailBooks.css" />
+    <link rel="stylesheet" href="../../assets/css/bill.css" />
+    <link rel="stylesheet" href="../../assets/css/createBill/createWholesaleBill.css" />
+    <link rel="stylesheet" href="../../assets/css/listBill/detailWholesaleBill.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../../components/css/delete-modal.css" />
+    <link rel="stylesheet" href="../../components/css/error-modal.css" />
+    <link rel="stylesheet" href="../../components/css/success-modal.css" />
+
+    <title>Nhà Sách NASA</title>
+
+  </head>
+  <body data-modal-error-src="../../components/html/error-modal.html" data-modal-success-src="../../components/html/success-modal.html" data-modal-delete-src="../../components/html/delete-modal.html">
+    <div class="container-fluid layout-root min-vh-100 d-flex flex-column justify-content-between">
+      <!-- Header -->
+      <div id="header" data-url="../../layouts/html/header.html"></div>
+      
+
+      <!-- Content -->
+       <div class="container invoice-box mt-2 mb-2 p-5 pt-0 pb-0">
+        <!-- Dòng TT NASA -->
+        <div class="d-flex justify-content-start align-items-center">
+            <img src="../../public/images/big-logo.png" alt="" class="logo-nasa">
+            <div class="detail-info-nasa">
+                <h5 class="nasa-info">CÔNG TY SÁCH NASA</h5>
+                <p class="nasa-info">Mã số thuế: 01234567890</p>
+                <p class="nasa-info">Địa chỉ: 227 Nguyễn Văn Cừ, Phường 4, Quận 5, Thành phố Hồ Chí Minh</p>
+                <p class="nasa-info">Số điện thoại: 0829929972</p>
+            </div>
+        </div>
+        <hr class="separate-line"/>
+
+        <!-- Dòng 2 -->
+        <div class="invoice-title">
+            <div class="row">
+                <div class="col-md-10">
+                    <h4 class="text-center">HOÁ ĐƠN BÁN HÀNG</h4>
+                    <p class="text-center ngay-tao"></p>
+                </div>
+                <div class="col-md-2">
+                    <p class="p-0 m-0">Mẫu số: <span id="mau-so"></span></p>
+                    <p class="p-0 m-0">Số hoá đơn: <strong><span id="so-hoa-don"></span></strong></p>
+                </div>
+            </div>
+        </div>
+        <hr class="separate-line"/>
+
+        <!-- Bảng sản phẩm -->
+        <table class="table mt-3" id="invoice-table">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Số lượng</th>
+                    <th>Đơn giá</th>
+                    <th>Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Nội dung sẽ được JS render -->
+            </tbody>
+        </table>
+       </div>
+
+       <!--Tình trạng thanh toán -->
+       <div class="d-flex justify-content-center align-items-center" style="font-size: 20px; margin-top: 20px;">
+          <p class="mx-3 fw-bold">Tình trạng</p>
+          <p id="bill-status" class="text-center"><strong></strong></p>
+       </div>
+
+      <div class="d-flex justify-content-center mt-3 gap-3">
+        <button class="btn btn-primary px-4 py-2 fw-bold" id="send-notify" style="background-color: #c1cff7; color: black; border: none;">
+          GỬI THÔNG BÁO CHO KHÁCH HÀNG
+        </button>
+        <button class="btn btn-primary px-4 py-2 fw-bold" id="mark-paid" style="background-color: #c1cff7; color: black; border: none;">
+          ĐÁNH DẤU ĐÃ THANH TOÁN
+        </button>
+      </div>
+
+
+
+
+
+
+      <!-- Footer -->
+      <div id="footer" data-url="../../layouts/html/footer.html"></div>
+
+      <!-- Modal xác nhận -->
+      <div id="confirmationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:1000;">
+        <div style="background:white; padding:20px; border-radius:8px; min-width:300px; text-align:center;">
+            <h3 id="confirmationModalTitle" style="margin-top:0;">XÁC NHẬN</h3>
+            <p id="confirmationModalMessage">Bạn có chắc muốn thực hiện hành động này?</p>
+            <div style="margin-top: 20px;">
+                <button id="confirmActionBtn" style="margin-right: 10px;">Cập nhật</button>
+                <button id="cancelActionBtn">Huỷ</button>
+            </div>
+        </div>
+      </div>
+
+
+      <script type="module" src="../../assets/js/manageDebt/manageDetailDebt.js"></script>
+      
+    
+      <!-- js bootstrap -->
+      <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"
+      ></script>
+    </div>
+    <script src="../../layouts/js/layout-loader.js"></script>
+    <script src="../../assets/js/utils.js"></script>
+
+    <script src="../../components/js/delete-confirm.js"></script>
+    <script src="../../components/js/error-modal.js"></script>
+    <script src="../../components/js/success-modal.js"></script>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+.manage-debt {
+    background-color: #c1cef4;
+    color: #000;
+    font-weight: bold;
+    margin-right: 5px;  /* Nhỏ hơn để gần a2 */
+}
+.manage-debt:hover{
+    color: white;
+    background-color: #214dd2;
+}
+
+.bill-active{
+    background-color: #1a3a9c;
+    color: white;
+}
