@@ -157,7 +157,156 @@ const getSalesStatistics = async (filters) => {
     }
 };
 
+
+
+///biểu đồ thống kê doanh thu
+
+// Tổng doanh thu chia theo loại thanh toán
+async function getRevenueSummary(from, to) {
+    const match = {};
+    if (from && to) {
+        match.date = { $gte: new Date(from), $lte: new Date(to) };
+    }
+    const invoices = await Invoice.find(match);
+
+    let immediatePayment = 0, debtRecovery = 0;
+    invoices.forEach(inv => {
+        if (inv.date && inv.paidAt && inv.date.getTime() === inv.paidAt.getTime()) {
+            immediatePayment += inv.total;
+        } else {
+            debtRecovery += inv.total;
+        }
+    });
+    return { immediatePayment, debtRecovery };
+}
+
+// Gom nhóm sách nhập/bán theo mốc thời gian
+async function getBookStats(type, from, to) {
+    // Tạo mảng label theo type
+    const labels = [];
+    const now = new Date(to || Date.now());
+    let start;
+    if (type === 'day') {
+        start = new Date(now);
+        start.setDate(now.getDate() - 6);
+        for (let i = 0; i < 7; i++) {
+            const d = new Date(start);
+            d.setDate(start.getDate() + i);
+            labels.push(d.toISOString().slice(0, 10));
+        }
+    } else if (type === 'month') {
+        start = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+        for (let i = 0; i < 6; i++) {
+            const d = new Date(start.getFullYear(), start.getMonth() + i, 1);
+            labels.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+        }
+    } else if (type === 'year') {
+        const yearNow = now.getFullYear();
+        for (let i = 0; i < 5; i++) {
+            labels.push(`${yearNow - 4 + i}`);
+        }
+    }
+
+    // Sách bán ra
+    const soldCount = new Array(labels.length).fill(0);
+    const importCount = new Array(labels.length).fill(0);
+
+    // Bán ra
+    const invoiceMatch = {};
+    if (from && to) invoiceMatch.date = { $gte: new Date(from), $lte: new Date(to) };
+    const invoices = await Invoice.find(invoiceMatch);
+    const invoiceIds = invoices.map(i => i._id);
+    const details = await InvoiceDetail.find({ invoice: { $in: invoiceIds } });
+
+    invoices.forEach(inv => {
+        let key;
+        const date = new Date(inv.date);
+        if (type === 'day') key = date.toISOString().slice(0, 10);
+        else if (type === 'month') key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        else if (type === 'year') key = `${date.getFullYear()}`;
+        const idx = labels.indexOf(key);
+        if (idx !== -1) {
+            const sum = details.filter(d => d.invoice.toString() === inv._id.toString())
+                .reduce((a, b) => a + b.quantity, 0);
+            soldCount[idx] += sum;
+        }
+    });
+
+    // Nhập vào
+    const importMatch = {};
+    if (from && to) importMatch.createdAt = { $gte: new Date(from), $lte: new Date(to) };
+    importMatch.status = 'confirmed';
+    const importOrders = await ImportOrder.find(importMatch);
+    importOrders.forEach(order => {
+        let key;
+        const date = new Date(order.createdAt);
+        if (type === 'day') key = date.toISOString().slice(0, 10);
+        else if (type === 'month') key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        else if (type === 'year') key = `${date.getFullYear()}`;
+        const idx = labels.indexOf(key);
+        if (idx !== -1) {
+            const sum = order.items.reduce((a, b) => a + b.quantity, 0);
+            importCount[idx] += sum;
+        }
+    });
+
+    return { labels, importCount, soldCount };
+}
+
+// Gom nhóm khách hàng theo mốc thời gian
+async function getCustomerStats(type, from, to) {
+    const labels = [];
+    const now = new Date(to || Date.now());
+    let start;
+    if (type === 'day') {
+        start = new Date(now);
+        start.setDate(now.getDate() - 6);
+        for (let i = 0; i < 7; i++) {
+            const d = new Date(start);
+            d.setDate(start.getDate() + i);
+            labels.push(d.toISOString().slice(0, 10));
+        }
+    } else if (type === 'month') {
+        start = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+        for (let i = 0; i < 6; i++) {
+            const d = new Date(start.getFullYear(), start.getMonth() + i, 1);
+            labels.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+        }
+    } else if (type === 'year') {
+        const yearNow = now.getFullYear();
+        for (let i = 0; i < 5; i++) {
+            labels.push(`${yearNow - 4 + i}`);
+        }
+    }
+
+    const retailCount = new Array(labels.length).fill(0);
+    const wholesaleCount = new Array(labels.length).fill(0);
+
+    const match = {};
+    if (from && to) match.createdAt = { $gte: new Date(from), $lte: new Date(to) };
+    const customers = await Customer.find(match);
+
+    customers.forEach(cust => {
+        let key;
+        const date = new Date(cust.createdAt);
+        if (type === 'day') key = date.toISOString().slice(0, 10);
+        else if (type === 'month') key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        else if (type === 'year') key = `${date.getFullYear()}`;
+        const idx = labels.indexOf(key);
+        if (idx !== -1) {
+            if (cust.type === 'retail') retailCount[idx]++;
+            else if (cust.type === 'wholesale') wholesaleCount[idx]++;
+        }
+    });
+
+    return { labels, retailCount, wholesaleCount };
+}
+
 module.exports = {
     getBookImportStatistics,
     getSalesStatistics,
+
+    getRevenueSummary,
+    getBookStats,
+    getCustomerStats,
 }; 
