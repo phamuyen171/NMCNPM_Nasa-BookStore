@@ -21,11 +21,13 @@
     <link rel="stylesheet" href="../../components/css/delete-modal.css" />
     <link rel="stylesheet" href="../../components/css/error-modal.css" />
     <link rel="stylesheet" href="../../components/css/success-modal.css" />
+    <link rel="stylesheet" href="../../components/css/confirm-modal.css" />
 
     <title>Nhà Sách NASA</title>
 
   </head>
-  <body data-modal-error-src="../../components/html/error-modal.html" data-modal-success-src="../../components/html/success-modal.html" data-modal-delete-src="../../components/html/delete-modal.html">
+  <body data-modal-error-src="../../components/html/error-modal.html" data-modal-success-src="../../components/html/success-modal.html" 
+  data-modal-delete-src="../../components/html/delete-modal.html" data-modal-confirm-src="../../components/html/confirm-modal.html">
     <div class="container-fluid layout-root min-vh-100 d-flex flex-column justify-content-between">
       <!-- Header -->
       <div id="header" data-url="../../layouts/html/header.html"></div>
@@ -101,7 +103,7 @@
       <div id="footer" data-url="../../layouts/html/footer.html"></div>
 
       <!-- Modal xác nhận -->
-      <div id="confirmationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:1000;">
+      <!-- <div id="confirmationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:1000;">
         <div style="background:white; padding:20px; border-radius:8px; min-width:300px; text-align:center;">
             <h3 id="confirmationModalTitle" style="margin-top:0;">XÁC NHẬN</h3>
             <p id="confirmationModalMessage">Bạn có chắc muốn thực hiện hành động này?</p>
@@ -110,7 +112,7 @@
                 <button id="cancelActionBtn">Huỷ</button>
             </div>
         </div>
-      </div>
+      </div> -->
 
 
       <script type="module" src="../../assets/js/manageDebt/manageDetailDebt.js"></script>
@@ -127,6 +129,7 @@
     <script src="../../assets/js/utils.js"></script>
 
     <script src="../../components/js/delete-confirm.js"></script>
+    <script src="../../components/js/confirm-modal.js"></script>
     <script src="../../components/js/error-modal.js"></script>
     <script src="../../components/js/success-modal.js"></script>
   </body>

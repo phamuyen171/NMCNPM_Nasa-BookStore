@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const promotionService = require('./promotion.service');
 const Customer = require('../../data/models/customer.model');
 const bookService = require('./book.service');
+const nodemailer = require('nodemailer');
 
 // const promotionService = new PromotionService();
 // const customerService = new CustomerService();
@@ -300,7 +301,7 @@ class InvoiceService {
 
     // Lấy danh sách hóa đơn (chỉ lấy các hóa đơn CHƯA bị xóa mềm HOẶC chưa có trường isDeleted)
     async getInvoices(currentUser, filters) {
-        const { page = 1, limit = 10, status, customerPhone, startDate, endDate, keyword, sortBy = 'date', sortOrder = -1 } = filters;
+        const { page = 1, limit = 10, status, customerPhone, paymentMethod, startDate, endDate, keyword, sortBy = 'date', sortOrder = -1 } = filters;
         const skip = (page - 1) * limit;
         console.log(`[InvoiceService] getInvoices called with keyword: '${keyword}'`); // THÊM DÒNG NÀY
 
@@ -312,6 +313,9 @@ class InvoiceService {
         }
         if (customerPhone) {
             query.customerPhone = new RegExp(customerPhone, 'i'); // Tìm kiếm không phân biệt hoa thường
+        }
+        if (paymentMethod){
+            query.paymentMethod = paymentMethod;
         }
         if (startDate || endDate) {
             query.date = {};
@@ -473,8 +477,8 @@ class InvoiceService {
             await invoice.save();
 
             // Cập nhật công nợ cho khách hàng
-            if (invoice.customerPhone && invoice.customerType === 'wholesale' && invoice.total > 0) {
-                const customer = await Customer.findOne({ phone: invoice.customerPhone, isDeleted: false });
+            if (invoice.companyName && invoice.customerType === 'wholesale' && invoice.total > 0) {
+                const customer = await Customer.findOne({ companyName: invoice.companyName, isDeleted: false });
                 if (customer) {
                     customer.debt = Math.max(0, (customer.debt || 0) - invoice.total);
                     await customer.save();
@@ -557,6 +561,52 @@ class InvoiceService {
         } catch (error) {
             console.error('Lỗi khi đếm hóa đơn:', error);
             throw new Error('Không thể đếm hóa đơn: ' + error.message);
+        }
+    }
+
+    async sendEmail(companyName, invoiceID){
+        try{
+            const company = await Customer.findOne({companyName, isDeleted: false, type: "wholesale"});
+            if (!company){
+                throw new Error("Khách hàng không tồn tại.");
+            }
+            const invoice = await Invoice.findOne({invoiceID, isDeleted: false, status: "debt"});
+            if (!invoice){
+                throw new Error("Hóa đơn không tồn tại.")
+            }
+            // Cấu hình tài khoản gửi email (dùng Gmail hoặc SMTP khác)
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASS
+                }
+            });
+            const formatted = new Intl.DateTimeFormat('vi-VN', {
+                weekday: 'long',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                timeZone: 'Asia/Ho_Chi_Minh'
+            }).format(invoice.dueDate);
+            // Soạn nội dung email
+            const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: company.email,
+            subject: `Thông báo thanh toán hóa đơn #${invoiceID}`,
+            html: `
+                <p>Kính gửi <b>${company.companyName}</b>,</p>
+                <p>Hóa đơn <b>#${invoiceID}</b> của quý khách có tổng tiền <b>${invoice.total.toLocaleString()} VND</b> sẽ đến hạn vào <b>${formatted}</b>.</p>
+                <p>Vui lòng thanh toán trước thời hạn để tránh phát sinh nợ xấu.</p>
+                <p>Trân trọng,<br>Đội ngũ kế toán <br>Nhà sách NASA.</p>
+            `
+            };
+
+            // Gửi email
+            return await transporter.sendMail(mailOptions);
+
+        } catch (error){
+            throw error;
         }
     }
 }

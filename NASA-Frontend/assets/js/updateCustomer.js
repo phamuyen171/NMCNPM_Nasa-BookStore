@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("phone").value = customer.phone || "";
     document.getElementById("discount").value = customer.discountPercentage + "%" || "";
     document.getElementById("debtLimit").value = convertMoney(customer.debtLimit) || "";
+    document.getElementById("email").value = customer.email || "";
 
     const btnDelete = document.getElementById("btn-delete");
     const btnResetDiscount = document.getElementById("btn-reset-discount");
@@ -84,7 +85,8 @@ document.addEventListener("DOMContentLoaded", () => {
             name: document.getElementById("represent-name").value,
             phone: document.getElementById("phone").value,
             discountPercentage: Number(document.getElementById("discount").value.replace("%", "")),
-            debtLimit: parseCurrencyVND(document.getElementById("debtLimit").value)
+            debtLimit: parseCurrencyVND(document.getElementById("debtLimit").value),
+            email: document.getElementById("email").value
         };
 
         const res = await fetch(`http://localhost:3000/api/customers/update-customer/${customer._id}`, {
@@ -116,7 +118,8 @@ function updateLocalStorage(customer, updated){
         name: updated.name? updated.name : customer.name,
         phone: updated.phone? updated.phone : customer.phone,
         discountPercentage: updated.discountPercentage !== null? updated.discountPercentage : customer.discountPercentage,
-        debtLimit: updated.debtLimit? updated.debtLimit : customer.debtLimit
+        debtLimit: updated.debtLimit? updated.debtLimit : customer.debtLimit,
+        email: updated.email? updated.email : customer.email
     };
 
     localStorage.setItem('updateCustomerData', JSON.stringify(customer));

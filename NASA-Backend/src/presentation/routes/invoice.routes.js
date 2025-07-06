@@ -30,4 +30,6 @@ router.patch('/:id/mark-as-paid', (req, res, next) => invoiceController.markInvo
 // Đánh dấu các hóa đơn quá hạn thành nợ xấu
 router.patch('/mark-overdue-as-bad-debt', (req, res, next) => invoiceController.markOverdueInvoicesAsBadDebt(req, res, next));
 
+router.post('/send-email', invoiceController.sendEmail);
+
 module.exports = router;

@@ -11,7 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
     "represent-name": "Tên người đại diện",
     "phone": "SĐT người đại diện",
     "discount": "Mức chiết khấu",
-    "debtLimit": "Hạn mức ghi nợ"
+    "debtLimit": "Hạn mức ghi nợ",
+    "email": "Email"
   };
 
   function showError(input, message) {
@@ -147,7 +148,8 @@ document.addEventListener("DOMContentLoaded", () => {
       phone: document.getElementById("phone").value.trim(),
       discountPercentage: Number(document.getElementById("discount").value.replace("%", "").trim()),
       type: "wholesale",
-      debtLimit: Number(document.getElementById("debtLimit").value.trim())
+      debtLimit: parseCurrencyVND(document.getElementById("debtLimit").value.trim()),
+      email: document.getElementById("email").value.trim()
     };
 
     console.log(data);
@@ -190,4 +192,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Bắt sự kiện nhấn nút
   addButton.addEventListener("click", handleSubmit);
+
+  const debtInput = document.getElementById("debtLimit");
+  debtInput.addEventListener("blur", () => {
+    if (!debtInput || debtInput ===''){
+      return;
+    }
+    debtInput.value = convertMoney(debtInput.value.trim());
+  });
 });

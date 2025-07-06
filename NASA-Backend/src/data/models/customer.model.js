@@ -16,6 +16,16 @@ const customerSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    email: {
+        type: String,
+        require: true,
+        validate: {
+            validator: function (v) {
+                return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(v); // Regex đơn giản kiểm tra định dạng email
+            },
+            message: props => `${props.value} không phải là email hợp lệ!`
+        }
+    },
     customerId: {
         type: String, // Mã khách hàng (chỉ có với khách sỉ)
         default: null

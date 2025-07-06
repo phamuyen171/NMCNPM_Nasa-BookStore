@@ -35,7 +35,7 @@ class InvoiceController {
     // Lấy danh sách hóa đơn
     async getInvoices(req, res, next) {
         try {
-            const { page, limit, status, customerPhone, startDate, endDate, keyword, sortBy, sortOrder } = req.query;
+            const { page, limit, status, customerPhone, startDate, endDate, keyword, sortBy, sortOrder, paymentMethod } = req.query;
             const currentUser = req.user;
 
             const total = await Invoice.countDocuments({ isDeleted: { $ne: true } }); 
@@ -47,6 +47,7 @@ class InvoiceController {
                     limit: parseInt(limit) || total,
                     status,
                     customerPhone,
+                    paymentMethod,
                     startDate,
                     endDate,
                     keyword,
@@ -231,6 +232,23 @@ class InvoiceController {
             next(error);
         }
     }  
+
+    async sendEmail(req, res){
+        try{
+            const companyName = req.body.companyName;
+            const invoiceID = req.body.invoiceID;
+            if (!companyName) {
+                throw new Error("Vui lòng gửi tên khách hàng bán sỉ.");
+            }
+            if (!invoiceID) {
+                throw new Error("Vui lòng gửi mã hóa đơn.");
+            }
+            const mail = await invoiceService.sendEmail(companyName, invoiceID);
+            res.status(200).json({success: true, message: "Gửi thông báo qua email khách hàng thành công!", data: mail})
+        } catch (error){
+            res.status(500).json({success: false, message: error.message});
+        }
+    }
 }
 
 module.exports = new InvoiceController();

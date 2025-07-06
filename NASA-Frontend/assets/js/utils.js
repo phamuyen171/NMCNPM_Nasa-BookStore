@@ -17,6 +17,14 @@ async function getRule(){
     }
 }
 
+function toISODate(ddmmyyyy) {
+  let [day, month, year] = ddmmyyyy.split('/');
+  if (!day || !month || !year) {
+    [day, month, year] = ddmmyyyy.split('-');
+  }
+  return new Date(year, month -1, day);
+}
+
 function formatDate(dateStr) {
     const date = new Date(dateStr);
 
