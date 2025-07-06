@@ -53,10 +53,10 @@ function createTable(staffs) {
             <th>CHỨC VỤ</th>
             <th>EMAIL</th>
             <th>SỐ ĐIỆN THOẠI</th>
-            <th>CCCD</th>
-            <th>MẬT KHẨU</th>
-            <th>TÌNH TRẠNG</th>
-            <th></th>
+            <th class="hide">CCCD</th>
+            <th class="hide">MẬT KHẨU</th>
+            <th class="hide">TÌNH TRẠNG</th>
+            <th class="hide"></th>
           </tr>
         </thead>
         <tbody>
@@ -80,9 +80,9 @@ function createTable(staffs) {
         <td>${role }</td>
         <td>${staff.email}</td>
         <td>${staff.phone}</td>
-        <td>${staff.CCCD}</td>
-        <td><div class="reset-password" data-username="${staff.username}" data-name="${staff.fullName}" style="text-decoration: underline;">Reset</div></td>
-        <td>
+        <td class="hide">${staff.CCCD}</td>
+        <td class="hide"><div class="reset-password" data-username="${staff.username}" data-name="${staff.fullName}" style="text-decoration: underline;">Reset</div></td>
+        <td class="hide">
           <div class="change-status" data-id="${staff._id}" data-name="${staff.fullName}" data-value="${staff.status}">
             ${staff.status === "inactive"
               ? `<span class="badge bg-danger">Đã sa thải</span>`
@@ -90,7 +90,7 @@ function createTable(staffs) {
             }
           </div>
         </td>
-        <td>
+        <td class="hide">
           <div class="delete-staff" data-id="${staff._id}" data-name="${staff.fullName}" style="text-decoration: underline;">Xóa</div>
         </td>
       </tr>
@@ -104,6 +104,12 @@ function createTable(staffs) {
 function renderTable(staffs) {
   const container = document.getElementById("staffs-container");
   container.innerHTML = createTable(staffs);
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user.role !== "manager"){
+    document.querySelectorAll(".hide").forEach(hide => {
+      hide.style.display = "none";
+    });
+  }
 }
 
 function renderTableByPage(data, page) {

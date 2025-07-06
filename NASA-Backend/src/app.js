@@ -31,7 +31,7 @@ app.use('/api/invoices', invoiceRoutes); // Thêm routes cho hóa đơn
 app.use('/api/customers', customerRoutes); // Thêm routes cho khách hàng
 app.use('/api/image', imageRoutes);
 app.use('/api/report', reportRoutes); // Thêm routes cho báo cáo
-app.use('/api/rule', ruleRoutes);
+app.use('/api/rules', ruleRoutes);
 
 // Middleware xử lý lỗi TẬP TRUNG
 // Bắt các lỗi được ném ra (thrown) từ controllers hoặc service
