@@ -20,7 +20,41 @@ const getSalesStatistics = async (req, res, next) => {
     }
 };
 
+///// biểu đồ 
+const getRevenueSummary = async (req, res, next) => {
+    try {
+        const { from, to } = req.query;
+        const data = await reportService.getRevenueSummary(from, to);
+        res.json(data);
+    } catch (error) {
+        next(error);
+    }
+};
+
+const getBookStats = async (req, res, next) => {
+    try {
+        const { type, from, to } = req.query;
+        const data = await reportService.getBookStats(type, from, to);
+        res.json(data);
+    } catch (error) {
+        next(error);
+    }
+};
+
+const getCustomerStats = async (req, res, next) => {
+    try {
+        const { type, from, to } = req.query;
+        const data = await reportService.getCustomerStats(type, from, to);
+        res.json(data);
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getBookImportStatistics,
     getSalesStatistics,
+    getRevenueSummary,
+    getBookStats,
+    getCustomerStats,
 }; 
