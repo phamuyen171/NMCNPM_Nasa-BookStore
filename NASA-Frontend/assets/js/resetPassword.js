@@ -11,7 +11,10 @@ document.addEventListener("click", (e) => {
         async () => {
             fetch(`http://localhost:3000/api/auth/reset-password/${staffUsername}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
             })
             .then(async response => {
                 const data = await response.json();

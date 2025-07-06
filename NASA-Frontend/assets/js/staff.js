@@ -123,6 +123,11 @@ const pageSize = 8;
 
 document.addEventListener("DOMContentLoaded", async function () {
   try{
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user.role !== "manager"){
+      document.getElementById("add-staff-btn").style.display = "none";
+      document.getElementById("update-staff-btn").style.display = "none";
+    }
     let allStaffs = await getAllStaffs();
 
     renderTableByPage(allStaffs, currentPage);

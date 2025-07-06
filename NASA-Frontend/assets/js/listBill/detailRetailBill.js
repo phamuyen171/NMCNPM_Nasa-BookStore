@@ -8,6 +8,10 @@ let invoice_fetch;
 
 window.addEventListener('DOMContentLoaded', async () => {
   try {
+     const user = JSON.parse(localStorage.getItem("user"));
+    if (user.role === "staff"){
+      document.getElementById("delete-bill").style.display = "none";
+    }
     const rule = await getRule();
     invoice_fetch = await getInvoice(invoiceID);
 
@@ -88,7 +92,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         async () => {
         fetch(`http://localhost:3000/api/invoices/${invoice_fetch.invoiceID}`, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
         })
         .then(async response => {
             const data = await response.json();

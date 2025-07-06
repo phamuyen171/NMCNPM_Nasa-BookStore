@@ -69,7 +69,16 @@ async function updateRules(rules){
 }
 const tagConvertList = ['maxLowDebt', 'maxHighDebt', 'minBillValue', 'cashToPoint', 'pointToCash', 'minUsedLevel']
 document.addEventListener("DOMContentLoaded", function () {
-    // Hiển thị value
+    let checkRole = false;
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user.role !== "staff"){
+      if (user.role === "manager") {
+        document.getElementById("notice").style.display = "none";
+        checkRole = true;
+      }
+    } else {
+        document.getElementById("report-btn").style.display = "none";
+    }
     showRuleInfo();
     tagConvertList.forEach(id => convertAfterChange(id)); // ✅ Gọi 1 lần
     // cập nhập
@@ -78,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
         
         document.querySelectorAll('input').forEach(input => {
             input.addEventListener('input', e => {
-                update_btn.disabled = false;
+                if (checkRole) update_btn.disabled = false;
             });
         });
         update_btn.addEventListener('click', async ()=>{

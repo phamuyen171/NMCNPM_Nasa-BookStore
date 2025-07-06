@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const invoiceController = require('../controllers/invoice.controller');
+const { protect, authorize } = require('../../middlewares/auth.middleware');
 
 // Lấy danh sách sách phổ biến
 router.get('/popular-books', invoiceController.getPopularBooks);
@@ -22,7 +23,7 @@ router.get('/', invoiceController.getInvoices);
 router.get('/:id', invoiceController.getInvoiceById);
 
 // Xóa hóa đơn
-router.delete('/:id', invoiceController.deleteInvoice);
+router.delete('/:id', protect, authorize(['manager', 'accountant']), invoiceController.deleteInvoice);
 
 // Đánh dấu hóa đơn là đã thanh toán
 router.patch('/:id/mark-as-paid', (req, res, next) => invoiceController.markInvoiceAsPaid(req, res, next));
@@ -30,6 +31,6 @@ router.patch('/:id/mark-as-paid', (req, res, next) => invoiceController.markInvo
 // Đánh dấu các hóa đơn quá hạn thành nợ xấu
 router.patch('/mark-overdue-as-bad-debt', (req, res, next) => invoiceController.markOverdueInvoicesAsBadDebt(req, res, next));
 
-router.post('/send-email', invoiceController.sendEmail);
+router.post('/send-email', protect, authorize(['manager', 'accountant']), invoiceController.sendEmail);
 
 module.exports = router;
