@@ -149,10 +149,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   const staffInput = document.getElementById('staff-code');
   const continueBtn = document.getElementById('continue-btn');
 
-  staffInput.addEventListener('keydown', async (event) => {
-    let code;
-    if (event.key === 'Enter'){
-      code = staffInput.value.trim();
+  staffInput.addEventListener('blur', async (event) => {
+    let code = staffInput.value.trim();;
+    if (code){
       if (code === ''){
         continueBtn.classList.remove('valid-continue-btn');
         continueBtn.classList.add('disabled-link');
@@ -362,21 +361,22 @@ function canDisabledButton(invoiceItems, checkStaffId, customerInfo) {
 //==================API KHÁCH HÀNG=============================
 let taxId;
 const companyNameTag = document.getElementById('name');
-companyNameTag.addEventListener("keydown", async (e)=>{
-    if (e.key === "Enter"){
-        const companyName = companyNameTag.value.trim();
-        try{
-            const response = await fetch(`http://localhost:3000/api/customers/company-info/${companyName}`);
-            const data = await response.json();
-            if (!data.success){
-                throw new Error(data.message);
-            }
-            taxId = data.data.taxId;
-            document.getElementById('code-tax').value = taxId;
-            document.getElementById('address').value = data.data.address;
-        } catch (error){
-            showModalError("LỖI LẤY THÔNG TIN ĐƠN VỊ BÁN Sỉ", error.message);
+companyNameTag.addEventListener("blur", async (e)=>{
+    const companyName = companyNameTag.value.trim();
+    if (!companyName || companyName === ''){
+      return;
+    }
+    try{
+        const response = await fetch(`http://localhost:3000/api/customers/company-info/${companyName}`);
+        const data = await response.json();
+        if (!data.success){
+            throw new Error(data.message);
         }
+        taxId = data.data.taxId;
+        document.getElementById('code-tax').value = taxId;
+        document.getElementById('address').value = data.data.address;
+    } catch (error){
+        showModalError("LỖI LẤY THÔNG TIN ĐƠN VỊ BÁN Sỉ", `Đơn vị bán sỉ <b>${companyName}</b> không tồn tại. Vui lòng <b>tạo mới khách hàng</b> hoặc <b>sử dụng hóa đơn bán lẻ</b>.`);
     }
 });
 
@@ -403,12 +403,13 @@ async function checkRepresentative(companyName, taxId, name, phone){
 }
 
 const personNameTag = document.getElementById('person-name');
-personNameTag.addEventListener("keydown", async (e) => {
-    if (e.key === "Enter"){
-        let name = personNameTag.value.trim();
+personNameTag.addEventListener("blur", async (e) => {
+  
+    let name = personNameTag.value.trim();
+    if (name && name !== ""){
 
         let phone = document.getElementById('phone').value.trim();
-        if (!phone){
+        if (!phone || phone != ''){
             return;
         }
         checkRepresentative(companyNameTag.value.trim(), taxId, name, phone);
@@ -417,17 +418,16 @@ personNameTag.addEventListener("keydown", async (e) => {
 });
 
 const personPhoneTag = document.getElementById('phone');
-personPhoneTag.addEventListener("keydown", async (e) => {
-    if (e.key === "Enter"){
-        let phone = personPhoneTag.value.trim();
-
-        let name = document.getElementById('person-name').value.trim();
-        if (!name){
-            return;
-        }
-        checkRepresentative(companyNameTag.value.trim(), taxId, name, phone);
-
-        canDisabledButton(invoiceItems, checkStaffId, checkCustomerInfo);
-
+personPhoneTag.addEventListener("blur", async (e) => {
+  let phone = personPhoneTag.value.trim();
+  if (!phone || phone === ""){
+      return;
+  }
+  let name = document.getElementById('person-name').value.trim();
+    if (!name || name === ""){
+        return;
     }
+    checkRepresentative(companyNameTag.value.trim(), taxId, name, phone);
+
+    canDisabledButton(invoiceItems, checkStaffId, checkCustomerInfo);
 });

@@ -124,12 +124,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     billStatus.style.color = '#ff0000';
     billStatus.style.backgroundColor = '#fdcdcd';
 
-    const dueDate = new Date(data.dueDate);
-    const dangerDate = new Date(dueDate.getTime() + 10 * 24 * 60 * 60 * 1000);
-    const warning = document.createElement("p");
-    warning.className = "text-center mt-3 text-danger fw-bold";
-    warning.innerText = `Khách hàng nếu không thanh toán trước ${formatDate(dangerDate)} sẽ bị chuyển thành nợ xấu.`;
-    notifyBtn.parentElement.insertAdjacentElement("afterend", warning);
+    // const dueDate = new Date(data.dueDate);
+    // const dangerDate = new Date(dueDate.getTime() + 10 * 24 * 60 * 60 * 1000);
+    // const warning = document.createElement("p");
+    // warning.className = "text-center mt-3 text-danger fw-bold";
+    // warning.innerText = `Khách hàng nếu không thanh toán trước ${formatDate(dangerDate)} sẽ bị chuyển thành nợ xấu.`;
+    // notifyBtn.parentElement.insertAdjacentElement("afterend", warning);
 
   } else if (statusDebt === "SẮP ĐẾN HẠN") {
     billStatus.style.color = '#ff0000';
@@ -153,34 +153,37 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   //==============================Gửi thông báo====================
-  document.getElementById("send-notify").addEventListener("click", function () {
+  document.getElementById("send-notify").addEventListener("click", async function () {
     if (invoiceID) {
         try {
-        // Gửi POST về "backend giả"
-        // await fetch(`http://localhost:3000/api/invoices/${invoiceID}/mark-notified`, {
-        //     method: "POST",
-        //     headers: { "Content-Type": "application/json" },
-        //     body: JSON.stringify({ invoiceID })
-        // });
+          const res = await fetch("http://localhost:3000/api/invoices/send-email", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({companyName: data.companyName, invoiceID: data.invoiceID}),
+          });
+          const resData = await res.json();
+          if (!resData.success){
+            throw new Error(resData.message);
+          }
+          
+          // Cập nhật localStorage (mô phỏng lưu trạng thái notified)
+          const notified = JSON.parse(localStorage.getItem("notifiedInvoices") || "[]");
+          if (!notified.includes(invoiceID)) {
+              notified.push(invoiceID);
+              localStorage.setItem("notifiedInvoices", JSON.stringify(notified));
+          }
 
-        // Cập nhật localStorage (mô phỏng lưu trạng thái notified)
-        const notified = JSON.parse(localStorage.getItem("notifiedInvoices") || "[]");
-        if (!notified.includes(invoiceID)) {
-            notified.push(invoiceID);
-            localStorage.setItem("notifiedInvoices", JSON.stringify(notified));
-        }
-
-        // Mở modal xác nhận
-        showSuccessModal(
-            "THÀNH CÔNG",
-            "Đã xuất tập tin PDF lưu thông tin chi tiết hóa đơn và khoản nợ.",
-            [
-                {
-                    text: "XEM DANH SÁCH GHI NỢ",
-                    link: "./manageDebt.html"
-                }
-            ]
-        );
+          // Mở modal xác nhận
+          showSuccessModal(
+              "THÀNH CÔNG",
+              "Đã xuất tập tin PDF lưu thông tin chi tiết hóa đơn và khoản nợ.",
+              [
+                  {
+                      text: "XEM DANH SÁCH GHI NỢ",
+                      link: "./manageDebt.html"
+                  }
+              ]
+          );
         } catch (err) {
             showModalError("LỖI GỬI THÔNG BÁO", "Không thể gửi thông báo lên hệ thống.");
         }
