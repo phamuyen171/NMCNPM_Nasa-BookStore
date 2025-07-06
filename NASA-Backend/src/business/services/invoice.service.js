@@ -300,7 +300,7 @@ class InvoiceService {
 
     // Lấy danh sách hóa đơn (chỉ lấy các hóa đơn CHƯA bị xóa mềm HOẶC chưa có trường isDeleted)
     async getInvoices(currentUser, filters) {
-        const { page = 1, limit = 10, status, customerPhone, startDate, endDate, keyword, sortBy = 'date', sortOrder = -1 } = filters;
+        const { page = 1, limit = 10, status, customerPhone, paymentMethod, startDate, endDate, keyword, sortBy = 'date', sortOrder = -1 } = filters;
         const skip = (page - 1) * limit;
         console.log(`[InvoiceService] getInvoices called with keyword: '${keyword}'`); // THÊM DÒNG NÀY
 
@@ -312,6 +312,9 @@ class InvoiceService {
         }
         if (customerPhone) {
             query.customerPhone = new RegExp(customerPhone, 'i'); // Tìm kiếm không phân biệt hoa thường
+        }
+        if (paymentMethod){
+            query.paymentMethod = paymentMethod;
         }
         if (startDate || endDate) {
             query.date = {};
@@ -473,8 +476,8 @@ class InvoiceService {
             await invoice.save();
 
             // Cập nhật công nợ cho khách hàng
-            if (invoice.customerPhone && invoice.customerType === 'wholesale' && invoice.total > 0) {
-                const customer = await Customer.findOne({ phone: invoice.customerPhone, isDeleted: false });
+            if (invoice.companyName && invoice.customerType === 'wholesale' && invoice.total > 0) {
+                const customer = await Customer.findOne({ companyName: invoice.companyName, isDeleted: false });
                 if (customer) {
                     customer.debt = Math.max(0, (customer.debt || 0) - invoice.total);
                     await customer.save();

@@ -190,25 +190,42 @@ document.addEventListener("DOMContentLoaded", async () => {
   //=============================Đánh dấu=========================  
   document.getElementById("mark-paid").addEventListener("click", function () {
     showModalConfirm(
-        "XÁC NHẬN",
-        "Bạn có chắc chắn muốn cập nhật trạng thái “ĐÃ THANH TOÁN” cho đơn hàng này?",
-        
-        function () {
-        // Lưu invoiceID vào localStorage
-        const paidInvoices = JSON.parse(localStorage.getItem("paidInvoices") || "[]");
-        if (!paidInvoices.includes(invoiceID)) {
-            paidInvoices.push(invoiceID);
-            localStorage.setItem("paidInvoices", JSON.stringify(paidInvoices));
-        }
+        "CẬP NHẬP TRẠNG THÁI THANH TOÁN",
+        "cập nhật trạng thái <b>“ĐÃ THANH TOÁN”</b> cho hóa đơn", "../../",
+        async () => {
+          // Lưu invoiceID vào localStorage
+          // const paidInvoices = JSON.parse(localStorage.getItem("paidInvoices") || "[]");
 
-        // Chuyển sang trang quản lý nợ
-        window.location.href = "./manageDebt.html";
+          // Chuyển sang trang quản lý nợ
+          // window.location.href = "./manageDebt.html";
+          // fetch api đánh dấu thanh toán
+          console.log(invoiceID);
+          try{
+            const res = await fetch(`http://localhost:3000/api/invoices/${invoiceID}/mark-as-paid`, { method: "PATCH"});
+            const resData = await res.json();
+            if (!resData.success){
+              throw new Error(resData.message);
+            }
+            // if (!paidInvoices.includes(invoiceID)) {
+            //   paidInvoices.push(invoiceID);
+            //   localStorage.setItem("paidInvoices", JSON.stringify(paidInvoices));
+            // }
+            showSuccessModal(
+                'CẬP NHẬP TRẠNG THÁI THANH TOÁN',
+                'cập nhật trạng thái <b>“ĐÃ THANH TOÁN”</b> cho hóa đơn thành công!',
+                [
+                    {
+                        text: 'Xem danh sách ghi nợ',
+                        link: 'manageDebt.html'
+                    }
+                ]
+            );
+          } catch(error){
+            showModalError("LỖI CẬP NHẬP TRẠNG THÁI THANH TOÁN", "Đã có lỗi khi cập nhập. Vui lòng thử lại sau.");
+            console.error(error.message);
+          }
+          
         }
     );
   });
-
-
-
- 
-
 });

@@ -35,7 +35,7 @@ class InvoiceController {
     // Lấy danh sách hóa đơn
     async getInvoices(req, res, next) {
         try {
-            const { page, limit, status, customerPhone, startDate, endDate, keyword, sortBy, sortOrder } = req.query;
+            const { page, limit, status, customerPhone, startDate, endDate, keyword, sortBy, sortOrder, paymentMethod } = req.query;
             const currentUser = req.user;
 
             const total = await Invoice.countDocuments({ isDeleted: { $ne: true } }); 
@@ -47,6 +47,7 @@ class InvoiceController {
                     limit: parseInt(limit) || total,
                     status,
                     customerPhone,
+                    paymentMethod,
                     startDate,
                     endDate,
                     keyword,

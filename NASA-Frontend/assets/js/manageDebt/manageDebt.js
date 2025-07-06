@@ -1,34 +1,38 @@
 import { renderPagination } from "../../../components/js/pagination.js";
 
-const listManageDebt = [
-    {
-        "invoiceID": "W0002",
-        "total": 5000000,
-        "date": "2025-07-04T15:50:18.496+00:00",
-        "dueDate": "2025-07-20T15:50:18.496+00:00",
-        "notified": "",
-        "customerInfo": "TNHH Chị em rọt",
-        "status": "debt"
-    },
-    {
-        "invoiceID": "W0003",
-        "total": 7000000,
-        "date": "2025-07-02T15:50:18.496+00:00",
-        "dueDate": "2025-07-10T15:50:18.496+00:00",
-        "notified": "",
-        "customerInfo": "Công ty TNHH Thương mại XYZ",
-        "status": "debt"
-    },
-    {
-        "invoiceID": "W0004",
-        "total": 12000000,
-        "date": "2025-06-25T15:50:18.496+00:00",
-        "dueDate": "2025-07-01T15:50:18.496+00:00",
-        "notified": "",
-        "customerInfo": "TNHH Chị em rọt",
-        "status": "debt"
+async function getDebtInvoices(){
+  let list = [];
+  try{
+    const res = await fetch("http://localhost:3000/api/invoices/?status=wholesale&paymentMethod=debt", {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const data = await res.json();
+    if (!data.success){
+      throw new Error(data.message);
     }
-];
+    const debtInvoice =  data.data.invoices;
+    debtInvoice.forEach(bill => {
+      if (bill.paidAt === null){
+        let unpaidBill = {
+          invoiceID: bill.invoiceID, 
+          total: bill.total, 
+          date: bill.date, 
+          dueDate: bill.dueDate, 
+          notified: "",
+          customerInfo: bill.companyName,
+          status: bill.status
+        };
+        list.push(unpaidBill);
+      }
+    });
+    return list;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 // ======================Xử lý trạng thái
 function getStatusText(dueDateStr) {
@@ -143,7 +147,7 @@ let allBills;
 document.addEventListener("DOMContentLoaded", async function () {
   try {
     // allBills = await getAllInvoices();
-    allBills = listManageDebt;
+    allBills = await getDebtInvoices();
 
     renderTableByPage(allBills, currentPage);
 

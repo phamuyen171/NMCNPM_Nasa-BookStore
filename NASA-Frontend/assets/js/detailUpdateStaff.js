@@ -3,25 +3,6 @@ let isChanged = false;
 let tryingToLeave = false;
 let noChange = true; // Biến để kiểm tra xem có thay đổi gì không
 
-function formatDate(dateStr) {
-    const date = new Date(dateStr);
-
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng tính từ 0
-    const year = String(date.getFullYear()); // Lấy 2 số cuối
-
-    return `${day}/${month}/${year}`;
-}
-
-function toISODate(ddmmyyyy) {
-  let [day, month, year] = ddmmyyyy.split('/');
-  if (!day || !month || !year) {
-    [day, month, year] = ddmmyyyy.split('-');
-  }
-  return new Date(year, month -1, day);
-}
-
-
 document.addEventListener("DOMContentLoaded", () => {
   const staff = JSON.parse(localStorage.getItem("selectedStaff"));
   if (!staff) return;
