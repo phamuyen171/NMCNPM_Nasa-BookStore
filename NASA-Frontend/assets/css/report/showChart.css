@@ -1,0 +1,26 @@
+/* ==========================Biểu đồ tròn================= */
+.pie-chart {
+  border: 1px solid #1a3a9c;
+  width: 300px;
+  height: 300px;
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fefefe;
+}
+#revenuePieChart {
+    max-width: 300px;
+    max-height: 300px;
+    margin: 0 auto;
+}
+
+.chart-title{
+    color: #1a3a9c;
+}
+
+/* =====================2 biểu đồ dưới */
+.col-md-6{
+    border-radius: 20px;
+}
