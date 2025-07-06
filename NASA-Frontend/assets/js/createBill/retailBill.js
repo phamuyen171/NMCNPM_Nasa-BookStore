@@ -249,10 +249,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   const staffInput = document.getElementById('staff-code');
   const continueBtn = document.getElementById('continue-btn');
 
-  staffInput.addEventListener('keydown', async (event) => {
-    let code;
-    if (event.key === 'Enter'){
-      code = staffInput.value.trim();
+  staffInput.addEventListener('blur', async (event) => {
+    let code = staffInput.value.trim();
+    if (code !== ''){
       if (code === ''){
         continueBtn.classList.remove('valid-continue-btn');
         continueBtn.classList.add('disabled-link');
